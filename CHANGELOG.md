@@ -1,27 +1,14 @@
 # Changelog
 
-## benjaminterm-v2026.04.22
+## v1.3.0
 
-Corrective preview release for the BenjaminTerm rebuild.
-
-### Changed
-
-- Removed every bundled font except 0xProto.
-- Changed the default internal font fallback from JetBrains Mono to 0xProto.
-- Removed JetBrains Mono, Fira Code, Roboto, Noto Color Emoji, and Symbols Nerd Font Mono from the BenjaminTerm source bundle.
-- Removed old bundled font license files that no longer apply.
-- Updated README and license language so the public GitHub page accurately says BenjaminTerm bundles 0xProto only.
-- Expanded README philosophy for the 0xProto decision and the attention cue system.
-
-## benjaminterm-v2026.04.21
-
-Preview release for the fresh BenjaminTerm rebuild.
+Fresh BenjaminTerm rebuild release.
 
 ### Added
 
 - Windows installer and portable Windows zip.
 - Best-effort macOS and Linux release artifacts.
-- BenjaminTerm release workflow for tags matching `benjaminterm-v*`.
+- BenjaminTerm release workflow for tags matching `v[0-9]*`.
 - Bundled BenjaminTerm config loaded as `wezterm.lua` in release packages.
 - Bundled 0xProto font.
 - Bundled Kenney CC0 interface sounds.
@@ -31,11 +18,18 @@ Preview release for the fresh BenjaminTerm rebuild.
 - Background tab marker for ready panes.
 - Windows reminder toasts with click-to-focus.
 - Input-cleared toast cleanup.
-- README documentation for the font philosophy and attention cue strategy.
+- Restored README banner, screenshot, BEN logo assets, and social preview.
+- README positioning for HyperYap as the sister project and full workstation layer.
 
 ### Changed
 
 - Rebuilt from a fresh WezTerm baseline.
+- Removed every bundled font except 0xProto.
+- Changed the default internal font fallback from JetBrains Mono to 0xProto.
+- Removed JetBrains Mono, Fira Code, Roboto, Noto Color Emoji, and Symbols Nerd Font Mono from the BenjaminTerm source bundle.
+- Removed old bundled font license files that no longer apply.
+- Updated README and license language so the public GitHub page accurately says BenjaminTerm bundles 0xProto only.
+- Expanded README philosophy for the 0xProto decision and the attention cue system.
 - Removed the old smart paste and image paste direction from BenjaminTerm scope.
 - Delegated speech-to-text and clipboard workflow to HyperYap.
 - Rebranded Windows installer identity to Benjamin Term.
@@ -46,6 +40,6 @@ Preview release for the fresh BenjaminTerm rebuild.
 
 ### Known Caveats
 
-- Windows is the supported platform for this preview.
+- Windows is the primary supported platform.
 - macOS and Linux artifacts are best-effort builds and need manual testing.
 - macOS and Linux notification behavior is not yet equivalent to the Windows toast implementation.

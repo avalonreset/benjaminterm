@@ -1,132 +1,191 @@
-# BenjaminTerm
+<p align="center">
+  <img src="assets/banner.webp" alt="BenjaminTerm - AI coding terminal for Windows built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
+</p>
 
-BenjaminTerm is a Windows-first terminal for AI coding sessions, built from a fresh WezTerm baseline and tuned to work cleanly beside HyperYap.
+# BenjaminTerm - AI Coding Terminal for Windows
 
-[![Release](https://img.shields.io/github/v/release/avalonreset/BenjaminTerm?include_prereleases&label=release)](https://github.com/avalonreset/BenjaminTerm/releases)
-[![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/BenjaminTerm/releases)
-[![macOS and Linux](https://img.shields.io/badge/macOS%20%2B%20Linux-best%20effort-555)](https://github.com/avalonreset/BenjaminTerm/releases)
-[![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-7c3aed)](https://wezterm.org/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
+[![Release](https://img.shields.io/github/v/release/avalonreset/BenjaminTerm?label=release)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/avalonreset/BenjaminTerm/benjaminterm-release.yml?branch=main&label=release%20build)](https://github.com/avalonreset/BenjaminTerm/actions/workflows/benjaminterm-release.yml)
+[![License](https://img.shields.io/github/license/avalonreset/BenjaminTerm)](LICENSE.md)
+[![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
+[![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
+[![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-## What It Is
+BenjaminTerm is a Windows-first terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, HyperYap, and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, and Windows toast click-to-focus.
 
-BenjaminTerm keeps the stability and terminal depth of WezTerm, then adds a focused set of defaults for running tools like Codex and Claude:
+```text
+   ___  _____  __   _____   __  ________  _______________  __  ___
+  / _ )/ __/ |/ /_ / / _ | /  |/  /  _/ |/ /_  __/ __/ _ \/  |/  /
+ / _  / _//    / // / __ |/ /|_/ // //    / / / / _// , _/ /|_/ /
+/____/___/_/|_/\___/_/ |_/_/  /_/___/_/|_/ /_/ /___/_/|_/_/  /_/
+```
 
-- Windows toast notifications when an agent session is ready for the next prompt.
-- Toast click-to-focus so the right terminal comes forward.
-- Visual attention pulse on completion, including a tab marker when the ready pane is in the background.
-- Per-pane sound grab bag using bundled CC0 interface sounds.
-- Bundled 0xProto font so new machines do not need manual font setup.
-- Theme shuffle-bag so each new window gets a fresh curated look.
-- Fancy tab bar behavior that avoids wasting vertical space when only one tab is open.
-- Preset font scale and terminal defaults for a more useful first launch.
+## Table of Contents
 
-HyperYap handles the speech-to-text and clipboard workflow. BenjaminTerm does not try to duplicate that layer.
+- [Screenshot](#screenshot)
+- [Why BenjaminTerm](#why-benjaminterm)
+- [Features](#features)
+- [Attention System](#attention-system)
+- [0xProto Philosophy](#0xproto-philosophy)
+- [HyperYap Sister Project](#hyperyap-sister-project)
+- [Hotkeys](#hotkeys)
+- [Install](#install)
+- [Platform Status](#platform-status)
+- [Upstream Credit](#upstream-credit)
+- [License](#license)
 
-## Download
+## Screenshot
 
-Latest preview release:
+![BenjaminTerm hacker terminal running on Windows with dark theme and borderless mode](assets/icon/benjaminterm_screenshot.jpg)
 
-https://github.com/avalonreset/BenjaminTerm/releases/tag/benjaminterm-v2026.04.22
+## Why BenjaminTerm
 
-Recommended Windows installer:
+Vanilla WezTerm is excellent, but it expects you to assemble your own workflow. BenjaminTerm is the opinionated build: the terminal is already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine does not nag you for fonts.
 
-`BenjaminTerm-benjaminterm-v2026.04.22-setup.exe`
+HyperYap owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. BenjaminTerm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, and a calmer default environment for agent-heavy work.
 
-Portable Windows zip:
+The two projects are meant to be used together. HyperYap is the complete AI workstation layer. BenjaminTerm is the focused terminal inside that workstation. HyperYap includes BenjaminTerm by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
 
-`BenjaminTerm-windows-benjaminterm-v2026.04.22.zip`
+| Feature | Windows Terminal | WezTerm (vanilla) | BenjaminTerm |
+|---------|------------------|-------------------|--------------|
+| AI session completion pulse | No | No | Built-in |
+| Per-pane sound identity | No | No | Built-in |
+| Windows toast click-to-focus | Basic app focus | No | Exact ready session workflow |
+| Theme shuffle-bag | No | Manual Lua config | Built-in |
+| Bundled coding font | Limited | User supplied | 0xProto bundled |
+| Single-line tab behavior | Basic | Config required | Fancy tabs, hidden for one tab |
+| Side-by-side install with WezTerm | N/A | N/A | Yes |
+| HyperYap companion workflow | No | Manual | Designed for it |
 
-Best-effort builds:
+## Features
 
-- macOS: `BenjaminTerm-macos-benjaminterm-v2026.04.22.zip`
-- Linux: `BenjaminTerm-linux-benjaminterm-v2026.04.22.tar.gz`
+### Agent Attention
 
-Windows is the supported target for this preview. macOS and Linux artifacts build successfully in GitHub Actions, but they have not been manually tested yet.
-
-## Install On Windows
-
-1. Download the setup executable from the latest release.
-2. Run the installer.
-3. Launch Benjamin Term from the Start menu.
-
-The installer uses its own BenjaminTerm Windows app identity and does not add `wezterm.exe` to PATH. That keeps it from casually shadowing vanilla WezTerm from a command prompt.
-
-## Using The Attention System
-
-The completion attention system is designed for a workflow with several terminal windows or tabs open at once.
-
-- When an agent session is ready, BenjaminTerm plays the pane's assigned sound.
-- The terminal also shows a visual pulse so your eyes can find the ready pane.
-- If the ready pane is not focused, Windows shows a reminder toast.
-- Clicking the toast focuses the matching window and triggers another visual cue.
+- Plays a subtle sound when Codex, Claude, or another terminal agent is ready for the next prompt.
+- Assigns sounds per pane from a shuffled grab bag, so separate windows and tabs can develop their own identity.
+- Pulses the active terminal visually when attention is needed.
+- Marks background tabs when the ready pane is not visible.
+- Shows Windows reminder toasts when the ready pane is not focused.
+- Clicking a toast focuses the matching terminal and triggers another visual cue.
 - Typing into the pane clears the pending reminder.
 
-This is intentionally Pavlovian: each pane gets its own subtle sound, so your brain can start mapping tasks to audio cues.
+### Theme Shuffle-Bag
 
-## Attention Philosophy
+- BenjaminTerm picks from curated black-background themes on launch.
+- Rotation uses a shuffle-bag so new windows cycle through the pool instead of repeating the same theme over and over.
+- `Ctrl+Alt+T` cycles to another theme on demand.
+- Theme state is stored in the BenjaminTerm state file.
+
+### 0xProto Built In
+
+- Bundles only 0xProto: regular, bold, and italic.
+- No JetBrains Mono bundle, no Roboto bundle, no Noto bundle, no OCR A dependency.
+- Fresh installs work without sending users on a font hunt.
+- The 0xProto license is included with the font files.
+
+### Windows-First Branding
+
+- Custom BenjaminTerm app identity.
+- BEN visual assets restored in the repo and README.
+- Windows installer and portable zip are published from GitHub Actions.
+- Vanilla WezTerm can still live beside BenjaminTerm.
+
+## Attention System
 
 BenjaminTerm treats agent completion as an attention routing problem.
 
-The normal terminal model assumes the user is staring at one shell. AI coding does not work that way. A real workflow often has multiple windows, multiple tabs, and multiple agents moving at different speeds. When one of them finishes, the terminal should not merely change a taskbar shade and hope the user notices. It should point attention to the right place without becoming loud or annoying.
+The old terminal model assumes you are staring at one shell. AI coding does not work that way. A real workflow often has multiple windows, multiple tabs, and multiple agents moving at different speeds. When one finishes, the terminal should not merely shade the taskbar and hope you notice. It should route your attention cleanly.
 
 BenjaminTerm uses a layered strategy:
 
-- Sound first: each new pane gets a sound from a shuffled grab bag, so different work streams begin to feel distinct.
-- Color and light second: the ready terminal gets a visual pulse using theme-aware highlight colors.
-- Tabs third: if the ready pane is hidden behind another tab, the tab gets an attention marker.
-- Toasts only when useful: Windows reminder toasts appear when the ready pane is not focused.
-- Click-to-focus as confirmation: clicking a toast brings the matching window forward and triggers a second visual cue.
-- Input clears intent: when the user starts typing into the pane, the pending reminder is cleared.
+- Sound first: each pane gets a sound from the bundled Kenney Interface Sounds set.
+- Color second: the ready terminal gets a theme-aware visual pulse.
+- Tabs third: if the ready pane is hidden, the tab receives an attention marker.
+- Toasts when useful: Windows reminder toasts appear when the pane is not focused.
+- Click-to-focus as confirmation: clicking a toast brings the matching window forward and pulses it again.
+- Input clears intent: when you start typing into the pane, the pending reminder is cleared.
 
-The point is not novelty. The point is reducing cognitive load. The sound tells you something finished. The color tells you where it finished. The toast helps recover buried windows. The click confirms the target. Together, those cues create a faster loop for working across several AI sessions without constantly scanning the taskbar.
+The goal is not noise. The goal is a faster loop. You hear that something finished, see where it finished, click directly into it if needed, and keep moving.
 
-The sound grab bag is deliberately randomized. If you open several terminals or split work across tabs, BenjaminTerm assigns cues from the bundle so the sessions do not all sound identical. Over time, that gives each active work stream a lightweight identity.
+## 0xProto Philosophy
 
-## Themes And Font
+The font is not decoration. In a terminal, the font is part of the productivity system.
 
-BenjaminTerm ships with a curated theme grab bag and one selected bundled font.
+AI coding creates walls of text: patches, test logs, prompts, shell output, stack traces, and generated code. Every ambiguous character makes the loop slower. Every cramped glyph makes scanning harder. Every ugly fallback on a new machine breaks the product feeling.
 
-- Primary font: 0xProto
-- Sounds: Kenney Interface Sounds, distributed as CC0
+BenjaminTerm chooses [0xProto](https://github.com/0xType/0xProto) because it is hackerish without being sloppy, readable without being sterile, and legally bundleable with the project. It is designed for source code clarity, including strong differentiation between similar characters and a balanced monospace rhythm.
 
-The theme shuffle state is stored in the BenjaminTerm state file so new windows cycle through the bag instead of constantly repeating the same theme.
+Our thesis:
 
-## Font Philosophy
+- Readability is speed.
+- Ambiguous characters are friction.
+- A terminal font should make dense output feel less chaotic.
+- A default font should be good enough that users do not need to think about it.
+- Packaging the right font is a product decision, not a cosmetic afterthought.
 
-The 0xProto decision is one of the core BenjaminTerm product decisions.
+BenjaminTerm does not ask users to install the font separately. It ships with the selected font because the selected font is part of the experience.
 
-The thesis is simple: a terminal is not just a shell. It is a reading instrument. If you spend hours scanning diffs, prompts, logs, stack traces, generated code, and command output, the font is part of the productivity system. A better programming font can reduce ambiguity, lower eye fatigue, and make long AI coding sessions feel less chaotic.
+## HyperYap Sister Project
 
-0xProto was selected because it is built around source code legibility. The project emphasizes clear differentiation between similar-looking characters, readability at small sizes, more even visual balance in monospace text, and ligatures that do not mutate the original meaning of code tokens.
+[HyperYap](https://github.com/avalonreset/hyperyap) and BenjaminTerm are sister projects.
 
-That lines up with BenjaminTerm's philosophy:
+HyperYap is the larger operating layer for AI work on Windows: voice-to-text, hotkey remapping, clipboard intelligence, image handling, and the kind of input workflow that should work across every app. BenjaminTerm is the terminal built to live inside that system.
 
-- Ambiguous characters slow people down.
-- Small terminal text should still have open, readable interiors.
-- Dense code should feel balanced, not blotchy.
-- Ligatures should help recognition without hiding the actual source text.
-- The best default is the one users do not have to think about.
+That separation is intentional:
 
-This matters even more when working with agents. AI coding creates fast-moving walls of text: plans, patches, shell output, test logs, and errors. In that environment, typography becomes part of the control surface. BenjaminTerm chooses 0xProto so every install starts with a font that is sharp, hackerish, legally bundleable, and optimized for the kind of reading developers actually do.
+- HyperYap handles what you say, paste, capture, and route into the computer.
+- BenjaminTerm handles where the AI work runs, how it looks, how it sounds, and how it asks for your attention.
+- HyperYap can bundle BenjaminTerm as the default terminal experience.
+- BenjaminTerm remains available as a standalone release for users who want the terminal by itself.
 
-0xProto source and license:
+The standalone release exists because the terminal is useful on its own. The full vision is the pair: HyperYap as the workstation, BenjaminTerm as the terminal that feels native to that workstation.
 
-https://github.com/0xType/0xProto
+## Hotkeys
 
-## Relationship To WezTerm
+| Action | Hotkey |
+|--------|--------|
+| Cycle theme | `Ctrl+Alt+T` |
+| Cycle theme alternate | `Ctrl+Alt+Shift+T` |
+| Font size down | `Ctrl+-` |
+| Font size up | `Ctrl+=` |
+| Reset font size | `Ctrl+0` |
+| New tab | WezTerm default, usually `Ctrl+Shift+T` |
+| Close tab | WezTerm default, usually `Ctrl+Shift+W` |
 
-BenjaminTerm is a fork of WezTerm. The terminal core, GPU renderer, multiplexer, configuration model, and much of the release machinery come from WezTerm.
+Clipboard, speech-to-text, smart paste, image paste, and vibe-coding hotkeys belong to [HyperYap](https://github.com/avalonreset/hyperyap). BenjaminTerm is designed to work beside it.
 
-Upstream project:
+## Install
 
-https://github.com/wezterm/wezterm
+### Windows
 
-Documentation for core WezTerm behavior:
+Download the latest release:
 
-https://wezterm.org/
+https://github.com/avalonreset/BenjaminTerm/releases/latest
 
-BenjaminTerm changes are intentionally scoped. The goal is to add a productive AI coding layer without rewriting the terminal engine.
+Recommended installer:
+
+`BenjaminTerm-v1.3.0-setup.exe`
+
+Portable zip:
+
+`BenjaminTerm-windows-v1.3.0.zip`
+
+### macOS and Linux
+
+Best-effort builds are published with each release:
+
+- macOS: `BenjaminTerm-macos-v1.3.0.zip`
+- Linux: `BenjaminTerm-linux-v1.3.0.tar.gz`
+
+Windows is the primary supported platform. macOS and Linux builds are produced by CI, but they have not been manually tested yet.
+
+## Platform Status
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| Windows | Supported | Installer, portable zip, toast click-to-focus, sound cues, visual pulse |
+| macOS | Best effort | Portable artifact builds in CI |
+| Linux | Best effort | Portable artifact builds in CI |
 
 ## Build From Source
 
@@ -146,19 +205,25 @@ The tag-driven release workflow lives at:
 
 `.github/workflows/benjaminterm-release.yml`
 
-Tags matching `benjaminterm-v*` build Windows, macOS, and Linux artifacts.
+Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
-## Current Status
+## Other Projects
 
-BenjaminTerm `v2026.04.22` is a preview release.
+**[HyperYap](https://github.com/avalonreset/hyperyap)** - Local voice-to-text for Windows with hotkey remapping and smart clipboard image handling. The recommended companion for BenjaminTerm.
 
-- Windows installer: built and published.
-- Windows portable zip: built and published.
-- macOS zip: built and published, best effort.
-- Linux tarball: built and published, best effort.
-- Windows attention behavior: working in local testing.
-- macOS/Linux notification behavior: planned best-effort follow-up.
+**[gemini-seo](https://github.com/avalonreset/gemini-seo)** - Professional SEO workflows for Gemini CLI.
+
+**[codex-seo](https://github.com/avalonreset/codex-seo)** - SEO workflows built for Codex CLI with parallel agents and client-ready reports.
+
+## Upstream Credit
+
+BenjaminTerm is a custom distribution built on [WezTerm](https://github.com/wezterm/wezterm) by Wez Furlong.
+
+- Upstream project: [wezterm/wezterm](https://github.com/wezterm/wezterm)
+- Upstream docs: [wezterm.org](https://wezterm.org/)
+
+BenjaminTerm changes are intentionally scoped. The goal is to add a productive AI coding layer without rewriting the terminal engine.
 
 ## License
 
-BenjaminTerm keeps WezTerm's MIT license. The bundled 0xProto font and bundled sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/kenney-interface`.
+BenjaminTerm keeps WezTerm's MIT license. The bundled 0xProto font and bundled Kenney sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/kenney-interface`.

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "benjaminterm-v*"
+      - "v[0-9]*"
 
 permissions:
   contents: write
@@ -130,9 +130,9 @@ jobs:
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          prerelease: true
+          prerelease: false
           files: artifacts/**
           body: |
-            BenjaminTerm preview release.
+            BenjaminTerm release.
 
-            Windows is the primary supported platform for this release. macOS and Linux artifacts are best-effort portable builds for early testing.
+            Windows is the primary supported platform. macOS and Linux artifacts are best-effort portable builds.
