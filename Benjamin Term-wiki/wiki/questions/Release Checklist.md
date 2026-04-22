@@ -39,3 +39,4 @@ Progress:
 - GitHub Actions release artifacts built successfully for Windows, macOS, and Linux.
 - Published prerelease: `https://github.com/avalonreset/BenjaminTerm/releases/tag/benjaminterm-v2026.04.21`.
 - Current install gate: wait for user confirmation before replacing or switching active terminals.
+- Corrective font packaging pass: 0xProto is now the only bundled font, and local package inspection confirms only `0xProto-Bold.ttf`, `0xProto-Italic.ttf`, `0xProto-Regular.ttf`, and `LICENSE_0XPROTO.txt` ship in `fonts/`.

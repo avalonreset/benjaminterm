@@ -20,11 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-WezTerm bundles `JetBrains Mono`, `Noto Color Emoji` and `Roboto` fonts.
-Those are distributed under the terms of the OFL 1.1, the text of which
-can be found in the assets/fonts directory.
+BenjaminTerm bundles `0xProto`, distributed under the SIL Open Font License
+1.1. Its license text is available in `assets/fonts/LICENSE_0XPROTO.txt`.
 
-WezTerm bundles `Symbols Nerd Font Mono`, built from only those icon sets
-available from https://github.com/ryanoasis/nerd-fonts which are clearly
-distributed under the terms of the OFL 1.1.
-Note that WezTerm excludes the Pomicons icon set from this collection.
+BenjaminTerm bundles Kenney Interface Sounds for agent attention cues. Those
+sound files are distributed under Creative Commons CC0 1.0 Universal. See
+`assets/sounds/kenney-interface/LICENSE_CC0.txt`.

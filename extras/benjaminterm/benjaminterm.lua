@@ -153,11 +153,6 @@ end
 local function make_font()
   return wezterm.font_with_fallback {
     '0xProto',
-    'JetBrains Mono',
-    'Cascadia Mono',
-    'Cascadia Code',
-    'Symbols Nerd Font Mono',
-    'Noto Color Emoji',
   }
 end
 

@@ -29,14 +29,11 @@ body:
   - type: input
     id: version
     attributes:
-      label: WezTerm version
+      label: BenjaminTerm version
       description: |
-        Please run `wezterm -V` and include its output here.
-        If you installed the flatpak version of wezterm, please consider trying
-        the native package format for your system and comparing the behavior,
-        as flatpak runs in an isolated sandbox that can prevent some functionality
-        from working fully.
-      placeholder: "ex: 20210816-085256-935c1f48"
+        Please include the release tag or run `wezterm -V` from the BenjaminTerm install directory.
+        Windows installer users can include the setup file name from the release.
+      placeholder: "ex: benjaminterm-v2026.04.21"
     validations:
       required: true
   - type: dropdown
@@ -84,7 +81,7 @@ body:
       label: Logs
       description: |
         If possible, activate the Debug Overlay by pressing CTRL-SHIFT-L and then copy
-        and paste the log lines in here.  If you launched wezterm from
+        and paste the log lines in here.  If you launched BenjaminTerm from
         the command line, copy and paste that output here.
         You can also find log files in `$XDG_RUNTIME_DIR/wezterm` on unix systems,
         or `$HOME/.local/share/wezterm` on macOS and Windows systems.
