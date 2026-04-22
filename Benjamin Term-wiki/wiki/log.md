@@ -11,6 +11,14 @@ status: active
 
 # Operation Log
 
+## 2026-04-21 - Microsoft Toast Research And Nagging Tags
+
+- Added [[Microsoft Toast Notification System]] research note from Microsoft documentation.
+- Captured `duration`, `scenario`, `Tag`, `Group`, headers, Notification Center behavior, and UX guidance.
+- Changed the BenjaminTerm design from stable per-pane toast tags to fresh per-event tags plus pane-scoped groups.
+- Updated [[Toast Notification Backend]], [[Windows Toast Click-To-Focus]], [[Agent Completion Attention Flow]], [[hot]], and [[index]].
+- Validated with `cargo check -p wezterm-gui`, `git diff --check`, and wiki link lint.
+
 ## 2026-04-22 - Input Clears Agent Toasts
 
 - Added pane-scoped toast tags for focusable Windows notifications.

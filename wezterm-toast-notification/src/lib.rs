@@ -57,6 +57,16 @@ pub fn dismiss_toast_notification(tag: &str, group: Option<&str>) {
     let _ = (tag, group);
 }
 
+pub fn dismiss_toast_notification_group(group: &str) {
+    #[cfg(windows)]
+    if let Err(err) = crate::windows::dismiss_toast_notification_group(group) {
+        log::error!("Failed to dismiss notification group: {}", err);
+    }
+
+    #[cfg(not(windows))]
+    let _ = group;
+}
+
 pub fn set_toast_activation_handler<F>(handler: F)
 where
     F: Fn(String) + Send + Sync + 'static,

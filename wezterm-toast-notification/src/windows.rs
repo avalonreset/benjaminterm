@@ -129,6 +129,15 @@ pub fn dismiss_toast_notification(
     Ok(())
 }
 
+pub fn dismiss_toast_notification_group(group: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let history = ToastNotificationManager::History()?;
+    let group = HSTRING::from(group);
+    let app_id = HSTRING::from("org.wezfurlong.wezterm");
+    history.RemoveGroupWithId(&group, &app_id)?;
+
+    Ok(())
+}
+
 pub fn show_notif(notif: TN) -> Result<(), Box<dyn std::error::Error>> {
     // We need to be in a different thread from the caller
     // in case we get called in the guts of a windows message

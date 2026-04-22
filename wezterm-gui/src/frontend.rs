@@ -208,13 +208,10 @@ impl GuiFrontEnd {
                                 let title = title.as_ref().unwrap_or(&body);
                                 if focus {
                                     let arguments = notification_focus_argument_for_pane(pane_id);
-                                    let tag = crate::attention_toast::tag_for_pane(pane_id);
+                                    let tag = crate::attention_toast::tag_for_ready_event(pane_id);
+                                    let group = crate::attention_toast::group_for_pane(pane_id);
                                     persistent_toast_notification_with_click_arguments_and_tag(
-                                        title,
-                                        message,
-                                        &arguments,
-                                        &tag,
-                                        crate::attention_toast::AGENT_READY_TOAST_GROUP,
+                                        title, message, &arguments, &tag, &group,
                                     );
                                 } else {
                                     persistent_toast_notification(title, message);

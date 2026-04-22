@@ -42,6 +42,11 @@ Sound/visual split:
 - Background tab or other window: sound plus visual pulse plus a silent, clickable Windows toast.
 - User response input: clears the pane-scoped Windows toast reminder.
 
+Nagging toast rule:
+
+- Each agent-ready event gets a fresh notification tag so Windows treats it as a new visible reminder.
+- All outstanding reminders for the pane share a pane-scoped group so one response clears that pane's queue.
+
 Implemented sound identity behavior:
 
 1. Each pane/tab session receives a shuffle-bag sound identity from [[Sound Grab Bag Attention System]].

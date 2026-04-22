@@ -32,6 +32,7 @@ status: active
 
 - [[Theme Grab Bag System]]
 - [[Windows Toast Click-To-Focus]]
+- [[Microsoft Toast Notification System]]
 - [[Attention Pulse]]
 - [[Tab Attention Indicator]]
 - [[Sound Grab Bag Attention System]]

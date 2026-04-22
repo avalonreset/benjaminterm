@@ -27,7 +27,8 @@ status: active
 - Per-pane sounds now come from a runtime shuffle bag and persist until that pane closes.
 - Background tabs need their own visual marker; [[Tab Attention Indicator]] captures the current tab-level design.
 - BenjaminTerm suppresses Windows toasts from the already-focused pane, while preserving toasts for background tabs and other windows as a lightweight attention queue.
-- Focusable Windows toasts are tagged per pane and dismissed when that pane receives the user's next input or paste.
+- Focusable Windows toasts now use fresh event tags with pane-scoped groups; this avoids same-pane ready events becoming silent replacements.
+- Pane input clears that pane's entire outstanding toast group.
 
 ## Recent Changes
 
@@ -45,3 +46,4 @@ status: active
 - Design tasteful agent-attention sounds without making the terminal noisy.
 - Decide whether tab attention fades automatically or persists until selected.
 - Consider a future content-area wash/glow if the border/tab pulse ever proves too subtle across theme packs.
+- Consider an opt-in sticky `scenario="reminder"` toast mode after release; it needs a button/action design.
