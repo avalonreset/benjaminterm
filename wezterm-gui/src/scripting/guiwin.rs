@@ -91,6 +91,7 @@ impl UserData for GuiWin {
                     click_arguments: None,
                     tag: None,
                     group: None,
+                    scenario: None,
                     timeout: timeout.map(std::time::Duration::from_millis),
                 });
                 Ok(())

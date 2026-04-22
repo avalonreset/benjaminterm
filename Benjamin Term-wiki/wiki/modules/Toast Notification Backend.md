@@ -22,6 +22,7 @@ Current behavior:
 
 - Focusable toasts carry `focus-pane:<pane_id>` activation arguments.
 - Focusable toasts use a fresh tag per agent-ready event and a pane-scoped group for cleanup.
+- Focusable agent-ready toasts use `scenario="reminder"` and a `Focus` action button to make the Windows banner as sticky/nagging as the platform allows.
 - Windows toast audio is silent so BenjaminTerm's own sound cue stays distinct.
 - The GUI removes a pane's outstanding toast group when the user responds in that pane.
 

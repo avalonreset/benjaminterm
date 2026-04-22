@@ -442,6 +442,7 @@ impl FallbackResolveInfo {
                     click_arguments: None,
                     tag: None,
                     group: None,
+                    scenario: None,
                     timeout: Some(Duration::from_secs(15)),
                 }
                 .show();

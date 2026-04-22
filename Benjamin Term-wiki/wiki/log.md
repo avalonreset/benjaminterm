@@ -11,6 +11,13 @@ status: active
 
 # Operation Log
 
+## 2026-04-21 - Reminder Toast Mode
+
+- Added `scenario="reminder"` support to the Windows toast backend.
+- Focusable agent-ready toasts now include a `Focus` action button in addition to body click-to-focus.
+- Kept silent toast audio, fresh per-event tags, and pane-scoped group cleanup.
+- Updated [[Microsoft Toast Notification System]], [[Toast Notification Backend]], [[Windows Toast Click-To-Focus]], [[Agent Completion Attention Flow]], and [[hot]].
+
 ## 2026-04-21 - Microsoft Toast Research And Nagging Tags
 
 - Added [[Microsoft Toast Notification System]] research note from Microsoft documentation.

@@ -10,6 +10,7 @@ pub struct ToastNotification {
     pub click_arguments: Option<String>,
     pub tag: Option<String>,
     pub group: Option<String>,
+    pub scenario: Option<String>,
     pub timeout: Option<std::time::Duration>,
 }
 
@@ -98,6 +99,7 @@ pub fn persistent_toast_notification_with_click_to_open_url(title: &str, message
         click_arguments: None,
         tag: None,
         group: None,
+        scenario: None,
         timeout: None,
     });
 }
@@ -114,6 +116,7 @@ pub fn persistent_toast_notification_with_click_arguments(
         click_arguments: Some(arguments.to_string()),
         tag: None,
         group: None,
+        scenario: None,
         timeout: None,
     });
 }
@@ -132,6 +135,7 @@ pub fn persistent_toast_notification_with_click_arguments_and_tag(
         click_arguments: Some(arguments.to_string()),
         tag: Some(tag.to_string()),
         group: Some(group.to_string()),
+        scenario: Some("reminder".to_string()),
         timeout: None,
     });
 }
@@ -144,6 +148,7 @@ pub fn persistent_toast_notification(title: &str, message: &str) {
         click_arguments: None,
         tag: None,
         group: None,
+        scenario: None,
         timeout: None,
     });
 }

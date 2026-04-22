@@ -36,6 +36,11 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     let launch_attr = launch_argument
         .map(|arg| format!(r#" launch="{}""#, escape_str_attribute(arg)))
         .unwrap_or_default();
+    let scenario_attr = toast
+        .scenario
+        .as_deref()
+        .map(|scenario| format!(r#" scenario="{}""#, escape_str_attribute(scenario)))
+        .unwrap_or_default();
 
     let url_actions = if toast.url.is_some() {
         r#"
@@ -43,12 +48,22 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
            <action content="Show" arguments="show" />
         </actions>
         "#
+        .to_string()
+    } else if let Some(arguments) = toast.click_arguments.as_deref() {
+        format!(
+            r#"
+        <actions>
+           <action content="Focus" arguments="{}" activationType="foreground" />
+        </actions>
+        "#,
+            escape_str_attribute(arguments)
+        )
     } else {
-        ""
+        String::new()
     };
 
     xml.LoadXml(HSTRING::from(format!(
-        r#"<toast{} duration="long">
+        r#"<toast{}{} duration="long">
         <visual>
             <binding template="ToastGeneric">
                 <text>{}</text>
@@ -59,6 +74,7 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
         {}
     </toast>"#,
         launch_attr,
+        scenario_attr,
         escape_str_pcdata(&toast.title),
         escape_str_pcdata(&toast.message),
         url_actions

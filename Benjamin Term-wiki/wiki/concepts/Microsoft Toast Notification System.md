@@ -44,7 +44,7 @@ The `scenario` attribute changes how Windows treats the notification:
 - `incomingCall`: special call-style UI with looping ringtone behavior.
 - `urgent`: high-priority notification that can break through Focus Assist only where supported and allowed by user settings.
 
-BenjaminTerm should avoid `alarm`, `incomingCall`, and `urgent` for normal agent-ready events. `reminder` is the only plausible sticky-toast experiment, but it needs a careful button/action design and should probably be an opt-in mode.
+BenjaminTerm should avoid `alarm`, `incomingCall`, and `urgent` for normal agent-ready events. `reminder` is the only plausible sticky-toast path. BenjaminTerm uses it for focusable agent-ready toasts with a `Focus` action button plus body click-to-focus, while still clearing the pane's reminder group on user input.
 
 ## Tag And Group
 
@@ -62,6 +62,8 @@ BenjaminTerm decision:
 - Use a fresh tag for each agent-ready toast.
 - Use a pane-scoped group such as `benjaminterm-agent-ready-pane-<pane_id>`.
 - On user input to that pane, remove the whole group.
+- Use `scenario="reminder"` for focusable agent-ready toasts to get as close as possible to sticky nagging behavior.
+- Include a foreground `Focus` action because reminder-style notifications are action-oriented in Microsoft's model.
 
 ## Headers And Notification Center
 
@@ -77,7 +79,7 @@ Possible future use:
 Microsoft's UX guidance warns that notifications should be useful and not noisy. For BenjaminTerm, that means:
 
 - Focused pane: sound plus visual pulse, no Windows toast.
-- Background tab or other window: sound plus visual pulse plus toast.
+- Background tab or other window: sound plus visual pulse plus reminder toast.
 - Repeated completion events: fresh toast so the user is visibly nagged again.
 - User response: clear outstanding reminders for that pane.
 
