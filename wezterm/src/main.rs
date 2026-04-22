@@ -771,13 +771,24 @@ fn delegate_to_gui(saver: UmaskSaver) -> anyhow::Result<()> {
     // Restore the original umask
     drop(saver);
 
-    let exe_name = if cfg!(windows) {
+    let current_exe = std::env::current_exe()?;
+    let current_name = current_exe
+        .file_name()
+        .map(|name| name.to_string_lossy().to_ascii_lowercase())
+        .unwrap_or_default();
+    let exe_name = if current_name.contains("benjaminterm") {
+        if cfg!(windows) {
+            "BenjaminTerm-gui.exe"
+        } else {
+            "benjaminterm-gui"
+        }
+    } else if cfg!(windows) {
         "wezterm-gui.exe"
     } else {
         "wezterm-gui"
     };
 
-    let exe = std::env::current_exe()?
+    let exe = current_exe
         .parent()
         .ok_or_else(|| anyhow!("exe has no parent dir!?"))?
         .join(exe_name);

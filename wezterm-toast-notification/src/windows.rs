@@ -127,7 +127,7 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub fn dismiss_toast_notification(
+fn dismiss_toast_notification_impl(
     tag: &str,
     group: Option<&str>,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -145,11 +145,39 @@ pub fn dismiss_toast_notification(
     Ok(())
 }
 
-pub fn dismiss_toast_notification_group(group: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn dismiss_toast_notification_group_impl(group: &str) -> Result<(), Box<dyn std::error::Error>> {
     let history = ToastNotificationManager::History()?;
     let group = HSTRING::from(group);
     let app_id = HSTRING::from("com.avalonreset.benjaminterm");
     history.RemoveGroupWithId(&group, &app_id)?;
+
+    Ok(())
+}
+
+pub fn dismiss_toast_notification(
+    tag: &str,
+    group: Option<&str>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let tag = tag.to_string();
+    let group = group.map(str::to_string);
+
+    std::thread::spawn(move || {
+        if let Err(err) = dismiss_toast_notification_impl(&tag, group.as_deref()) {
+            log::error!("Failed to dismiss toast notification: {:#}", err);
+        }
+    });
+
+    Ok(())
+}
+
+pub fn dismiss_toast_notification_group(group: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let group = group.to_string();
+
+    std::thread::spawn(move || {
+        if let Err(err) = dismiss_toast_notification_group_impl(&group) {
+            log::error!("Failed to dismiss toast notification group: {:#}", err);
+        }
+    });
 
     Ok(())
 }

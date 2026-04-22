@@ -116,16 +116,29 @@ impl UnixDomain {
     pub fn serve_command(&self) -> anyhow::Result<Vec<OsString>> {
         match self.serve_command.as_ref() {
             Some(cmd) => Ok(cmd.iter().map(Into::into).collect()),
-            None => Ok(vec![
-                std::env::current_exe()?
-                    .with_file_name(if cfg!(windows) {
-                        "wezterm-mux-server.exe"
+            None => {
+                let exe = std::env::current_exe()?;
+                let exe_name = exe
+                    .file_name()
+                    .map(|name| name.to_string_lossy().to_ascii_lowercase())
+                    .unwrap_or_default();
+                let mux_name = if exe_name.contains("benjaminterm") {
+                    if cfg!(windows) {
+                        "BenjaminTerm-mux-server.exe"
                     } else {
-                        "wezterm-mux-server"
-                    })
-                    .into_os_string(),
-                OsString::from("--daemonize"),
-            ]),
+                        "benjaminterm-mux-server"
+                    }
+                } else if cfg!(windows) {
+                    "wezterm-mux-server.exe"
+                } else {
+                    "wezterm-mux-server"
+                };
+
+                Ok(vec![
+                    exe.with_file_name(mux_name).into_os_string(),
+                    OsString::from("--daemonize"),
+                ])
+            }
         }
     }
 }

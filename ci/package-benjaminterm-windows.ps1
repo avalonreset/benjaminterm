@@ -29,18 +29,18 @@ New-Item -ItemType Directory -Force -Path (Join-Path $packageDir "fonts") | Out-
 New-Item -ItemType Directory -Force -Path (Join-Path $packageDir "sounds") | Out-Null
 
 $requiredFiles = @(
-  "wezterm.exe",
-  "wezterm-gui.exe",
-  "wezterm-mux-server.exe",
-  "strip-ansi-escapes.exe"
+  @{ Source = "wezterm.exe"; Destination = "BenjaminTerm.exe" },
+  @{ Source = "wezterm-gui.exe"; Destination = "BenjaminTerm-gui.exe" },
+  @{ Source = "wezterm-mux-server.exe"; Destination = "BenjaminTerm-mux-server.exe" },
+  @{ Source = "strip-ansi-escapes.exe"; Destination = "strip-ansi-escapes.exe" }
 )
 
 foreach ($file in $requiredFiles) {
-  $source = Join-Path $releaseDir $file
+  $source = Join-Path $releaseDir $file.Source
   if (!(Test-Path $source)) {
     throw "Missing required build output: $source"
   }
-  Copy-Item -LiteralPath $source -Destination $packageDir
+  Copy-Item -LiteralPath $source -Destination (Join-Path $packageDir $file.Destination)
 }
 
 $optionalPdb = Join-Path $releaseDir "wezterm.pdb"

@@ -6,7 +6,7 @@
 ;#define MyAppVersion "1.5"
 #define MyAppPublisher "Avalon Reset"
 #define MyAppURL "https://github.com/avalonreset/BenjaminTerm"
-#define MyAppExeName "wezterm-gui.exe"
+#define MyAppExeName "BenjaminTerm-gui.exe"
 #define MyAppUserModelID "com.avalonreset.benjaminterm"
 
 [Setup]
@@ -20,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={autopf}\BenjaminTerm
 DisableProgramGroupPage=yes
 ;LicenseFile=..\LICENSE.md
 ; Remove the following line to run in administrative install mode (install for all users.)
@@ -44,9 +44,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; DestName: "BenjaminTerm.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; DestName: "BenjaminTerm-gui.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; DestName: "BenjaminTerm-mux-server.exe"; Flags: ignoreversion
 Source: "..\assets\windows\mesa\opengl32.dll"; DestDir: "{app}\mesa"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
