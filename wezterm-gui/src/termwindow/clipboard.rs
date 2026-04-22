@@ -25,6 +25,7 @@ impl TermWindow {
 
     pub fn paste_from_clipboard(&mut self, pane: &Arc<dyn Pane>, clipboard: ClipboardPasteSource) {
         let pane_id = pane.pane_id();
+        crate::attention_toast::dismiss_for_pane(pane_id);
         log::trace!(
             "paste_from_clipboard in pane {} {:?}",
             pane.pane_id(),

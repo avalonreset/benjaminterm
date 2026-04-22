@@ -785,7 +785,18 @@ impl TerminalState {
             }
         }
         if self.focus_tracking {
-            write!(self.writer, "{}{}", CSI, if focused { "I" } else { "O" }).ok();
+            // BenjaminTerm is optimized for agent CLIs that suppress their own
+            // completion notifications while the terminal reports focus. Keep
+            // those apps in their notification-capable path while preserving
+            // the terminal's real focus state internally.
+            let report_focused = false;
+            write!(
+                self.writer,
+                "{}{}",
+                CSI,
+                if report_focused { "I" } else { "O" }
+            )
+            .ok();
             self.writer.flush().ok();
         }
         self.focused = focused;
@@ -1806,6 +1817,8 @@ impl TerminalState {
             Mode::SetDecPrivateMode(DecPrivateMode::Code(DecPrivateModeCode::FocusTracking)) => {
                 self.focus_tracking = true;
                 self.last_mouse_move.take();
+                write!(self.writer, "{}O", CSI).ok();
+                self.writer.flush().ok();
             }
             Mode::ResetDecPrivateMode(DecPrivateMode::Code(DecPrivateModeCode::FocusTracking)) => {
                 self.focus_tracking = false;

@@ -18,8 +18,24 @@ fn unwrap_arg<T>(a: &Option<T>) -> Result<&T, WinError> {
     }
 }
 
+fn escape_str_attribute(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;")
+}
+
 fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     let xml = XmlDocument::new()?;
+
+    let launch_argument = toast
+        .click_arguments
+        .as_deref()
+        .or_else(|| toast.url.as_deref().map(|_| "show"));
+    let launch_attr = launch_argument
+        .map(|arg| format!(r#" launch="{}""#, escape_str_attribute(arg)))
+        .unwrap_or_default();
 
     let url_actions = if toast.url.is_some() {
         r#"
@@ -32,34 +48,43 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     };
 
     xml.LoadXml(HSTRING::from(format!(
-        r#"<toast duration="long">
+        r#"<toast{} duration="long">
         <visual>
             <binding template="ToastGeneric">
                 <text>{}</text>
                 <text>{}</text>
             </binding>
         </visual>
+        <audio silent="true"/>
         {}
     </toast>"#,
+        launch_attr,
         escape_str_pcdata(&toast.title),
         escape_str_pcdata(&toast.message),
         url_actions
     )))?;
 
     let notif = ToastNotification::CreateToastNotification(xml)?;
+    if let Some(tag) = toast.tag.as_deref() {
+        notif.SetTag(&HSTRING::from(tag))?;
+    }
+    if let Some(group) = toast.group.as_deref() {
+        notif.SetGroup(&HSTRING::from(group))?;
+    }
 
     notif.Activated(TypedEventHandler::new(
         move |_: &Option<ToastNotification>, result: &Option<IInspectable>| {
             // let myself = unwrap_arg(myself)?;
             let result = unwrap_arg(result)?.cast::<ToastActivatedEventArgs>()?;
 
-            let args = result.Arguments()?;
+            let args = result.Arguments()?.to_string();
 
             if args == "show" {
                 if let Some(url) = toast.url.as_ref() {
                     wezterm_open_url::open_url(url);
                 }
             }
+            crate::dispatch_toast_activation(args);
 
             Ok(())
         },
@@ -82,6 +107,24 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     ))?;
 
     notifier.Show(&notif)?;
+
+    Ok(())
+}
+
+pub fn dismiss_toast_notification(
+    tag: &str,
+    group: Option<&str>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let history = ToastNotificationManager::History()?;
+    let tag = HSTRING::from(tag);
+
+    if let Some(group) = group {
+        let group = HSTRING::from(group);
+        let app_id = HSTRING::from("org.wezfurlong.wezterm");
+        history.RemoveGroupedTagWithId(&tag, &group, &app_id)?;
+    } else {
+        history.Remove(&tag)?;
+    }
 
     Ok(())
 }

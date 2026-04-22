@@ -450,6 +450,8 @@ pub struct TermWindow {
     /// if we run out of texture space
     allow_images: AllowImage,
     scheduled_animation: RefCell<Option<Instant>>,
+    toast_attention_pulse_until: Option<Instant>,
+    agent_attention_tab_until: RefCell<HashMap<TabId, Instant>>,
 
     created: Instant,
 
@@ -779,6 +781,8 @@ impl TermWindow {
             current_event: None,
             has_animation: RefCell::new(None),
             scheduled_animation: RefCell::new(None),
+            toast_attention_pulse_until: None,
+            agent_attention_tab_until: RefCell::new(HashMap::new()),
             allow_images: AllowImage::Yes,
             semantic_zones: HashMap::new(),
             ui_items: vec![],
@@ -1020,6 +1024,7 @@ impl TermWindow {
                     Some(pane) => pane,
                     None => return Ok(true),
                 };
+                crate::attention_toast::dismiss_for_pane(pane.pane_id());
                 pane.send_paste(text.as_str())?;
                 Ok(true)
             }
@@ -1034,6 +1039,7 @@ impl TermWindow {
                     .collect::<Vec<_>>()
                     .join(" ")
                     + " ";
+                crate::attention_toast::dismiss_for_pane(pane.pane_id());
                 pane.send_paste(urls.as_str())?;
                 Ok(true)
             }
@@ -1052,6 +1058,7 @@ impl TermWindow {
                     .collect::<Vec<_>>()
                     .join(" ")
                     + " ";
+                crate::attention_toast::dismiss_for_pane(pane.pane_id());
                 pane.send_paste(&paths)?;
                 Ok(true)
             }
@@ -2743,13 +2750,17 @@ impl TermWindow {
             ActivateWindowRelativeNoWrap(n) => {
                 self.activate_window_relative(*n, false)?;
             }
-            SendString(s) => pane.writer().write_all(s.as_bytes())?,
+            SendString(s) => {
+                crate::attention_toast::dismiss_for_pane(pane.pane_id());
+                pane.writer().write_all(s.as_bytes())?
+            }
             SendKey(key) => {
                 use keyevent::Key;
                 let mods = key.mods;
                 if let Key::Code(key) = self.win_key_code_to_termwiz_key_code(
                     &key.key.resolve(self.config.key_map_preference),
                 ) {
+                    crate::attention_toast::dismiss_for_pane(pane.pane_id());
                     pane.key_down(key, mods)?;
                 }
             }

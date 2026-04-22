@@ -1,0 +1,11 @@
+Creative Commons CC0 1.0 Universal
+
+The sound files in this directory are derived from Kenney Interface Sounds:
+https://opengameart.org/content/interface-sounds
+
+OpenGameArt lists the package license as CC0:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The original package notes that credit to "Kenney.nl" or "www.kenney.nl" is
+appreciated but not mandatory.
+

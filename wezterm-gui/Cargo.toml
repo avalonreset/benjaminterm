@@ -119,6 +119,7 @@ winapi = { workspace=true, features = [
     "winsock2",
 ]}
 windows = { workspace=true, features = [
+    "Win32_Media_Audio",
     "Win32_UI_Shell",
 ]}
 

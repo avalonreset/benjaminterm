@@ -13,6 +13,10 @@ dhat-heap.json
 /wezterm*.tar.xz
 /pkg
 /target/
+/target-sound-prototype/
+/target-focused-cue/
+/preview/
+/prototype-assets/
 /wezterm-char-props/codegen/target
 /wezterm-char-props/codegen/Cargo.lock
 /termwiz/codegen/target

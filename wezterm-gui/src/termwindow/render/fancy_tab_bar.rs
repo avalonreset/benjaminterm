@@ -7,10 +7,16 @@ use crate::termwindow::render::window_buttons::window_button_element;
 use crate::termwindow::{UIItem, UIItemType};
 use crate::utilsprites::RenderMetrics;
 use config::{Dimension, DimensionContext, TabBarColors};
+use mux::Mux;
+use std::collections::HashMap;
 use std::rc::Rc;
+use std::time::{Duration, Instant};
 use wezterm_font::LoadedFont;
 use wezterm_term::color::{ColorAttribute, ColorPalette};
+use window::color::LinearRgba;
 use window::{IntegratedTitleButtonAlignment, IntegratedTitleButtonStyle};
+
+const AGENT_ATTENTION_TAB_DURATION: Duration = Duration::from_millis(900);
 
 const X_BUTTON: &[Poly] = &[
     Poly {
@@ -55,11 +61,63 @@ impl crate::TermWindow {
         self.fancy_tab_bar.take();
     }
 
+    fn theme_attention_tab_color(palette: &ColorPalette) -> LinearRgba {
+        [9usize, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5, 6]
+            .iter()
+            .copied()
+            .filter_map(|idx| {
+                let color = palette.colors.0[idx];
+                let max = color.0.max(color.1).max(color.2);
+                let min = color.0.min(color.1).min(color.2);
+                let saturation = max - min;
+
+                if saturation < 0.12 || max < 0.25 {
+                    return None;
+                }
+
+                let luminance =
+                    (0.2126_f32 * color.0) + (0.7152_f32 * color.1) + (0.0722_f32 * color.2);
+                let score = saturation * 2.0_f32 + max - (luminance - 0.68_f32).abs() * 0.35_f32;
+                Some((score, color))
+            })
+            .max_by(|(a, _), (b, _)| a.total_cmp(b))
+            .map(|(_, color)| color.to_linear())
+            .unwrap_or_else(|| palette.selection_bg.to_linear())
+    }
+
+    fn agent_attention_tab_alpha_by_index(&self) -> HashMap<usize, f32> {
+        let now = Instant::now();
+        let total = AGENT_ATTENTION_TAB_DURATION.as_secs_f32();
+
+        let mut attention_tabs = self.agent_attention_tab_until.borrow_mut();
+        attention_tabs.retain(|_, until| *until > now);
+
+        let mux = Mux::get();
+        let Some(window) = mux.get_window(self.mux_window_id) else {
+            return HashMap::new();
+        };
+
+        window
+            .iter()
+            .enumerate()
+            .filter_map(|(tab_idx, tab)| {
+                let until = attention_tabs.get(&tab.tab_id())?;
+                let remaining = until.duration_since(now).as_secs_f32();
+                let elapsed = total - remaining;
+                let fade = remaining / total;
+                let wave = (elapsed * std::f32::consts::TAU * 2.4).sin().abs();
+                Some((tab_idx, (0.25 + 0.75 * wave) * fade))
+            })
+            .collect()
+    }
+
     pub fn build_fancy_tab_bar(&self, palette: &ColorPalette) -> anyhow::Result<ComputedElement> {
         let tab_bar_height = self.tab_bar_pixel_height()?;
         let font = self.fonts.title_font()?;
         let metrics = RenderMetrics::with_font_metrics(&font.metrics());
         let items = self.tab_bar.items();
+        let attention_tabs = self.agent_attention_tab_alpha_by_index();
+        let attention_color = Self::theme_attention_tab_color(palette);
         let colors = self
             .config
             .colors
@@ -165,7 +223,7 @@ impl crate::TermWindow {
                     bg: new_tab_hover.bg_color.to_linear().into(),
                     text: new_tab_hover.fg_color.to_linear().into(),
                 })),
-                TabBarItem::Tab { active, .. } if active => element
+                TabBarItem::Tab { tab_idx, active } if active => element
                     .vertical_align(VerticalAlign::Bottom)
                     .item_type(UIItemType::TabBar(item.item.clone()))
                     .margin(BoxDimension {
@@ -195,22 +253,24 @@ impl crate::TermWindow {
                         bottom_left: SizedPoly::none(),
                         bottom_right: SizedPoly::none(),
                     }))
-                    .colors(ElementColors {
-                        border: BorderColor::new(
-                            bg_color
-                                .unwrap_or_else(|| active_tab.bg_color.into())
-                                .to_linear(),
-                        ),
-                        bg: bg_color
+                    .colors({
+                        let bg = bg_color
                             .unwrap_or_else(|| active_tab.bg_color.into())
-                            .to_linear()
-                            .into(),
-                        text: fg_color
+                            .to_linear();
+                        let text = fg_color
                             .unwrap_or_else(|| active_tab.fg_color.into())
-                            .to_linear()
-                            .into(),
+                            .to_linear();
+                        let attention = attention_tabs
+                            .get(&tab_idx)
+                            .map(|alpha| attention_color.mul_alpha(*alpha))
+                            .unwrap_or(bg);
+                        ElementColors {
+                            border: BorderColor::new(attention),
+                            bg: bg.into(),
+                            text: text.into(),
+                        }
                     }),
-                TabBarItem::Tab { .. } => element
+                TabBarItem::Tab { tab_idx, .. } => element
                     .vertical_align(VerticalAlign::Bottom)
                     .item_type(UIItemType::TabBar(item.item.clone()))
                     .margin(BoxDimension {
@@ -254,17 +314,23 @@ impl crate::TermWindow {
                             .unwrap_or_else(|| inactive_tab.bg_color.into())
                             .to_linear();
                         let edge = colors.inactive_tab_edge().to_linear();
+                        let attention = attention_tabs
+                            .get(&tab_idx)
+                            .map(|alpha| attention_color.mul_alpha(*alpha));
                         ElementColors {
                             border: BorderColor {
-                                left: bg,
-                                right: edge,
-                                top: bg,
-                                bottom: bg,
+                                left: attention.unwrap_or(bg),
+                                right: attention.unwrap_or(edge),
+                                top: attention.unwrap_or(bg),
+                                bottom: attention.unwrap_or(bg),
                             },
                             bg: bg.into(),
-                            text: fg_color
-                                .unwrap_or_else(|| inactive_tab.fg_color.into())
-                                .to_linear()
+                            text: attention
+                                .unwrap_or_else(|| {
+                                    fg_color
+                                        .unwrap_or_else(|| inactive_tab.fg_color.into())
+                                        .to_linear()
+                                })
                                 .into(),
                         }
                     })

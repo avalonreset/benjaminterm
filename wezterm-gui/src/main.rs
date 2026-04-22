@@ -34,6 +34,8 @@ use wezterm_gui_subcommands::*;
 use wezterm_mux_server_impl::update_mux_domains;
 use wezterm_toast_notification::*;
 
+mod attention_sound;
+mod attention_toast;
 mod colorease;
 mod commands;
 mod customglyph;

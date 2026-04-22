@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "overview",
+      "type": "file",
+      "file": "wiki/overview.md",
+      "x": -420,
+      "y": -160,
+      "width": 280,
+      "height": 160
+    },
+    {
+      "id": "attention-flow",
+      "type": "file",
+      "file": "wiki/flows/Agent Completion Attention Flow.md",
+      "x": -60,
+      "y": -160,
+      "width": 320,
+      "height": 160
+    },
+    {
+      "id": "sound",
+      "type": "file",
+      "file": "wiki/concepts/Sound Grab Bag Attention System.md",
+      "x": 340,
+      "y": -160,
+      "width": 340,
+      "height": 160
+    },
+    {
+      "id": "toast",
+      "type": "file",
+      "file": "wiki/concepts/Windows Toast Click-To-Focus.md",
+      "x": -60,
+      "y": 80,
+      "width": 320,
+      "height": 160
+    },
+    {
+      "id": "pulse",
+      "type": "file",
+      "file": "wiki/concepts/Attention Pulse.md",
+      "x": 340,
+      "y": 80,
+      "width": 280,
+      "height": 160
+    }
+  ],
+  "edges": [
+    {
+      "id": "overview-attention",
+      "fromNode": "overview",
+      "fromSide": "right",
+      "toNode": "attention-flow",
+      "toSide": "left"
+    },
+    {
+      "id": "attention-sound",
+      "fromNode": "attention-flow",
+      "fromSide": "right",
+      "toNode": "sound",
+      "toSide": "left"
+    },
+    {
+      "id": "attention-toast",
+      "fromNode": "attention-flow",
+      "fromSide": "bottom",
+      "toNode": "toast",
+      "toSide": "top"
+    },
+    {
+      "id": "toast-pulse",
+      "fromNode": "toast",
+      "fromSide": "right",
+      "toNode": "pulse",
+      "toSide": "left"
+    }
+  ]
+}

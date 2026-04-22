@@ -7,6 +7,7 @@ use anyhow::{Context, Error};
 use config::keyassignment::{KeyAssignment, SpawnCommand};
 use config::{ConfigSubscription, NotificationHandling};
 use mux::client::ClientId;
+use mux::pane::PaneId;
 use mux::window::WindowId as MuxWindowId;
 use mux::{Mux, MuxNotification};
 use promise::{Future, Promise};
@@ -16,6 +17,83 @@ use std::rc::Rc;
 use std::sync::Arc;
 use wezterm_term::{Alert, ClipboardSelection};
 use wezterm_toast_notification::*;
+
+const TOAST_FOCUS_PANE_PREFIX: &str = "focus-pane:";
+
+fn notification_focus_argument_for_pane(pane_id: PaneId) -> String {
+    format!("{TOAST_FOCUS_PANE_PREFIX}{pane_id}")
+}
+
+fn pane_id_from_notification_focus_argument(arguments: &str) -> Option<PaneId> {
+    arguments
+        .strip_prefix(TOAST_FOCUS_PANE_PREFIX)?
+        .parse::<PaneId>()
+        .ok()
+}
+
+fn handle_toast_activation(arguments: String) {
+    let Some(pane_id) = pane_id_from_notification_focus_argument(&arguments) else {
+        return;
+    };
+
+    promise::spawn::spawn_into_main_thread(async move {
+        let mux = Mux::get();
+        if let Err(err) = mux.focus_pane_and_containing_tab(pane_id) {
+            log::error!("Unable to focus pane {pane_id} from toast activation: {err:#}");
+            return;
+        }
+
+        let Some((_domain, mux_window_id, _tab_id)) = mux.resolve_pane_id(pane_id) else {
+            log::error!("Unable to resolve pane {pane_id} after toast activation");
+            return;
+        };
+
+        let Some(front_end) = crate::frontend::try_front_end() else {
+            log::error!("Unable to focus pane {pane_id}: front_end is unavailable");
+            return;
+        };
+
+        if let Some(gui_window) = front_end.gui_window_for_mux_window(mux_window_id) {
+            gui_window.window.focus();
+            gui_window
+                .window
+                .notify(TermWindowNotif::Apply(Box::new(move |term_window| {
+                    term_window.start_visual_attention_for_pane(pane_id);
+                })));
+        } else {
+            log::error!(
+                "Unable to find GUI window for mux window {mux_window_id} (pane {pane_id})"
+            );
+        }
+    })
+    .detach();
+}
+
+fn trigger_attention_for_pane(mux_window_id: MuxWindowId, pane_id: PaneId) {
+    let Some(front_end) = crate::frontend::try_front_end() else {
+        log::error!("Unable to trigger attention: front_end is unavailable");
+        return;
+    };
+
+    if let Some(gui_window) = front_end.gui_window_for_mux_window(mux_window_id) {
+        play_attention_sound_for_pane(pane_id);
+        gui_window
+            .window
+            .notify(TermWindowNotif::Apply(Box::new(move |term_window| {
+                term_window.start_visual_attention_for_pane(pane_id);
+            })));
+    } else {
+        log::error!("Unable to find GUI window for mux window {mux_window_id}");
+    }
+}
+
+#[cfg(windows)]
+fn play_attention_sound_for_pane(pane_id: PaneId) {
+    crate::attention_sound::play_for_pane(pane_id);
+}
+
+#[cfg(not(windows))]
+fn play_attention_sound_for_pane(_pane_id: PaneId) {}
 
 pub struct GuiFrontEnd {
     connection: Rc<Connection>,
@@ -34,6 +112,8 @@ impl Drop for GuiFrontEnd {
 
 impl GuiFrontEnd {
     pub fn try_new() -> anyhow::Result<Rc<GuiFrontEnd>> {
+        set_toast_activation_handler(handle_toast_activation);
+
         let connection = Connection::init()?;
         connection.set_event_handler(Self::app_event_handler);
 
@@ -90,23 +170,25 @@ impl GuiFrontEnd {
                 MuxNotification::WindowTitleChanged { .. } => {}
                 MuxNotification::TabResized(_) => {}
                 MuxNotification::TabAddedToWindow { .. } => {}
-                MuxNotification::PaneRemoved(_) => {}
+                MuxNotification::PaneRemoved(pane_id) => {
+                    crate::attention_sound::forget_pane(pane_id);
+                }
                 MuxNotification::WindowInvalidated(_) => {}
                 MuxNotification::PaneOutput(_) => {}
                 MuxNotification::PaneAdded(_) => {}
                 MuxNotification::Alert {
                     pane_id,
-                    alert:
-                        Alert::ToastNotification {
-                            title,
-                            body,
-                            focus: _,
-                        },
+                    alert: Alert::ToastNotification { title, body, focus },
                 } => {
                     let mux = Mux::get();
 
                     if let Some((_domain, window_id, tab_id)) = mux.resolve_pane_id(pane_id) {
                         let config = config::configuration();
+
+                        promise::spawn::spawn_into_main_thread(async move {
+                            trigger_attention_for_pane(window_id, pane_id);
+                        })
+                        .detach();
 
                         if let Some((_fdomain, f_window, f_tab, f_pane)) =
                             mux.resolve_focused_pane(&client_id)
@@ -124,10 +206,19 @@ impl GuiFrontEnd {
                             if show {
                                 let message = if title.is_none() { "" } else { &body };
                                 let title = title.as_ref().unwrap_or(&body);
-                                // FIXME: if notification.focus is true, we should do
-                                // something here to arrange to focus pane_id when the
-                                // notification is clicked
-                                persistent_toast_notification(title, message);
+                                if focus {
+                                    let arguments = notification_focus_argument_for_pane(pane_id);
+                                    let tag = crate::attention_toast::tag_for_pane(pane_id);
+                                    persistent_toast_notification_with_click_arguments_and_tag(
+                                        title,
+                                        message,
+                                        &arguments,
+                                        &tag,
+                                        crate::attention_toast::AGENT_READY_TOAST_GROUP,
+                                    );
+                                } else {
+                                    persistent_toast_notification(title, message);
+                                }
                             }
                         }
                     }
