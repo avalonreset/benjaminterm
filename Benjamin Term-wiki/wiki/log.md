@@ -55,6 +55,16 @@ status: active
 - Final idle visual cue for release is a hard-edged, event-armed breathing cursor-row band that clears on input and chooses a theme accent away from the cursor color.
 - Release target is `v1.4.0`, covering the soft cue pack, visual attention cue, toast/focus fixes, and Windows branding correction.
 
+## 2026-04-22 - BenjaminTerm v1.4.0 Installed Locally
+
+- Published GitHub release `v1.4.0` with local Windows portable ZIP, setup EXE, and SHA256 checksum files.
+- Initial silent installer return did not replace `C:\Program Files\BenjaminTerm`; verification still showed old WezTerm metadata and the old `kenney-interface` folder.
+- Ran an elevated replacement script that stopped installed/source-preview BenjaminTerm processes, removed `sounds/kenney-interface`, and copied `dist/BenjaminTerm-windows-v1.4.0` into `C:\Program Files\BenjaminTerm`.
+- Verified installed `BenjaminTerm-gui.exe` hash matches the release package hash `DAA7AAD18288AF5ED99B5938419D69EC673E6803155DEA42F250F649910666D8`.
+- Verified installed GUI metadata: ProductName `BenjaminTerm`, FileDescription `BenjaminTerm - agent-focused terminal emulator`, CompanyName `Avalon Reset`, OriginalFilename `BenjaminTerm-gui.exe`.
+- Verified installed sound cue set: `sounds/benjaminterm-soft-cues` exists with 84 WAV files, and `sounds/kenney-interface` is absent.
+- Updated the pinned taskbar shortcut to target `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` and use icon `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe,0`.
+
 ## 2026-04-22 - Idle Glow Aura Prototype
 
 - Added a low-alpha aura rectangle behind non-space text clusters in addition to the foreground breathing color shift.

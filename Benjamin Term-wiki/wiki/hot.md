@@ -34,6 +34,7 @@ status: active
 - Pane input clears that pane's entire outstanding toast group.
 - [[Idle Text Glow Cue]] is accepted for release as an event-armed, one-shot breathing cursor-row cue. It clears on user input, uses a hard-edged pane-painted band, and selects a theme accent that avoids the cursor color.
 - Current release package is `dist/BenjaminTerm-windows-v1.4.0.zip`.
+- GitHub release is live at `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.0`.
 - Current preview emits OSC 777 after two seconds so the same ready path as sound/border/glow is exercised.
 - User review accepted the breathing pulse behavior, then requested cleaner hard edges and a non-cursor color. The release implementation removes fuzzy edge/aura rectangles and scores palette accents away from cursor colors.
 - Installed upstream WezTerm is unrelated to this work and should not be used for BenjaminTerm feature review.
@@ -61,4 +62,6 @@ status: active
 - Keep agent-attention sounds quiet, short, and non-startling during long coding sessions.
 - Decide whether tab attention fades automatically or persists until selected.
 - Branding follow-up: verify installed EXE metadata/icon and taskbar identity from `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe`.
+- Local install verification passed: installed `BenjaminTerm-gui.exe` hash matches the v1.4.0 package, metadata is `BenjaminTerm / Avalon Reset`, `sounds/benjaminterm-soft-cues` has 84 WAV files, and the old `sounds/kenney-interface` folder is gone.
+- Pinned taskbar shortcut was updated to target `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` and use icon `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe,0`; remaining old-looking taskbar icon behavior is expected to be Windows icon cache/shortcut cache.
 - Manually verify reminder-toast behavior across Focus Assist states and Windows notification settings.

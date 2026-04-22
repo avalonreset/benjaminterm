@@ -28,8 +28,8 @@ sources:
 - Confirm license notices include 0xProto OFL.
 - Build release artifact. Done for Windows/macOS/Linux.
 - Build Windows installer.
-- Publish GitHub release artifacts for `v1.4.0`.
-- Replace the current local BenjaminTerm install with `v1.4.0`.
+- Publish GitHub release artifacts for `v1.4.0`. Done: `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.0`.
+- Replace the current local BenjaminTerm install with `v1.4.0`. Done by elevated package copy after silent installer did not replace open files.
 
 Progress:
 
@@ -46,3 +46,4 @@ Progress:
 - Sound-refresh normalization: per-file peak normalized around `-14 dB`; packaged measurement quietest `-14.0 dB`, loudest `-13.9 dB`.
 - Local Inno Setup compiler: `C:/Users/rccol/AppData/Local/Programs/Inno Setup 6/ISCC.exe`.
 - `v1.4.0` branding gate: verify `BenjaminTerm-gui.exe` product metadata and icon before installing.
+- Installed branding verification: `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` reports ProductName `BenjaminTerm`, CompanyName `Avalon Reset`, OriginalFilename `BenjaminTerm-gui.exe`, and hash matches the packaged release binary.
