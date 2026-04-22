@@ -2,14 +2,15 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; vim:ts=2:sw=2:et:
 
-#define MyAppName "WezTerm"
+#define MyAppName "Benjamin Term"
 ;#define MyAppVersion "1.5"
-#define MyAppPublisher "Wez Furlong"
-#define MyAppURL "http://wezterm.org"
+#define MyAppPublisher "Avalon Reset"
+#define MyAppURL "https://github.com/avalonreset/BenjaminTerm"
 #define MyAppExeName "wezterm-gui.exe"
+#define MyAppUserModelID "com.avalonreset.benjaminterm"
 
 [Setup]
-AppId={{BCF6F0DA-5B9A-408D-8562-F680AE6E1EAF}
+AppId={{E79835B5-C418-4C79-BD62-3A18E94B22C3}
 ArchitecturesAllowed=x64 arm64
 ArchitecturesInstallIn64BitMode=x64 arm64
 AppName={#MyAppName}
@@ -26,7 +27,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..
-OutputBaseFilename=WezTerm-Setup
+OutputBaseFilename=BenjaminTerm-Setup
 SetupIconFile=..\assets\windows\terminal.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
@@ -34,7 +35,7 @@ SolidCompression=yes
 WizardStyle=modern
 ; Build 1809 is required for pty support
 MinVersion=10.0.17763
-ChangesEnvironment=true
+ChangesEnvironment=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -46,31 +47,34 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\mesa\opengl32.dll"; DestDir: "{app}\mesa"; Flags: ignoreversion
-Source: "..\target\release\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\conpty.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\target\release\OpenConsole.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\assets\windows\mesa\opengl32.dll"; DestDir: "{app}\mesa"; Flags: ignoreversion
+Source: "..\assets\windows\angle\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\assets\windows\angle\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\assets\windows\conhost\conpty.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\assets\windows\conhost\OpenConsole.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\target\release\strip-ansi-escapes.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\extras\benjaminterm\benjaminterm.lua"; DestDir: "{app}"; DestName: "wezterm.lua"; Flags: ignoreversion
+Source: "..\assets\fonts\*"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\assets\sounds\kenney-interface\*"; DestDir: "{app}\sounds\kenney-interface"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; AppUserModelID: "org.wezfurlong.wezterm"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; AppUserModelID: "org.wezfurlong.wezterm"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; AppUserModelID: "{#MyAppUserModelID}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; AppUserModelID: "{#MyAppUserModelID}"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open WezTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open WezTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open WezTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open WezTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open WezTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open WezTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open WezTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open WezTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open WezTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open Benjamin Term here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open Benjamin Term here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open Benjamin Term here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open Benjamin Term here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open Benjamin Term here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open Benjamin Term here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open Benjamin Term here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open Benjamin Term here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open Benjamin Term here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
 
 [Code]
 { https://stackoverflow.com/a/46609047/149111 }
@@ -189,12 +193,8 @@ end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  if CurStep = ssPostInstall then
-    EnvAddPath(ExpandConstant('{app}'));
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  if CurUninstallStep = usPostUninstall then
-    EnvRemovePath(ExpandConstant('{app}'));
 end;

@@ -21,13 +21,16 @@ Current rebuild status:
 - Core config defaults are working in preview.
 - Theme shuffle-bag works in preview.
 - 0xProto is bundled in the source tree.
-- Windows toast click-to-focus compiles.
+- Windows toast click-to-focus compiles and now uses the BenjaminTerm AppUserModelID `com.avalonreset.benjaminterm`.
 - Attention pulse, tab marker, per-pane sound prototype, and input-cleared toast reminders compile.
 - Source-built preview launched from `target-sound-prototype`.
-- BEN branding exists in copied preview binaries, but source-built preview still needs full branding/resource work before final release.
+- Windows portable packaging exists via `ci/package-benjaminterm-windows.ps1`.
+- Local release build succeeded and produced `dist/BenjaminTerm-windows-local-20260421.zip`.
+- Installer script is rebranded to Benjamin Term, uses a unique Inno Setup GUID, installs bundled `wezterm.lua`, fonts, and sounds, and avoids adding `wezterm.exe` to PATH.
+- GitHub Actions release workflow exists for tag-driven `benjaminterm-v*` releases across Windows, macOS, and Linux.
 
 Next release work:
 
-- Verify toast click-to-focus, sound, pulse, background-tab marker, and input-cleared toasts manually.
-- Complete branding and packaging path.
-- Build installer/portable artifacts.
+- Build the Windows installer on a machine with Inno Setup or through GitHub Actions.
+- Push a `benjaminterm-v*` tag to publish Windows/macOS/Linux artifacts.
+- Treat macOS and Linux artifacts as best-effort until manually tested on those platforms.

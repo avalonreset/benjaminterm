@@ -1,0 +1,139 @@
+name: benjaminterm-release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "benjaminterm-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        shell: cmd
+        run: |
+          PATH C:\Strawberry\perl\bin;%PATH%
+          cargo build -p wezterm -p wezterm-gui -p wezterm-mux-server -p strip-ansi-escapes --release
+      - name: Package portable zip
+        shell: pwsh
+        run: ./ci/package-benjaminterm-windows.ps1 -TagName "${{ github.ref_name }}"
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          & $iscc -DMyAppVersion="${{ github.ref_name }}" -F"BenjaminTerm-${{ github.ref_name }}-setup" ci/windows-installer.iss
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benjaminterm-windows
+          path: |
+            dist/BenjaminTerm-windows-*.zip
+            BenjaminTerm-*.exe
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Rust targets
+        shell: bash
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+      - name: Install dependencies
+        shell: bash
+        run: env CI=yes PATH=$PATH ./get-deps
+      - name: Build universal components
+        shell: bash
+        run: |
+          for bin in wezterm wezterm-gui wezterm-mux-server strip-ansi-escapes; do
+            cargo build --target x86_64-apple-darwin -p "$bin" --release
+            cargo build --target aarch64-apple-darwin -p "$bin" --release
+          done
+      - name: Package app zip
+        shell: bash
+        run: TAG_NAME="${{ github.ref_name }}" bash ci/deploy.sh
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benjaminterm-macos
+          path: BenjaminTerm-macos-*.zip
+
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install dependencies
+        shell: bash
+        run: env CI=yes PATH=$PATH ./get-deps
+      - name: Build
+        shell: bash
+        run: cargo build -p wezterm -p wezterm-gui -p wezterm-mux-server -p strip-ansi-escapes --release
+      - name: Package portable tarball
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ github.ref_name }}"
+          pkg="BenjaminTerm-linux-$tag"
+          rm -rf "$pkg" "$pkg.tar.gz"
+          mkdir -p "$pkg/fonts" "$pkg/sounds"
+          cp target/release/wezterm target/release/wezterm-gui target/release/wezterm-mux-server target/release/strip-ansi-escapes "$pkg/"
+          cp extras/benjaminterm/benjaminterm.lua "$pkg/wezterm.lua"
+          cp -r assets/fonts/* "$pkg/fonts/"
+          cp -r assets/sounds/kenney-interface "$pkg/sounds/"
+          tar czf "$pkg.tar.gz" "$pkg"
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benjaminterm-linux
+          path: BenjaminTerm-linux-*.tar.gz
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - windows
+      - macos
+      - linux
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums
+        shell: bash
+        run: |
+          cd artifacts
+          for f in *; do
+            sha256sum "$f" > "$f.sha256"
+          done
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          files: artifacts/*
+          body: |
+            BenjaminTerm preview release.
+
+            Windows is the primary supported platform for this release. macOS and Linux artifacts are best-effort portable builds for early testing.

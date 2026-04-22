@@ -119,7 +119,7 @@ fn show_notif_impl(toast: TN) -> Result<(), Box<dyn std::error::Error>> {
     */
 
     let notifier = ToastNotificationManager::CreateToastNotifierWithId(HSTRING::from(
-        "org.wezfurlong.wezterm",
+        "com.avalonreset.benjaminterm",
     ))?;
 
     notifier.Show(&notif)?;
@@ -136,7 +136,7 @@ pub fn dismiss_toast_notification(
 
     if let Some(group) = group {
         let group = HSTRING::from(group);
-        let app_id = HSTRING::from("org.wezfurlong.wezterm");
+        let app_id = HSTRING::from("com.avalonreset.benjaminterm");
         history.RemoveGroupedTagWithId(&tag, &group, &app_id)?;
     } else {
         history.Remove(&tag)?;
@@ -148,7 +148,7 @@ pub fn dismiss_toast_notification(
 pub fn dismiss_toast_notification_group(group: &str) -> Result<(), Box<dyn std::error::Error>> {
     let history = ToastNotificationManager::History()?;
     let group = HSTRING::from(group);
-    let app_id = HSTRING::from("org.wezfurlong.wezterm");
+    let app_id = HSTRING::from("com.avalonreset.benjaminterm");
     history.RemoveGroupWithId(&group, &app_id)?;
 
     Ok(())

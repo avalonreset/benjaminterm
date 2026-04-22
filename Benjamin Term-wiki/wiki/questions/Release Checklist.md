@@ -20,8 +20,20 @@ sources:
 - Verify Windows toast notification.
 - Verify toast click-to-focus.
 - Verify attention pulse.
-- Complete BEN branding in source-built binary.
+- Assign distinct Windows AppUserModelID.
+- Rebrand Windows installer identity.
+- Package bundled config as `wezterm.lua`.
+- Package bundled fonts.
+- Package bundled sound grab bag.
 - Confirm license notices include 0xProto OFL.
 - Build release artifact.
+- Build Windows installer.
+- Publish GitHub release artifacts.
 - Test side-by-side install behavior.
 
+Progress:
+
+- Windows AppUserModelID: `com.avalonreset.benjaminterm`.
+- Windows installer GUID: `E79835B5-C418-4C79-BD62-3A18E94B22C3`.
+- Local portable zip built: `dist/BenjaminTerm-windows-local-20260421.zip`.
+- Inno Setup is not installed on the current Windows machine, so the local `.exe` installer still needs either Inno Setup locally or the GitHub Actions release workflow.

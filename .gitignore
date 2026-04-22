@@ -9,6 +9,11 @@ dhat-heap.json
 /PKGBUILD
 /WezTerm*.zip
 /WezTerm*.exe
+/BenjaminTerm*.zip
+/BenjaminTerm*.exe
+/BenjaminTerm-macos-*
+/BenjaminTerm-linux-*
+/dist/
 /wezterm*.deb
 /wezterm*.tar.xz
 /pkg

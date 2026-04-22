@@ -19,9 +19,9 @@ fi
 
 case $OSTYPE in
   darwin*)
-    zipdir=WezTerm-macos-$TAG_NAME
+    zipdir=BenjaminTerm-macos-$TAG_NAME
     if [[ "$BUILD_REASON" == "Schedule" ]] ; then
-      zipname=WezTerm-macos-nightly.zip
+      zipname=BenjaminTerm-macos-nightly.zip
     else
       zipname=$zipdir.zip
     fi
@@ -33,8 +33,13 @@ case $OSTYPE in
     rm $zipdir/WezTerm.app/*.dylib
     mkdir -p $zipdir/WezTerm.app/Contents/MacOS
     mkdir -p $zipdir/WezTerm.app/Contents/Resources
+    mkdir -p $zipdir/WezTerm.app/Contents/MacOS/fonts
+    mkdir -p $zipdir/WezTerm.app/Contents/MacOS/sounds
     cp -r assets/shell-integration/* $zipdir/WezTerm.app/Contents/Resources
     cp -r assets/shell-completion $zipdir/WezTerm.app/Contents/Resources
+    cp extras/benjaminterm/benjaminterm.lua $zipdir/WezTerm.app/Contents/MacOS/wezterm.lua
+    cp -r assets/fonts/* $zipdir/WezTerm.app/Contents/MacOS/fonts/
+    cp -r assets/sounds/kenney-interface $zipdir/WezTerm.app/Contents/MacOS/sounds/
     tic -xe wezterm -o $zipdir/WezTerm.app/Contents/Resources/terminfo termwiz/data/wezterm.terminfo
 
     for bin in wezterm wezterm-mux-server wezterm-gui strip-ansi-escapes ; do
@@ -101,16 +106,18 @@ case $OSTYPE in
 
     ;;
   msys)
-    zipdir=WezTerm-windows-$TAG_NAME
+    zipdir=BenjaminTerm-windows-$TAG_NAME
     if [[ "$BUILD_REASON" == "Schedule" ]] ; then
-      zipname=WezTerm-windows-nightly.zip
-      instname=WezTerm-nightly-setup
+      zipname=BenjaminTerm-windows-nightly.zip
+      instname=BenjaminTerm-nightly-setup
     else
       zipname=$zipdir.zip
-      instname=WezTerm-${TAG_NAME}-setup
+      instname=BenjaminTerm-${TAG_NAME}-setup
     fi
     rm -rf $zipdir $zipname
     mkdir $zipdir
+    mkdir -p $zipdir/fonts
+    mkdir -p $zipdir/sounds
     cp $TARGET_DIR/release/wezterm.exe \
       $TARGET_DIR/release/wezterm-mux-server.exe \
       $TARGET_DIR/release/wezterm-gui.exe \
@@ -121,6 +128,9 @@ case $OSTYPE in
       assets/windows/angle/libEGL.dll \
       assets/windows/angle/libGLESv2.dll \
       $zipdir
+    cp extras/benjaminterm/benjaminterm.lua $zipdir/wezterm.lua
+    cp -r assets/fonts/* $zipdir/fonts/
+    cp -r assets/sounds/kenney-interface $zipdir/sounds/
     mkdir $zipdir/mesa
     cp $TARGET_DIR/release/mesa/opengl32.dll \
         $zipdir/mesa
