@@ -9,6 +9,7 @@ tags:
 status: active
 related:
   - "[[Release Checklist]]"
+  - "[[Soft Cue Pack Refresh]]"
 sources:
   - "[[Rebuild Session Summary]]"
 validation: "release-published"
@@ -32,9 +33,12 @@ Current rebuild status:
 - Corrective release work for `benjaminterm-v2026.04.22` removes the old upstream font bundle and keeps only 0xProto plus its license.
 - GitHub Actions successfully built Windows, macOS, and Linux artifacts.
 - The Windows installer, Windows portable zip, macOS zip, Linux tarball, and SHA256 files are attached to the prerelease.
+- Current sound-refresh worktree produced `dist/BenjaminTerm-windows-v2026.04.22-soft-cues-curated.zip` with the re-sourced 84-file cue pack.
+- Local installer rebuild for the sound-refresh package is blocked because Inno Setup is not installed locally.
 
 Next release work:
 
 - Publish and install the corrected Windows release after the user confirms terminal cutover timing.
 - Treat macOS and Linux artifacts as best-effort until manually tested on those platforms.
 - Improve macOS/Linux notification behavior as follow-up work after the Windows release is stable.
+- Complete user ear review of the curated soft cue pack before publishing another sound-refresh release.

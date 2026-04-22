@@ -10,6 +10,7 @@ use window::color::LinearRgba;
 
 const TOAST_ATTENTION_PULSE_DURATION: Duration = Duration::from_millis(900);
 const TOAST_ATTENTION_PULSE_FRAME: Duration = Duration::from_millis(60);
+const IDLE_TEXT_GLOW_FRAME: Duration = Duration::from_millis(50);
 
 impl crate::TermWindow {
     pub fn start_agent_attention_for_pane(&mut self, pane_id: PaneId) {
@@ -23,12 +24,58 @@ impl crate::TermWindow {
                 self.agent_attention_tab_until
                     .borrow_mut()
                     .insert(tab_id, Instant::now() + TOAST_ATTENTION_PULSE_DURATION);
-                self.pane_state(pane_id).bell_start.replace(Instant::now());
+                {
+                    let now = Instant::now();
+                    let mut pane_state = self.pane_state(pane_id);
+                    pane_state.bell_start.replace(now);
+                    pane_state.idle_text_glow_start.replace(now);
+                }
+                self.start_idle_text_glow_animation_for_pane(pane_id);
                 self.invalidate_fancy_tab_bar();
             }
         }
 
         self.start_toast_attention_pulse();
+    }
+
+    fn start_idle_text_glow_animation_for_pane(&mut self, pane_id: PaneId) {
+        {
+            let mut pane_state = self.pane_state(pane_id);
+            if pane_state.idle_text_glow_animation_active {
+                return;
+            }
+            pane_state.idle_text_glow_animation_active = true;
+        }
+
+        let Some(window) = self.window.clone() else {
+            let mut pane_state = self.pane_state(pane_id);
+            pane_state.idle_text_glow_animation_active = false;
+            return;
+        };
+
+        window.invalidate();
+        promise::spawn::spawn(async move {
+            loop {
+                smol::Timer::after(IDLE_TEXT_GLOW_FRAME).await;
+
+                let win = window.clone();
+                window.notify(TermWindowNotif::Apply(Box::new(move |term_window| {
+                    let keep_animating = {
+                        let mut pane_state = term_window.pane_state(pane_id);
+                        let keep_animating = pane_state.idle_text_glow_start.is_some();
+                        if !keep_animating {
+                            pane_state.idle_text_glow_animation_active = false;
+                        }
+                        keep_animating
+                    };
+
+                    if keep_animating {
+                        win.invalidate();
+                    }
+                })));
+            }
+        })
+        .detach();
     }
 
     pub fn start_toast_attention_pulse(&mut self) {

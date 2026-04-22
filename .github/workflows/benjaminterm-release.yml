@@ -208,7 +208,7 @@ jobs:
           cp target/release/strip-ansi-escapes "$pkg/strip-ansi-escapes"
           cp extras/benjaminterm/benjaminterm.lua "$pkg/wezterm.lua"
           cp -r assets/fonts/* "$pkg/fonts/"
-          cp -r assets/sounds/kenney-interface "$pkg/sounds/"
+          cp -r assets/sounds/benjaminterm-soft-cues "$pkg/sounds/"
           tar czf "$pkg.tar.gz" "$pkg"
       - name: Upload Linux release assets
         shell: bash

@@ -90,6 +90,8 @@ impl crate::TermWindow {
 
         let cursor_border_color = palette.cursor_border.to_linear();
         let foreground = palette.foreground.to_linear();
+        let (idle_text_glow_intensity, idle_text_glow_color, idle_text_glow_bucket) =
+            self.idle_text_glow_for_pane(pane_id, pos.is_active, &cursor, &palette);
         let white_space = gl_state.util_sprites.white_space.texture_coords();
         let filled_box = gl_state.util_sprites.filled_box.texture_coords();
 
@@ -289,6 +291,37 @@ impl crate::TermWindow {
             .context("filled_rectangle")?;
         }
 
+        if idle_text_glow_intensity > 0.0 && pos.is_active {
+            let stable_top = current_viewport.unwrap_or(dims.physical_top);
+            let cursor_row = cursor.y - stable_top;
+
+            if cursor_row >= 0 && cursor_row < dims.viewport_rows as StableRowIndex {
+                let pane_left = padding_left
+                    + border.left.get() as f32
+                    + (pos.left as f32 * cell_width);
+                let pane_top = top_pixel_y + (pos.top as f32 * cell_height);
+                let row_y = pane_top + (cursor_row as f32 * cell_height);
+                let pane_width = pos.width as f32 * cell_width;
+
+                let glow_alpha = (0.04 + idle_text_glow_intensity * 0.34).min(0.30);
+                let row_rect = euclid::rect(pane_left, row_y, pane_width, cell_height);
+
+                let mut row_quad = self
+                    .filled_rectangle(
+                        layers,
+                        0,
+                        row_rect,
+                        idle_text_glow_color.mul_alpha(glow_alpha),
+                    )
+                    .context("idle pane row glow filled_rectangle")?;
+                row_quad.set_hsv(if pos.is_active {
+                    None
+                } else {
+                    Some(config.inactive_pane_hsb)
+                });
+            }
+        }
+
         let (selrange, rectangular) = {
             let sel = self.selection(pos.pane.pane_id());
             (sel.range.clone(), sel.rectangular)
@@ -333,6 +366,9 @@ impl crate::TermWindow {
                 white_space: TextureRect,
                 filled_box: TextureRect,
                 window_is_transparent: bool,
+                idle_text_glow_intensity: f32,
+                idle_text_glow_color: LinearRgba,
+                idle_text_glow_bucket: u8,
                 layers: &'a mut TripleLayerQuadAllocator<'b>,
                 error: Option<anyhow::Error>,
             }
@@ -360,6 +396,9 @@ impl crate::TermWindow {
                 cursor_bg,
                 foreground,
                 cursor_is_default_color,
+                idle_text_glow_intensity,
+                idle_text_glow_color,
+                idle_text_glow_bucket,
                 white_space,
                 filled_box,
                 window_is_transparent,
@@ -440,6 +479,7 @@ impl crate::TermWindow {
                         left_pixel_x: NotNan::new(self.left_pixel_x).unwrap(),
                         phys_line_idx: line_idx,
                         reverse_video: self.dims.reverse_video,
+                        idle_text_glow_bucket: self.idle_text_glow_bucket,
                     };
 
                     if let Some(cached_quad) =
@@ -523,6 +563,8 @@ impl crate::TermWindow {
                                 render_metrics: self.term_window.render_metrics,
                                 shape_key: Some(shape_key),
                                 password_input,
+                                idle_text_glow_intensity: self.idle_text_glow_intensity,
+                                idle_text_glow_color: self.idle_text_glow_color,
                             },
                             &mut TripleLayerQuadAllocator::Heap(&mut buf),
                         )

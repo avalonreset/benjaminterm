@@ -99,7 +99,7 @@ The old terminal model assumes you are staring at one shell. AI coding does not 
 
 BenjaminTerm uses a layered strategy:
 
-- Sound first: each pane gets a sound from the bundled Kenney Interface Sounds set.
+- Sound first: each pane gets a sound from the bundled soft CC0 cue set.
 - Color second: the ready terminal gets a theme-aware visual pulse.
 - Tabs third: if the ready pane is hidden, the tab receives an attention marker.
 - Toasts when useful: Windows reminder toasts appear when the pane is not focused.
@@ -247,4 +247,4 @@ BenjaminTerm changes are intentionally scoped. The goal is to add a productive A
 
 ## License
 
-BenjaminTerm keeps WezTerm's MIT license. The bundled 0xProto font and bundled Kenney sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/kenney-interface`.
+BenjaminTerm keeps WezTerm's MIT license. The bundled 0xProto font and bundled soft CC0 sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/benjaminterm-soft-cues`.

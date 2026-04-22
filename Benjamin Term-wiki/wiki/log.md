@@ -11,6 +11,76 @@ status: active
 
 # Operation Log
 
+## 2026-04-22 - Dedicated Glow Animation Loop
+
+- User corrected the prior assessment: the visible cursor-row highlight was static, not subtly pulsing.
+- Root cause: the row cue still depended on generic render animation scheduling, which was not reliably advancing the pane-painted highlight.
+- Added a per-pane `idle_text_glow_animation_active` flag and a dedicated `50 ms` invalidation loop started from `start_visual_attention_for_pane`.
+- The loop keeps invalidating while `idle_text_glow_start` remains armed and stops when user input clears that state.
+- Widened the intensity range so the row cue can visibly breathe instead of remaining at nearly constant alpha.
+- Rebuilt `wezterm-gui`, copied it to `target/debug/BenjaminTerm-gui.exe`, stopped only the stale source-preview process, and launched source preview process `40092`.
+
+## 2026-04-22 - Pane-Painted Cursor Row Glow
+
+- User reported no visible progress after the cursor-row prototype.
+- Rechecked the OSC 777 path and confirmed `777;notify;...` parses through `RxvtExtension` into `Alert::ToastNotification`.
+- Identified two implementation risks: the glow path was tied to per-line cached rendering, and it was suppressed when window focus state was unavailable.
+- Removed the focus-state suppression and added direct pane-level cursor-row glow painting after pane background fill, before line rendering.
+- Rebuilt `wezterm-gui`, copied it to `target/debug/BenjaminTerm-gui.exe`, and launched source preview process `3896`.
+- Captured a desktop screenshot and verified the cyan cursor-row glow is visibly rendered in the source preview.
+- Brought process `3896` forward for user review.
+
+## 2026-04-22 - Cursor Row Glow Preview
+
+- User reported the preview window showed broken PowerShell parser errors from the OSC trigger command and still did not show an acceptable glow.
+- Root cause: the preview launch used fragile inline PowerShell quoting around the OSC 777 control sequence.
+- Added `scripts/preview/launch-benjaminterm-glow-preview.ps1`, which writes a trigger script and launches it via `-File` to avoid inline quoting failures.
+- Changed [[Idle Text Glow Cue]] from all-text aura to a cursor-row scoped breathing glow: soft cyan row band, same-position text aura, and foreground color breath only on the input row.
+- Rebuilt `wezterm-gui`, copied it to `target/debug/BenjaminTerm-gui.exe`, verified BenjaminTerm metadata, and spawned source preview process `33216`.
+- Validated with `cargo check -p wezterm-gui --quiet`, `cargo build -p wezterm-gui`, `git diff --check`, and a direct parse run of `.tmp/benjaminterm-glow-trigger.ps1`.
+
+## 2026-04-22 - BenjaminTerm Preview Branding Fix
+
+- User caught that the launched preview was still effectively an upstream-named WezTerm GUI with the wrong app icon.
+- Stopped treating copied `wezterm-gui.exe` debug builds as an acceptable BenjaminTerm preview surface.
+- Copied the newer BenjaminTerm Windows icon from `E:\benjaminterm\assets\windows\terminal.ico` into this worktree.
+- Updated `wezterm-gui/build.rs` Windows resource metadata to ProductName `BenjaminTerm`, OriginalFilename `BenjaminTerm-gui.exe`, and BenjaminTerm file description/company fields.
+- Rebuilt `wezterm-gui`, copied the result to `target/debug/BenjaminTerm-gui.exe`, verified version metadata, and spawned process `27216` from that path.
+
+## 2026-04-22 - BenjaminTerm v1.4.0 Finalization
+
+- Built the Windows release binaries with BenjaminTerm Windows resource metadata and refreshed `assets/windows/terminal.ico`.
+- Packaged `dist/BenjaminTerm-windows-v1.4.0.zip` with the soft cue set, bundled config, 0xProto fonts, and renamed BenjaminTerm executables.
+- Located local Inno Setup at `C:/Users/rccol/AppData/Local/Programs/Inno Setup 6/ISCC.exe`; local installer build is no longer blocked.
+- Final idle visual cue for release is a hard-edged, event-armed breathing cursor-row band that clears on input and chooses a theme accent away from the cursor color.
+- Release target is `v1.4.0`, covering the soft cue pack, visual attention cue, toast/focus fixes, and Windows branding correction.
+
+## 2026-04-22 - Idle Glow Aura Prototype
+
+- Added a low-alpha aura rectangle behind non-space text clusters in addition to the foreground breathing color shift.
+- Kept the rejected offset-glyph halo out of the renderer.
+- Rebuilt the source GUI and copied it to `target/debug/BenjaminTerm-preview.exe` for a less confusing test surface.
+- Spawned preview process `23952` with a PowerShell command that emits OSC 777 after two seconds, exercising the same ready attention path as agent notifications.
+- Current design remains under review, not accepted for release.
+
+## 2026-04-22 - Idle Glow Regroup
+
+- User review: [[Idle Text Glow Cue]] is not done. The current preview appears to have no glow effect.
+- Clarified that the latest event-armed implementation will not glow in a plain idle `cmd.exe` because no agent-ready attention event has occurred.
+- Captured the need for a reliable local test trigger that exercises the same ready path as sound and border cues.
+- Captured the branding issue that source previews still reference `wezterm-gui.exe`; BenjaminTerm needs a renamed executable or wrapper before release-quality testing.
+- Kept the design requirement: one-shot ready cue, clears on user input, does not reactivate from typing/deleting, and stays subtle.
+
+## 2026-04-22 - Idle Text Glow Prototype
+
+- Added [[Idle Text Glow Cue]] as the content-area visual cue for panes that are idle and inviting the next prompt.
+- Implemented configurable idle delay, input suppression, pulse period, and strength.
+- Rejected the hard offset halo prototype after screenshot review; it looked distorted and too aggressive.
+- Changed the renderer to a breathing glow-color shift only, with at least `30 fps` scheduling for smoother animation.
+- Changed behavior from passive idle detection to one-shot ready-event arming; user input clears the glow until the next ready event.
+- Rebuilt and relaunched the source preview terminal from `E:\benjaminterm-sound-refresh\target\debug\wezterm-gui.exe` as process `35600`.
+- Validated with `cargo check -p wezterm-gui --quiet` and `cargo build -p wezterm-gui`; only existing upstream warnings were reported.
+
 ## 2026-04-21 - Reminder Toast Mode
 
 - Added `scenario="reminder"` support to the Windows toast backend.
@@ -66,6 +136,15 @@ status: active
 - Each pane receives one sound on first attention event and keeps it until pane removal.
 - Closing a pane removes the assignment without immediately recycling that sound ahead of the bag.
 - Updated [[Sound Grab Bag Attention System]], [[Agent Completion Attention Flow]], and [[hot]].
+
+## 2026-04-22 - Sound Pack Re-Sourced
+
+- Replaced the mixed-source softer prototype with a fully re-sourced CC0 cue set.
+- Used 51 files from Kenney UI Audio and 33 files from ObsydianX Interface SFX Pack 1 after removing extremely low-energy cues.
+- Peak-normalized the retained cues to approximately -14 dB so one cue is not dramatically louder than another.
+- Excluded the old Kenney Interface Sounds pack from the generated replacement set.
+- Removed the runtime fallback path to `kenney-interface` so packaged builds use the new `benjaminterm-soft-cues` directory.
+- Added [[Soft Cue Pack Refresh]] as the canonical decision note for source split, curation rules, validation, package paths, and remaining installer work.
 
 ## 2026-04-22 - Pane And Tab Attention Model Captured
 

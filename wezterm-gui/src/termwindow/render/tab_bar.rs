@@ -93,6 +93,8 @@ impl crate::TermWindow {
                 render_metrics: self.render_metrics,
                 shape_key: None,
                 password_input: false,
+                idle_text_glow_intensity: 0.0,
+                idle_text_glow_color: LinearRgba::default(),
             },
             layers,
         )?;

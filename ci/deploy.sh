@@ -40,7 +40,7 @@ case $OSTYPE in
     cp -r assets/shell-completion "$appdir/Contents/Resources"
     cp extras/benjaminterm/benjaminterm.lua "$appdir/Contents/MacOS/wezterm.lua"
     cp -r assets/fonts/* "$appdir/Contents/MacOS/fonts/"
-    cp -r assets/sounds/kenney-interface "$appdir/Contents/MacOS/sounds/"
+    cp -r assets/sounds/benjaminterm-soft-cues "$appdir/Contents/MacOS/sounds/"
     tic -xe wezterm -o "$appdir/Contents/Resources/terminfo" termwiz/data/wezterm.terminfo
 
     for bin in wezterm wezterm-mux-server wezterm-gui strip-ansi-escapes ; do
@@ -143,7 +143,7 @@ case $OSTYPE in
       $zipdir
     cp extras/benjaminterm/benjaminterm.lua $zipdir/wezterm.lua
     cp -r assets/fonts/* $zipdir/fonts/
-    cp -r assets/sounds/kenney-interface $zipdir/sounds/
+    cp -r assets/sounds/benjaminterm-soft-cues $zipdir/sounds/
     mkdir $zipdir/mesa
     cp $TARGET_DIR/release/mesa/opengl32.dll \
         $zipdir/mesa

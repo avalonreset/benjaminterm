@@ -203,6 +203,9 @@ pub struct PaneState {
     pub overlay: Option<OverlayState>,
 
     bell_start: Option<Instant>,
+    last_input: Option<Instant>,
+    idle_text_glow_start: Option<Instant>,
+    idle_text_glow_animation_active: bool,
     pub mouse_terminal_coords: Option<(ClickPosition, StableRowIndex)>,
 }
 
@@ -3377,6 +3380,7 @@ impl TermWindow {
     }
 
     fn maybe_scroll_to_bottom_for_input(&mut self, pane: &Arc<dyn Pane>) {
+        self.mark_pane_input(pane.pane_id());
         if self.config.scroll_to_bottom_on_input {
             self.scroll_to_bottom(pane);
         }

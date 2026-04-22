@@ -9,6 +9,7 @@ tags:
 status: answered-for-prototype
 related:
   - "[[Sound Grab Bag Attention System]]"
+  - "[[Soft Cue Pack Refresh]]"
 sources:
   - "[[Rebuild Session Summary]]"
 ---
@@ -26,13 +27,16 @@ Requirements:
 
 Prototype answer:
 
-- Kenney Interface Sounds is suitable for prototyping.
-- OpenGameArt lists the pack as CC0.
-- The pack contains 100 separate OGG interface sounds with normalized volume.
-- Credit to Kenney is appreciated but not mandatory.
-- BenjaminTerm should still ship a source/credits note with release artifacts.
+- Kenney UI Audio is suitable for part of the quieter default cue pack.
+- ObsydianX Interface SFX Pack 1 is suitable for the remaining UI/interface cues.
+- Both sources are CC0.
+- The current generated pack contains 84 WAV files: 51 from Kenney UI Audio and 33 from ObsydianX Interface SFX Pack 1.
+- Extremely low-energy ObsydianX cues were removed from the packaged set after remastering.
+- The old Kenney Interface Sounds pack is excluded from the replacement pack.
+- BenjaminTerm should ship a source/credits note with release artifacts.
+- Current source mapping is captured in `assets/sounds/benjaminterm-soft-cues/SOURCE_MANIFEST.json`.
 
 Sources:
 
-- https://opengameart.org/content/interface-sounds
 - https://kenney.nl/assets/ui-audio
+- https://obsydianx.itch.io/interface-sfx-pack-1

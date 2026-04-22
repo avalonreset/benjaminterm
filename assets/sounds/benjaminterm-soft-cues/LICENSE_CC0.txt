@@ -1,0 +1,14 @@
+BenjaminTerm Soft Cues License Notes
+
+All bundled sounds in this directory are from CC0 sources.
+
+Kenney UI Audio
+- Source: https://kenney.nl/assets/ui-audio
+- License: Creative Commons CC0
+- Upstream note: credit to Kenney or kenney.nl is appreciated but not mandatory.
+
+ObsydianX Interface SFX Pack 1
+- Source: https://obsydianx.itch.io/interface-sfx-pack-1
+- License: Creative Commons Zero v1.0 Universal / CC0
+
+The generated WAV files are derived from those sources for BenjaminTerm packaging and runtime playback.

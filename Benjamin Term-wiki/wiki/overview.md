@@ -24,7 +24,8 @@ Current identity pillars:
 - Pure-black theme shuffle-bag: [[Theme Grab Bag System]].
 - Windows notification focus routing: [[Windows Toast Click-To-Focus]].
 - Brief visual target pulse: [[Attention Pulse]].
-- Per-pane/tab audio identity: [[Sound Grab Bag Attention System]].
+- Idle prompt invitation glow: [[Idle Text Glow Cue]].
+- Per-pane/tab audio identity using the re-sourced soft CC0 cue pack: [[Sound Grab Bag Attention System]] and [[Soft Cue Pack Refresh]].
 - Background tab marker: [[Tab Attention Indicator]].
 
 [[Hyper Yap]] is a sister project and owns speech-to-text, copy/paste, and image-paste workflows.

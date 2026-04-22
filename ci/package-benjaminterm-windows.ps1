@@ -62,7 +62,7 @@ if (Test-Path $mesaFromBuild) {
 
 Copy-Item -LiteralPath "extras\benjaminterm\benjaminterm.lua" -Destination (Join-Path $packageDir "wezterm.lua")
 Copy-Item -Path "assets\fonts\*" -Destination (Join-Path $packageDir "fonts") -Recurse
-Copy-Item -LiteralPath "assets\sounds\kenney-interface" -Destination (Join-Path $packageDir "sounds") -Recurse
+Copy-Item -LiteralPath "assets\sounds\benjaminterm-soft-cues" -Destination (Join-Path $packageDir "sounds") -Recurse
 
 Compress-Archive -Path $packageDir -DestinationPath $zipPath -Force
 

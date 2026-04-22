@@ -189,6 +189,10 @@ impl crate::TermWindow {
         // Assume that we are drawing retro tab bar if there is no
         // stable_line_idx set.
         let is_tab_bar = params.stable_line_idx.is_none();
+        let idle_text_glow_cursor_line = params.idle_text_glow_intensity > 0.0
+            && params.pane.is_some()
+            && params.is_active
+            && params.stable_line_idx == Some(params.cursor.y);
 
         // Make a pass to compute background colors.
         // Need to consider:
@@ -603,10 +607,10 @@ impl crate::TermWindow {
                                 !is_cursor && selection_pixel_range.contains(&range.start);
 
                             let ComputeCellFgBgResult {
-                                fg_color: glyph_color,
+                                fg_color,
                                 bg_color,
-                                fg_color_alt,
-                                fg_color_mix,
+                                mut fg_color_alt,
+                                mut fg_color_mix,
                                 ..
                             } = self.compute_cell_fg_bg(ComputeCellFgBgParams {
                                 cursor: if is_cursor { Some(params.cursor) } else { None },
@@ -623,6 +627,16 @@ impl crate::TermWindow {
                                 cursor_border_color: params.cursor_border_color,
                                 pane: params.pane,
                             });
+
+                            let glyph_color = fg_color;
+                            let idle_text_glow = idle_text_glow_cursor_line
+                                && !is_cursor
+                                && !selected
+                                && !glyph.has_color;
+                            if idle_text_glow {
+                                fg_color_alt = params.idle_text_glow_color;
+                                fg_color_mix = params.idle_text_glow_intensity;
+                            }
 
                             if glyph_color == bg_color || cluster.attrs.invisible() {
                                 // Essentially invisible: don't render it, as anti-aliasing

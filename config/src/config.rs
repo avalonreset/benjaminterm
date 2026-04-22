@@ -648,6 +648,19 @@ pub struct Config {
     #[dynamic(default)]
     pub text_min_contrast_ratio: Option<f32>,
 
+    /// BenjaminTerm: subtly pulse pane text after a ready attention event,
+    /// making the next prompt easier to reacquire visually.
+    #[dynamic(default = "default_true")]
+    pub benjaminterm_idle_text_glow: bool,
+    #[dynamic(default = "default_benjaminterm_idle_text_glow_delay_ms")]
+    pub benjaminterm_idle_text_glow_delay_ms: u64,
+    #[dynamic(default = "default_benjaminterm_idle_text_glow_input_suppression_ms")]
+    pub benjaminterm_idle_text_glow_input_suppression_ms: u64,
+    #[dynamic(default = "default_benjaminterm_idle_text_glow_period_ms")]
+    pub benjaminterm_idle_text_glow_period_ms: u64,
+    #[dynamic(default = "default_benjaminterm_idle_text_glow_strength")]
+    pub benjaminterm_idle_text_glow_strength: f32,
+
     #[dynamic(default)]
     pub force_reverse_video_cursor: bool,
     #[dynamic(default = "default_reverse_video_cursor_min_contrast")]
@@ -1054,7 +1067,7 @@ impl Config {
                         file_name: Some(path_item.path.clone()),
                         lua: None,
                         warnings: vec![],
-                    }
+                    };
                 }
                 Ok(None) => continue,
                 Ok(Some(loaded)) => return loaded,
@@ -1681,6 +1694,22 @@ fn default_text_blink_rate() -> u64 {
 
 fn default_text_blink_rate_rapid() -> u64 {
     250
+}
+
+fn default_benjaminterm_idle_text_glow_delay_ms() -> u64 {
+    500
+}
+
+fn default_benjaminterm_idle_text_glow_input_suppression_ms() -> u64 {
+    1200
+}
+
+fn default_benjaminterm_idle_text_glow_period_ms() -> u64 {
+    2600
+}
+
+fn default_benjaminterm_idle_text_glow_strength() -> f32 {
+    0.42
 }
 
 fn default_swap_backspace_and_delete() -> bool {

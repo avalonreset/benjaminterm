@@ -55,7 +55,7 @@ Source: "..\assets\windows\conhost\OpenConsole.exe"; DestDir: "{app}"; Flags: ig
 Source: "..\target\release\strip-ansi-escapes.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\extras\benjaminterm\benjaminterm.lua"; DestDir: "{app}"; DestName: "wezterm.lua"; Flags: ignoreversion
 Source: "..\assets\fonts\*"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\assets\sounds\kenney-interface\*"; DestDir: "{app}\sounds\kenney-interface"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\assets\sounds\benjaminterm-soft-cues\*"; DestDir: "{app}\sounds\benjaminterm-soft-cues"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

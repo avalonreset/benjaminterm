@@ -13,6 +13,7 @@ related:
   - "[[Claude]]"
   - "[[Sound Grab Bag Attention System]]"
   - "[[Tab Attention Indicator]]"
+  - "[[Idle Text Glow Cue]]"
 sources:
   - "[[Rebuild Session Summary]]"
 ---
@@ -27,10 +28,11 @@ Current flow:
 2. BenjaminTerm immediately plays the originating pane/tab's attention sound.
 3. BenjaminTerm immediately triggers [[Attention Pulse]] for the containing window.
 4. BenjaminTerm marks the originating tab through [[Tab Attention Indicator]].
-5. If the originating pane is not already focused, BenjaminTerm shows a Windows toast.
-6. User clicks the toast.
-7. BenjaminTerm focuses the originating pane/window and triggers visual attention again without replaying the sound.
-8. When the user sends the next response into that pane, BenjaminTerm dismisses the pane's outstanding toast.
+5. The ready event arms [[Idle Text Glow Cue]], which invites the next prompt in the content area.
+6. If the originating pane is not already focused, BenjaminTerm shows a Windows toast.
+7. User clicks the toast.
+8. BenjaminTerm focuses the originating pane/window and triggers visual attention again without replaying the sound.
+9. When the user sends the next response into that pane, BenjaminTerm dismisses the pane's outstanding toast and clears the idle glow until the next ready event.
 
 Important rule: the Pavlovian sound cue is not dependent on whether a Windows toast is shown. BenjaminTerm also reports focus-tracking panes as unfocused to terminal applications so agent CLIs keep emitting ready notifications even while the user is actively looking at the pane.
 
@@ -40,7 +42,7 @@ Sound/visual split:
 - Toast click: visual pulse only.
 - Focused pane: sound plus visual pulse, no Windows toast.
 - Background tab or other window: sound plus visual pulse plus a silent, clickable Windows reminder toast.
-- User response input: clears the pane-scoped Windows toast reminder.
+- User response input: clears the pane-scoped Windows toast reminder and disarms the idle text glow until the next ready event.
 
 Nagging toast rule:
 

@@ -161,9 +161,9 @@ mod imp {
                     parent
                         .join("assets")
                         .join("sounds")
-                        .join("kenney-interface"),
+                        .join("benjaminterm-soft-cues"),
                 );
-                dirs.push(parent.join("sounds").join("kenney-interface"));
+                dirs.push(parent.join("sounds").join("benjaminterm-soft-cues"));
             }
         }
 
@@ -172,7 +172,7 @@ mod imp {
                 .join("..")
                 .join("assets")
                 .join("sounds")
-                .join("kenney-interface"),
+                .join("benjaminterm-soft-cues"),
         );
 
         dirs

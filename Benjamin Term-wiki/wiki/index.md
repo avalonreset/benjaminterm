@@ -36,6 +36,7 @@ status: active
 - [[Attention Pulse]]
 - [[Tab Attention Indicator]]
 - [[Sound Grab Bag Attention System]]
+- [[Idle Text Glow Cue]]
 
 ## Modules
 
@@ -56,6 +57,8 @@ status: active
 - [[Keep Toast Click-To-Focus]]
 - [[Drop Hyper Yap Paste Duplicates]]
 - [[Preserve Upstream Terminal Internals]]
+- [[Soft Cue Pack Refresh]]
+- [[Idle Text Glow Cue]]
 
 ## Questions
 

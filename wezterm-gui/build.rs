@@ -118,13 +118,13 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName",      "Wez Furlong\0"
-            VALUE "FileDescription",  "WezTerm - Wez's Terminal Emulator\0"
+            VALUE "CompanyName",      "Avalon Reset\0"
+            VALUE "FileDescription",  "BenjaminTerm - agent-focused terminal emulator\0"
             VALUE "FileVersion",      "{version}\0"
-            VALUE "LegalCopyright",   "Wez Furlong, MIT licensed\0"
-            VALUE "InternalName",     "\0"
-            VALUE "OriginalFilename", "\0"
-            VALUE "ProductName",      "WezTerm\0"
+            VALUE "LegalCopyright",   "BenjaminTerm contributors; WezTerm contributors, MIT licensed\0"
+            VALUE "InternalName",     "BenjaminTerm-gui\0"
+            VALUE "OriginalFilename", "BenjaminTerm-gui.exe\0"
+            VALUE "ProductName",      "BenjaminTerm\0"
             VALUE "ProductVersion",   "{version}\0"
         END
     END

@@ -23,7 +23,7 @@ use ordered_float::NotNan;
 use std::ops::Range;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use termwiz::cellcluster::CellCluster;
 use termwiz::hyperlink::Hyperlink;
 use termwiz::surface::{CursorShape, CursorVisibility, SequenceNo};
@@ -72,6 +72,7 @@ pub struct LineQuadCacheKey {
     pub cursor: Option<CursorProperties>,
     pub reverse_video: bool,
     pub password_input: bool,
+    pub idle_text_glow_bucket: u8,
 }
 
 pub struct LineQuadCacheValue {
@@ -168,6 +169,8 @@ pub struct RenderScreenLineParams<'a> {
     pub render_metrics: RenderMetrics,
     pub shape_key: Option<LineToEleShapeCacheKey>,
     pub password_input: bool,
+    pub idle_text_glow_intensity: f32,
+    pub idle_text_glow_color: LinearRgba,
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
@@ -223,6 +226,75 @@ pub struct ClusterStyleCache<'a> {
 }
 
 impl crate::TermWindow {
+    pub fn mark_pane_input(&mut self, pane_id: PaneId) {
+        {
+            let mut per_pane = self.pane_state(pane_id);
+            per_pane.last_input.replace(Instant::now());
+            per_pane.idle_text_glow_start.take();
+            per_pane.idle_text_glow_animation_active = false;
+        }
+        self.quad_generation += 1;
+    }
+
+    pub fn idle_text_glow_for_pane(
+        &self,
+        pane_id: PaneId,
+        _is_active: bool,
+        _cursor: &StableCursorPosition,
+        palette: &ColorPalette,
+    ) -> (f32, LinearRgba, u8) {
+        let glow_color = theme_idle_text_glow_color(palette);
+
+        if !self.config.benjaminterm_idle_text_glow {
+            return (0.0, glow_color, 0);
+        }
+
+        let now = Instant::now();
+        let (glow_start, last_input) = {
+            let per_pane = self.pane_state(pane_id);
+            (per_pane.idle_text_glow_start, per_pane.last_input)
+        };
+
+        if let Some(last_input) = last_input {
+            let suppress_until = last_input
+                + Duration::from_millis(
+                    self.config.benjaminterm_idle_text_glow_input_suppression_ms,
+                );
+            if now < suppress_until {
+                self.update_next_frame_time(Some(suppress_until));
+                return (0.0, glow_color, 0);
+            }
+        }
+
+        let Some(glow_start) = glow_start else {
+            return (0.0, glow_color, 0);
+        };
+
+        let ready_at =
+            glow_start + Duration::from_millis(self.config.benjaminterm_idle_text_glow_delay_ms);
+        if now < ready_at {
+            self.update_next_frame_time(Some(ready_at));
+            return (0.0, glow_color, 0);
+        }
+
+        let period_ms = self.config.benjaminterm_idle_text_glow_period_ms.max(500);
+        let period = Duration::from_millis(period_ms).as_secs_f32();
+        let elapsed = now.duration_since(ready_at).as_secs_f32();
+        let phase = (elapsed % period) / period;
+        let wave = 0.5 - 0.5 * (phase * std::f32::consts::TAU).cos();
+        let strength = self
+            .config
+            .benjaminterm_idle_text_glow_strength
+            .clamp(0.0, 0.7);
+        let intensity = strength * (0.12 + 0.88 * wave);
+        let bucket = (intensity * 255.0).round().clamp(1.0, 255.0) as u8;
+
+        let fps = self.config.animation_fps.max(30) as u64;
+        self.update_next_frame_time(Some(now + Duration::from_millis((1000 / fps).max(1))));
+
+        (intensity, glow_color, bucket)
+    }
+
     pub fn update_next_frame_time(&self, next_due: Option<Instant>) {
         if next_due.is_some() {
             update_next_frame_time(&mut *self.has_animation.borrow_mut(), next_due);
@@ -952,6 +1024,54 @@ fn update_next_frame_time(storage: &mut Option<Instant>, next_due: Option<Instan
             }
         }
     }
+}
+
+fn theme_idle_text_glow_color(palette: &ColorPalette) -> LinearRgba {
+    [9usize, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5, 6]
+        .iter()
+        .copied()
+        .filter_map(|idx| {
+            let color = palette.colors.0[idx];
+            if color_too_close(color, palette.cursor_bg)
+                || color_too_close(color, palette.cursor_border)
+            {
+                return None;
+            }
+
+            let max = color.0.max(color.1).max(color.2);
+            let min = color.0.min(color.1).min(color.2);
+            let saturation = max - min;
+
+            if saturation < 0.12 || max < 0.25 {
+                return None;
+            }
+
+            let luminance =
+                (0.2126_f32 * color.0) + (0.7152_f32 * color.1) + (0.0722_f32 * color.2);
+            let score = saturation * 2.0_f32 + max - (luminance - 0.68_f32).abs() * 0.35_f32;
+            Some((score, color))
+        })
+        .max_by(|(a, _), (b, _)| a.total_cmp(b))
+        .map(|(_, color)| color.to_linear())
+        .unwrap_or_else(|| {
+            if !color_too_close(palette.selection_bg, palette.cursor_bg)
+                && !color_too_close(palette.selection_bg, palette.cursor_border)
+            {
+                palette.selection_bg.to_linear()
+            } else {
+                palette.colors.0[13].to_linear()
+            }
+        })
+}
+
+fn color_too_close(
+    a: wezterm_term::color::SrgbaTuple,
+    b: wezterm_term::color::SrgbaTuple,
+) -> bool {
+    let dr = a.0 - b.0;
+    let dg = a.1 - b.1;
+    let db = a.2 - b.2;
+    (dr * dr + dg * dg + db * db) < 0.035
 }
 
 fn same_hyperlink(a: Option<&Arc<Hyperlink>>, b: Option<&Arc<Hyperlink>>) -> bool {
