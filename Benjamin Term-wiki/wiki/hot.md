@@ -33,8 +33,8 @@ status: active
 - Focusable agent-ready toasts use Windows `scenario="reminder"` plus a `Focus` action button for stronger nagging behavior.
 - Pane input clears that pane's entire outstanding toast group.
 - [[Idle Text Glow Cue]] is accepted for release as an event-armed, one-shot breathing cursor-row cue. It clears on user input, uses a hard-edged pane-painted band, and selects a theme accent that avoids the cursor color.
-- Current release package is `dist/BenjaminTerm-windows-v1.4.0.zip`.
-- GitHub release is live at `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.0`.
+- Current release package is `dist/BenjaminTerm-windows-v1.4.1.zip`.
+- Current GitHub release is `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`.
 - Current preview emits OSC 777 after two seconds so the same ready path as sound/border/glow is exercised.
 - User review accepted the breathing pulse behavior, then requested cleaner hard edges and a non-cursor color. The release implementation removes fuzzy edge/aura rectangles and scores palette accents away from cursor colors.
 - Installed upstream WezTerm is unrelated to this work and should not be used for BenjaminTerm feature review.
@@ -56,8 +56,8 @@ status: active
 
 ## Active Threads
 
-- Finalize `v1.4.0` release packaging and installer.
-- Install `v1.4.0` over the current local BenjaminTerm installation after validating branding.
+- Release wrap-up: `v1.4.1` is latest, with the no-space `BenjaminTerm` installer naming patch.
+- Local install remains `v1.4.0` until the user chooses to run the patch installer.
 - Continue user ear review of [[Soft Cue Pack Refresh]].
 - Keep agent-attention sounds quiet, short, and non-startling during long coding sessions.
 - Decide whether tab attention fades automatically or persists until selected.
@@ -65,4 +65,5 @@ status: active
 - Local install verification passed: installed `BenjaminTerm-gui.exe` hash matches the v1.4.0 package, metadata is `BenjaminTerm / Avalon Reset`, `sounds/benjaminterm-soft-cues` has 84 WAV files, and the old `sounds/kenney-interface` folder is gone.
 - Pinned taskbar shortcut was updated to target `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` and use icon `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe,0`; remaining old-looking taskbar icon behavior is expected to be Windows icon cache/shortcut cache.
 - Patch release `v1.4.1` is live at `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`; it corrects the installer AppName and shell labels from `Benjamin Term` to `BenjaminTerm` so Start/taskbar surfaces do not use the spaced brand.
+- Archived public fork `BenjaminTerm-fork-archive-2026-04-22` was deleted manually by the user; only active public BenjaminTerm repo should remain.
 - Manually verify reminder-toast behavior across Focus Assist states and Windows notification settings.

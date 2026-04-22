@@ -75,6 +75,13 @@ status: active
 - Built and published `v1.4.1` with `BenjaminTerm-v1.4.1-setup.exe`, `BenjaminTerm-windows-v1.4.1.zip`, and SHA256 checksum files.
 - Local reinstall is intentionally deferred.
 
+## 2026-04-22 - Release Wrap-Up
+
+- User manually deleted the archived public fork repo before final housekeeping.
+- Verified `v1.4.1` is the latest GitHub release with four assets.
+- Verified the active public repo is `https://github.com/avalonreset/BenjaminTerm`.
+- Final housekeeping goal: fast-forward the fork's `main` branch to include the release work, not just the `sound-refresh-soft-cues` branch.
+
 ## 2026-04-22 - Idle Glow Aura Prototype
 
 - Added a low-alpha aura rectangle behind non-space text clusters in addition to the foreground breathing color shift.

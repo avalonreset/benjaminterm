@@ -30,6 +30,8 @@ sources:
 - Build Windows installer.
 - Publish GitHub release artifacts for `v1.4.0`. Done: `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.0`.
 - Replace the current local BenjaminTerm install with `v1.4.0`. Done by elevated package copy after silent installer did not replace open files.
+- Publish patch release `v1.4.1`. Done: `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`.
+- Archived public fork cleanup. Done manually by user.
 
 Progress:
 
