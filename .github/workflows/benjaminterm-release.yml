@@ -9,14 +9,26 @@ on:
 permissions:
   contents: write
 
+env:
+  BENJAMINTERM_NODE_VERSION: "25.9.0"
+
 jobs:
   windows:
     runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
+      - name: Install Node latest
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.BENJAMINTERM_NODE_VERSION }}
+      - name: Verify Node latest
+        shell: pwsh
+        run: |
+          node --version
+          npm --version
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Build
@@ -36,7 +48,7 @@ jobs:
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           & $iscc -DMyAppVersion="${{ github.ref_name }}" -F"BenjaminTerm-${{ github.ref_name }}-setup" ci/windows-installer.iss
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: benjaminterm-windows
           path: |
@@ -47,9 +59,18 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
+      - name: Install Node latest
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.BENJAMINTERM_NODE_VERSION }}
+      - name: Verify Node latest
+        shell: bash
+        run: |
+          node --version
+          npm --version
       - name: Install Rust targets
         shell: bash
         run: |
@@ -69,7 +90,7 @@ jobs:
         shell: bash
         run: TAG_NAME="${{ github.ref_name }}" bash ci/deploy.sh
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: benjaminterm-macos
           path: BenjaminTerm-macos-*.zip
@@ -78,9 +99,18 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
+      - name: Install Node latest
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.BENJAMINTERM_NODE_VERSION }}
+      - name: Verify Node latest
+        shell: bash
+        run: |
+          node --version
+          npm --version
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install dependencies
@@ -103,7 +133,7 @@ jobs:
           cp -r assets/sounds/kenney-interface "$pkg/sounds/"
           tar czf "$pkg.tar.gz" "$pkg"
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: benjaminterm-linux
           path: BenjaminTerm-linux-*.tar.gz
@@ -116,8 +146,17 @@ jobs:
       - linux
     if: startsWith(github.ref, 'refs/tags/')
     steps:
+      - name: Install Node latest
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.BENJAMINTERM_NODE_VERSION }}
+      - name: Verify Node latest
+        shell: bash
+        run: |
+          node --version
+          npm --version
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
           merge-multiple: true
@@ -128,11 +167,23 @@ jobs:
             sha256sum "$f" > "$f.sha256"
           done
       - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: false
-          files: artifacts/**
-          body: |
-            BenjaminTerm release.
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          notes_file="$(mktemp)"
+          cat > "$notes_file" <<'NOTES'
+          BenjaminTerm release.
 
-            Windows is the primary supported platform. macOS and Linux artifacts are best-effort portable builds.
+          Windows is the primary supported platform. macOS and Linux artifacts are best-effort portable builds.
+
+          Release infrastructure verifies Node.js 25.9.0 on Windows, macOS, Linux, and the publisher job before artifacts are published.
+          NOTES
+
+          gh release create "$tag" artifacts/** \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$tag" \
+            --notes-file "$notes_file" \
+            --latest

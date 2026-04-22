@@ -31,6 +31,7 @@ BenjaminTerm is a Windows-first terminal for AI coding sessions, rebuilt from a 
 - [Hotkeys](#hotkeys)
 - [Install](#install)
 - [Platform Status](#platform-status)
+- [Release Infrastructure](#release-infrastructure)
 - [Upstream Credit](#upstream-credit)
 - [License](#license)
 
@@ -187,7 +188,27 @@ Windows is the primary supported platform. macOS and Linux builds are produced b
 | macOS | Best effort | Portable artifact builds in CI |
 | Linux | Best effort | Portable artifact builds in CI |
 
+## Release Infrastructure
+
+BenjaminTerm release infrastructure is pinned to Node.js `25.9.0`.
+
+The release workflow installs and verifies Node.js `25.9.0` on every release path:
+
+- Windows build job
+- macOS build job
+- Linux build job
+- GitHub release publisher job
+
+The repository includes `.node-version` so local development shells using `fnm` also resolve to Node.js `25.9.0`.
+
 ## Build From Source
+
+Required release tooling:
+
+```powershell
+node --version
+# v25.9.0
+```
 
 Windows release build:
 

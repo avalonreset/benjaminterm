@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.3.1
+
+Release infrastructure update.
+
+### Changed
+
+- Pinned repository Node.js version to `25.9.0`.
+- Added `.node-version` for local development shells.
+- Updated the BenjaminTerm release workflow to install and verify Node.js `25.9.0` on Windows, macOS, Linux, and the publisher job.
+- Updated official GitHub Actions steps to newer major versions.
+- Replaced the third-party release publisher action with direct `gh release create` usage.
+
 ## v1.3.0
 
 Fresh BenjaminTerm rebuild release.
