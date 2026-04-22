@@ -201,6 +201,8 @@ The release workflow installs and verifies Node.js `25.9.0` on every release pat
 
 The repository includes `.node-version` so local development shells using `fnm` also resolve to Node.js `25.9.0`.
 
+GitHub's own JavaScript action runtime is forced to Node.js 24, which is the newest action runtime GitHub currently exposes. The BenjaminTerm build, packaging, and release verification still run on Node.js `25.9.0`.
+
 ## Build From Source
 
 Required release tooling:

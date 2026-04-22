@@ -11,6 +11,7 @@ permissions:
 
 env:
   BENJAMINTERM_NODE_VERSION: "25.9.0"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   windows:
