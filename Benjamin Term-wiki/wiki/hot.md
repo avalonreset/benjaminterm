@@ -64,5 +64,5 @@ status: active
 - Branding follow-up: verify installed EXE metadata/icon and taskbar identity from `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe`.
 - Local install verification passed: installed `BenjaminTerm-gui.exe` hash matches the v1.4.0 package, metadata is `BenjaminTerm / Avalon Reset`, `sounds/benjaminterm-soft-cues` has 84 WAV files, and the old `sounds/kenney-interface` folder is gone.
 - Pinned taskbar shortcut was updated to target `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` and use icon `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe,0`; remaining old-looking taskbar icon behavior is expected to be Windows icon cache/shortcut cache.
-- Patch release `v1.4.1` corrects the installer AppName and shell labels from `Benjamin Term` to `BenjaminTerm` so Start/taskbar surfaces do not use the spaced brand.
+- Patch release `v1.4.1` is live at `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`; it corrects the installer AppName and shell labels from `Benjamin Term` to `BenjaminTerm` so Start/taskbar surfaces do not use the spaced brand.
 - Manually verify reminder-toast behavior across Focus Assist states and Windows notification settings.

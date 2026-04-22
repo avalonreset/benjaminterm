@@ -72,7 +72,8 @@ status: active
 - Changed the Windows installer AppName and Windows shell verbs to `BenjaminTerm`.
 - Added installer cleanup for old spaced Start/Desktop shortcuts and `Open Benjamin Term here` registry shell verbs.
 - Changed the macOS package app directory name from `Benjamin Term.app` to `BenjaminTerm.app` for consistency.
-- Patch release target is `v1.4.1`; local reinstall is intentionally deferred.
+- Built and published `v1.4.1` with `BenjaminTerm-v1.4.1-setup.exe`, `BenjaminTerm-windows-v1.4.1.zip`, and SHA256 checksum files.
+- Local reinstall is intentionally deferred.
 
 ## 2026-04-22 - Idle Glow Aura Prototype
 
