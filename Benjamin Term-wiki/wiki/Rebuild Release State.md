@@ -11,7 +11,7 @@ related:
   - "[[Release Checklist]]"
 sources:
   - "[[Rebuild Session Summary]]"
-validation: "partial"
+validation: "release-published"
 ---
 
 # Rebuild Release State
@@ -28,9 +28,12 @@ Current rebuild status:
 - Local release build succeeded and produced `dist/BenjaminTerm-windows-local-20260421.zip`.
 - Installer script is rebranded to Benjamin Term, uses a unique Inno Setup GUID, installs bundled `wezterm.lua`, fonts, and sounds, and avoids adding `wezterm.exe` to PATH.
 - GitHub Actions release workflow exists for tag-driven `benjaminterm-v*` releases across Windows, macOS, and Linux.
+- Release tag `benjaminterm-v2026.04.21` is published on GitHub.
+- GitHub Actions successfully built Windows, macOS, and Linux artifacts.
+- The Windows installer, Windows portable zip, macOS zip, Linux tarball, and SHA256 files are attached to the prerelease.
 
 Next release work:
 
-- Build the Windows installer on a machine with Inno Setup or through GitHub Actions.
-- Push a `benjaminterm-v*` tag to publish Windows/macOS/Linux artifacts.
+- Install the Windows release after the user confirms terminal cutover timing.
 - Treat macOS and Linux artifacts as best-effort until manually tested on those platforms.
+- Improve macOS/Linux notification behavior as follow-up work after the Windows release is stable.

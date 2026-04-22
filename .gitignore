@@ -14,6 +14,7 @@ dhat-heap.json
 /BenjaminTerm-macos-*
 /BenjaminTerm-linux-*
 /dist/
+/gh-artifacts/
 /wezterm*.deb
 /wezterm*.tar.xz
 /pkg

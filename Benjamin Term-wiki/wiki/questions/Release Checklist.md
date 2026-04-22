@@ -5,7 +5,7 @@ created: 2026-04-22
 updated: 2026-04-22
 tags:
   - release
-status: open
+status: active
 related:
   - "[[Rebuild Release State]]"
 sources:
@@ -26,9 +26,9 @@ sources:
 - Package bundled fonts.
 - Package bundled sound grab bag.
 - Confirm license notices include 0xProto OFL.
-- Build release artifact.
-- Build Windows installer.
-- Publish GitHub release artifacts.
+- Build release artifact. Done for Windows/macOS/Linux.
+- Build Windows installer. Done through GitHub Actions.
+- Publish GitHub release artifacts. Done for `benjaminterm-v2026.04.21`.
 - Test side-by-side install behavior.
 
 Progress:
@@ -36,4 +36,6 @@ Progress:
 - Windows AppUserModelID: `com.avalonreset.benjaminterm`.
 - Windows installer GUID: `E79835B5-C418-4C79-BD62-3A18E94B22C3`.
 - Local portable zip built: `dist/BenjaminTerm-windows-local-20260421.zip`.
-- Inno Setup is not installed on the current Windows machine, so the local `.exe` installer still needs either Inno Setup locally or the GitHub Actions release workflow.
+- GitHub Actions release artifacts built successfully for Windows, macOS, and Linux.
+- Published prerelease: `https://github.com/avalonreset/BenjaminTerm/releases/tag/benjaminterm-v2026.04.21`.
+- Current install gate: wait for user confirmation before replacing or switching active terminals.
