@@ -27,7 +27,7 @@ case $OSTYPE in
     fi
     rm -rf $zipdir $zipname
     mkdir $zipdir
-    appdir="$zipdir/Benjamin Term.app"
+    appdir="$zipdir/BenjaminTerm.app"
     cp -r assets/macos/WezTerm.app "$appdir"
     # Omit MetalANGLE for now; it's a bit laggy compared to CGL,
     # and on M1/Big Sur, CGL is implemented in terms of Metal anyway

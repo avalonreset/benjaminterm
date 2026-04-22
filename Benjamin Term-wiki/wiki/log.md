@@ -65,6 +65,15 @@ status: active
 - Verified installed sound cue set: `sounds/benjaminterm-soft-cues` exists with 84 WAV files, and `sounds/kenney-interface` is absent.
 - Updated the pinned taskbar shortcut to target `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe` and use icon `C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe,0`.
 
+## 2026-04-22 - BenjaminTerm v1.4.1 Installer Name Patch
+
+- User caught that the taskbar jump-list displayed `Benjamin Term` with a space.
+- Root cause: the Inno Setup script still defined `MyAppName` as `Benjamin Term`, so installer-created shortcuts and setup metadata could carry the spaced display name even though the binary metadata was already `BenjaminTerm`.
+- Changed the Windows installer AppName and Windows shell verbs to `BenjaminTerm`.
+- Added installer cleanup for old spaced Start/Desktop shortcuts and `Open Benjamin Term here` registry shell verbs.
+- Changed the macOS package app directory name from `Benjamin Term.app` to `BenjaminTerm.app` for consistency.
+- Patch release target is `v1.4.1`; local reinstall is intentionally deferred.
+
 ## 2026-04-22 - Idle Glow Aura Prototype
 
 - Added a low-alpha aura rectangle behind non-space text clusters in addition to the foreground breathing color shift.

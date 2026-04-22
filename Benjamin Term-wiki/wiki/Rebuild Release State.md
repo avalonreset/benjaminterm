@@ -27,7 +27,7 @@ Current rebuild status:
 - Source-built preview launched from `target-sound-prototype`.
 - Windows portable packaging exists via `ci/package-benjaminterm-windows.ps1`.
 - Local release build succeeded and produced `dist/BenjaminTerm-windows-local-20260421.zip`.
-- Installer script is rebranded to Benjamin Term, uses a unique Inno Setup GUID, installs bundled `wezterm.lua`, fonts, and sounds, and avoids adding `wezterm.exe` to PATH.
+- Installer script is rebranded to BenjaminTerm, uses a unique Inno Setup GUID, installs bundled `wezterm.lua`, fonts, and sounds, and avoids adding `wezterm.exe` to PATH.
 - GitHub Actions release workflow exists for tag-driven `benjaminterm-v*` releases across Windows, macOS, and Linux.
 - Release tag `benjaminterm-v2026.04.21` is published on GitHub.
 - Corrective release work for `benjaminterm-v2026.04.22` removes the old upstream font bundle and keeps only 0xProto plus its license.

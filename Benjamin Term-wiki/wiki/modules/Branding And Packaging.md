@@ -20,7 +20,7 @@ Branding and packaging must make BenjaminTerm install side-by-side with upstream
 
 Current implementation:
 
-- Windows installer is named Benjamin Term and emits `BenjaminTerm-*.exe`.
+- Windows installer is named BenjaminTerm and emits `BenjaminTerm-*.exe`.
 - Windows Start Menu/Desktop shortcuts use AppUserModelID `com.avalonreset.benjaminterm`.
 - Windows installer uses unique Inno Setup AppId `E79835B5-C418-4C79-BD62-3A18E94B22C3`.
 - Installer and portable zip include `wezterm.lua`, `fonts/`, and `sounds/benjaminterm-soft-cues/`.

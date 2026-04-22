@@ -165,18 +165,18 @@ https://github.com/avalonreset/BenjaminTerm/releases/latest
 
 Recommended installer:
 
-`BenjaminTerm-v1.3.0-setup.exe`
+`BenjaminTerm-v1.4.1-setup.exe`
 
 Portable zip:
 
-`BenjaminTerm-windows-v1.3.0.zip`
+`BenjaminTerm-windows-v1.4.1.zip`
 
 ### macOS and Linux
 
 Best-effort builds are published with each release:
 
-- macOS: `BenjaminTerm-macos-v1.3.0.zip`
-- Linux: `BenjaminTerm-linux-v1.3.0.tar.gz`
+- macOS: `BenjaminTerm-macos-v1.4.1.zip`
+- Linux: `BenjaminTerm-linux-v1.4.1.tar.gz`
 
 Windows is the primary supported platform. macOS and Linux builds are produced by CI, but they have not been manually tested yet.
 
