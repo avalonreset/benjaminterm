@@ -11,6 +11,12 @@ status: active
 
 # Operation Log
 
+## 2026-04-23 - Official Install Path Clarified
+
+- Added `INSTALL.md` with Windows, macOS, and Linux install instructions.
+- Updated README to treat GitHub Releases as the official distribution path for all three platforms.
+- Clarified that package-manager channels are not required for release completion.
+
 ## 2026-04-23 - Sound Attribution Final Check
 
 - Verified `BenjaminTerm-windows-v1.4.0.zip` and `BenjaminTerm-windows-v1.4.1.zip` each contain 84 files under `sounds/benjaminterm-soft-cues` and 0 old `kenney-interface` entries.

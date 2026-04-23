@@ -2,16 +2,18 @@
   <img src="assets/banner.webp" alt="BenjaminTerm - AI coding terminal for Windows built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
 </p>
 
-# BenjaminTerm - AI Coding Terminal for Windows
+# BenjaminTerm - AI Coding Terminal for Windows, macOS, and Linux
 
 [![Release](https://img.shields.io/github/v/release/avalonreset/BenjaminTerm?label=release)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/avalonreset/BenjaminTerm/benjaminterm-release.yml?branch=main&label=release%20build)](https://github.com/avalonreset/BenjaminTerm/actions/workflows/benjaminterm-release.yml)
 [![License](https://img.shields.io/github/license/avalonreset/BenjaminTerm)](LICENSE.md)
 [![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
+[![macOS](https://img.shields.io/badge/macos-release%20artifact-111)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
+[![Linux](https://img.shields.io/badge/linux-release%20artifact-111)](https://github.com/avalonreset/BenjaminTerm/releases/latest)
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
 [![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-BenjaminTerm is a Windows-first terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, HyperYap, and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, and Windows toast click-to-focus.
+BenjaminTerm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, HyperYap, and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, and focused attention routing.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -88,7 +90,7 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 
 - Custom BenjaminTerm app identity.
 - BEN visual assets restored in the repo and README.
-- Windows installer and portable zip are published from GitHub Actions.
+- Windows installer, Windows portable zip, macOS app zip, and Linux tarball are published from GitHub Actions.
 - Vanilla WezTerm can still live beside BenjaminTerm.
 
 ## Attention System
@@ -157,11 +159,15 @@ Clipboard, speech-to-text, smart paste, image paste, and vibe-coding hotkeys bel
 
 ## Install
 
-### Windows
+Full install instructions: [INSTALL.md](INSTALL.md)
 
-Download the latest release:
+Official downloads are published on GitHub Releases:
 
 https://github.com/avalonreset/BenjaminTerm/releases/latest
+
+Package managers are not required. Homebrew, WinGet, Flathub, and Linuxbrew are out of scope for the current release. GitHub Releases are the official release path.
+
+### Windows
 
 Recommended installer:
 
@@ -171,22 +177,50 @@ Portable zip:
 
 `BenjaminTerm-windows-v1.4.1.zip`
 
-### macOS and Linux
+### macOS
 
-Best-effort builds are published with each release:
+Download:
 
-- macOS: `BenjaminTerm-macos-v1.4.1.zip`
-- Linux: `BenjaminTerm-linux-v1.4.1.tar.gz`
+`BenjaminTerm-macos-v1.4.1.zip`
 
-Windows is the primary supported platform. macOS and Linux builds are produced by CI, but they have not been manually tested yet.
+Install:
+
+```sh
+unzip BenjaminTerm-macos-v1.4.1.zip
+mv BenjaminTerm-macos-v1.4.1/BenjaminTerm.app /Applications/
+open /Applications/BenjaminTerm.app
+```
+
+If macOS blocks the unsigned app:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/BenjaminTerm.app
+open /Applications/BenjaminTerm.app
+```
+
+### Linux
+
+Download:
+
+`BenjaminTerm-linux-v1.4.1.tar.gz`
+
+Run:
+
+```sh
+tar -xzf BenjaminTerm-linux-v1.4.1.tar.gz
+cd BenjaminTerm-linux-v1.4.1
+./BenjaminTerm-gui
+```
 
 ## Platform Status
 
 | Platform | Status | Notes |
 |----------|--------|-------|
 | Windows | Supported | Installer, portable zip, toast click-to-focus, sound cues, visual pulse |
-| macOS | Best effort | Portable artifact builds in CI |
-| Linux | Best effort | Portable artifact builds in CI |
+| macOS | Supported release artifact | App zip with bundled config, 0xProto, and sound cues |
+| Linux | Supported release artifact | Tarball with bundled config, 0xProto, and sound cues |
+
+Windows has the most platform-specific attention behavior because it includes the toast click-to-focus workflow. macOS and Linux ship the same BenjaminTerm terminal bundle and assets through GitHub Releases.
 
 ## Release Infrastructure
 

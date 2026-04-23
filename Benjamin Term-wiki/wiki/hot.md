@@ -37,6 +37,7 @@ status: active
 - [[Idle Text Glow Cue]] is accepted for release as an event-armed, one-shot breathing cursor-row cue. It clears on user input, uses a hard-edged pane-painted band, and selects a theme accent that avoids the cursor color.
 - Current release package is `dist/BenjaminTerm-windows-v1.4.1.zip`.
 - Current GitHub release is `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`.
+- GitHub Releases are the official distribution channel for Windows, macOS, and Linux. Package-manager channels are not required for release completion.
 - Current preview emits OSC 777 after two seconds so the same ready path as sound/border/glow is exercised.
 - User review accepted the breathing pulse behavior, then requested cleaner hard edges and a non-cursor color. The release implementation removes fuzzy edge/aura rectangles and scores palette accents away from cursor colors.
 - Installed upstream WezTerm is unrelated to this work and should not be used for BenjaminTerm feature review.
@@ -69,3 +70,4 @@ status: active
 - Patch release `v1.4.1` is live at `https://github.com/avalonreset/BenjaminTerm/releases/tag/v1.4.1`; it corrects the installer AppName and shell labels from `Benjamin Term` to `BenjaminTerm` so Start/taskbar surfaces do not use the spaced brand.
 - Archived public fork `BenjaminTerm-fork-archive-2026-04-22` was deleted manually by the user; only active public BenjaminTerm repo should remain.
 - Manually verify reminder-toast behavior across Focus Assist states and Windows notification settings.
+- Public install docs now live in `INSTALL.md`.

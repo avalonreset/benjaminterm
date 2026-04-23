@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Declared GitHub Releases as the official distribution channel for Windows, macOS, and Linux.
+- Added `INSTALL.md` with direct install instructions for the Windows installer, macOS app zip, and Linux tarball.
+- Clarified that package-manager channels are not required for the official release.
+
+## v1.4.1
+
+Branding and distribution finalization.
+
+### Changed
+
+- Published Windows installer, Windows portable zip, macOS app zip, Linux tarball, and SHA256 checksums on GitHub Releases.
+- Standardized visible app naming as `BenjaminTerm` across installer, shortcuts, shell labels, and macOS app directory naming.
+- Documented shipped sound cue attribution for Kenney UI Audio and ObsydianX Interface SFX Pack 1.
+- Confirmed the old `kenney-interface` prototype sound set is not included in the shipped artifacts.
+- Declared GitHub Releases as the official distribution channel for all supported platforms.
+
+## v1.4.0
+
+Cross-platform release baseline.
+
+### Added
+
+- Windows installer and portable zip.
+- macOS app zip.
+- Linux tarball.
+- Bundled 0xProto font.
+- Bundled `benjaminterm-soft-cues` sound pack.
+- Visual attention pulse, per-pane sound identity, and Windows toast click-to-focus.
+
 ## v1.3.1
 
 Release infrastructure update.
@@ -51,8 +84,7 @@ Fresh BenjaminTerm rebuild release.
 - Disabled installer PATH edits to avoid shadowing vanilla WezTerm.
 - Cleaned stale upstream support and funding links from the BenjaminTerm GitHub surface.
 
-### Known Caveats
+### Historical Caveats
 
-- Windows is the primary supported platform.
-- macOS and Linux artifacts are best-effort builds and need manual testing.
-- macOS and Linux notification behavior is not yet equivalent to the Windows toast implementation.
+- This release was superseded by `v1.4.1`, which publishes official Windows, macOS, and Linux GitHub release artifacts.
+- Windows remains the platform with the strongest notification integration because it includes toast click-to-focus.
