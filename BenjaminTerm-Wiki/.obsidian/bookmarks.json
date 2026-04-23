@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "ctime": 1776864000000,
+      "path": "START HERE.md",
+      "title": "Start Here"
+    },
+    {
+      "type": "file",
+      "ctime": 1776864000000,
+      "path": "wiki/hot.md",
+      "title": "Hot Context"
+    },
+    {
+      "type": "file",
+      "ctime": 1776864000000,
+      "path": "wiki/meta/dashboard.md",
+      "title": "Dashboard"
+    },
+    {
+      "type": "file",
+      "ctime": 1776864000000,
+      "path": "wiki/canvases/main.canvas",
+      "title": "Visual Map"
+    }
+  ]
+}

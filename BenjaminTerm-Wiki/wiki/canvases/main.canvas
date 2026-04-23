@@ -1,0 +1,293 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# BenjaminTerm Wiki\n\nRelease-candidate map for the cross-platform terminal distribution.",
+      "x": -720,
+      "y": -520,
+      "width": 420,
+      "height": 150,
+      "color": "6"
+    },
+    {
+      "id": "zone-release",
+      "type": "group",
+      "label": "Release Readiness",
+      "x": -760,
+      "y": -320,
+      "width": 760,
+      "height": 520,
+      "color": "4"
+    },
+    {
+      "id": "zone-architecture",
+      "type": "group",
+      "label": "Architecture",
+      "x": 80,
+      "y": -320,
+      "width": 760,
+      "height": 520,
+      "color": "5"
+    },
+    {
+      "id": "zone-maintenance",
+      "type": "group",
+      "label": "Wiki Maintenance",
+      "x": -340,
+      "y": 260,
+      "width": 760,
+      "height": 380,
+      "color": "3"
+    },
+    {
+      "id": "zone-concepts",
+      "type": "group",
+      "label": "Concepts",
+      "x": 920,
+      "y": -320,
+      "width": 720,
+      "height": 520,
+      "color": "2"
+    },
+    {
+      "id": "start-here",
+      "type": "file",
+      "file": "START HERE.md",
+      "x": -240,
+      "y": -520,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "release-readiness",
+      "type": "file",
+      "file": "wiki/decisions/Release Readiness 2026-04-22.md",
+      "x": -700,
+      "y": -240,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "release-flow",
+      "type": "file",
+      "file": "wiki/flows/Release Flow.md",
+      "x": -360,
+      "y": -240,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "packaging",
+      "type": "file",
+      "file": "wiki/modules/Packaging and CI.md",
+      "x": -700,
+      "y": -80,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "questions",
+      "type": "file",
+      "file": "wiki/questions/Open Release Questions.md",
+      "x": -360,
+      "y": -80,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "architecture",
+      "type": "file",
+      "file": "wiki/modules/Architecture Overview.md",
+      "x": 140,
+      "y": -240,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "tech-stack",
+      "type": "file",
+      "file": "wiki/modules/Tech Stack.md",
+      "x": 480,
+      "y": -240,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "source-map",
+      "type": "file",
+      "file": "wiki/sources/Repository Source Map.md",
+      "x": 140,
+      "y": -80,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "defaults",
+      "type": "file",
+      "file": "wiki/modules/Terminal Defaults.md",
+      "x": 480,
+      "y": -80,
+      "width": 300,
+      "height": 120
+    },
+    {
+      "id": "hot",
+      "type": "file",
+      "file": "wiki/hot.md",
+      "x": -280,
+      "y": 340,
+      "width": 220,
+      "height": 100
+    },
+    {
+      "id": "index",
+      "type": "file",
+      "file": "wiki/index.md",
+      "x": -20,
+      "y": 340,
+      "width": 220,
+      "height": 100
+    },
+    {
+      "id": "guide",
+      "type": "file",
+      "file": "wiki/meta/Wiki Operating Guide.md",
+      "x": 240,
+      "y": 340,
+      "width": 220,
+      "height": 100
+    },
+    {
+      "id": "wiki-maintenance-flow",
+      "type": "file",
+      "file": "wiki/flows/Wiki Maintenance Flow.md",
+      "x": -280,
+      "y": 480,
+      "width": 220,
+      "height": 100
+    },
+    {
+      "id": "cross-platform-strategy",
+      "type": "file",
+      "file": "wiki/concepts/Cross-Platform Release Strategy.md",
+      "x": 980,
+      "y": -240,
+      "width": 280,
+      "height": 120
+    },
+    {
+      "id": "optional-package-channels",
+      "type": "file",
+      "file": "wiki/concepts/Optional Package Manager Channels.md",
+      "x": 1300,
+      "y": -240,
+      "width": 280,
+      "height": 120
+    },
+    {
+      "id": "notification-policy",
+      "type": "file",
+      "file": "wiki/concepts/Notification Noise Policy.md",
+      "x": 980,
+      "y": -80,
+      "width": 280,
+      "height": 120
+    },
+    {
+      "id": "rc-definition",
+      "type": "file",
+      "file": "wiki/concepts/Release Candidate Definition.md",
+      "x": 1300,
+      "y": -80,
+      "width": 280,
+      "height": 120
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-start-hot",
+      "fromNode": "start-here",
+      "fromSide": "bottom",
+      "toNode": "hot",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-start-release",
+      "fromNode": "start-here",
+      "fromSide": "left",
+      "toNode": "release-readiness",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-start-architecture",
+      "fromNode": "start-here",
+      "fromSide": "right",
+      "toNode": "architecture",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-release-flow-packaging",
+      "fromNode": "release-flow",
+      "fromSide": "bottom",
+      "toNode": "packaging",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-architecture-source",
+      "fromNode": "architecture",
+      "fromSide": "bottom",
+      "toNode": "source-map",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-hot-index",
+      "fromNode": "hot",
+      "fromSide": "right",
+      "toNode": "index",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-index-guide",
+      "fromNode": "index",
+      "fromSide": "right",
+      "toNode": "guide",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-guide-maintenance",
+      "fromNode": "guide",
+      "fromSide": "left",
+      "toNode": "wiki-maintenance-flow",
+      "toSide": "right"
+    },
+    {
+      "id": "edge-release-strategy",
+      "fromNode": "release-flow",
+      "fromSide": "right",
+      "toNode": "cross-platform-strategy",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-packaging-channels",
+      "fromNode": "packaging",
+      "fromSide": "right",
+      "toNode": "optional-package-channels",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-defaults-notification",
+      "fromNode": "defaults",
+      "fromSide": "right",
+      "toNode": "notification-policy",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-readiness-rc",
+      "fromNode": "release-readiness",
+      "fromSide": "right",
+      "toNode": "rc-definition",
+      "toSide": "left"
+    }
+  ]
+}

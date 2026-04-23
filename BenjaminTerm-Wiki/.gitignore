@@ -1,0 +1,24 @@
+# Local Obsidian state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Private or temporary material
+.trash/
+.raw/private/
+_attachments/private/
+*.tmp
+*.bak
+
+# Secrets and local environment files
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+*.age
+*.asc
+*.gpg
+id_rsa
+id_ed25519
