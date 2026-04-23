@@ -9,6 +9,7 @@
 - Clarified that package-manager channels are not required for the official release.
 - Added screenshot scene scripts for creating an updated README terminal screenshot.
 - Linked the first README mentions of HyperYap to its GitHub repository.
+- Replaced the README screenshot with the approved WebP export.
 
 ## v1.4.1
 

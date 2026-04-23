@@ -39,7 +39,7 @@ BenjaminTerm is a cross-platform terminal for AI coding sessions, rebuilt from a
 
 ## Screenshot
 
-![BenjaminTerm hacker terminal running on Windows with dark theme and borderless mode](assets/icon/benjaminterm_screenshot.jpg)
+![BenjaminTerm hacker terminal scene with agent ready cues](assets/icon/benjaminterm_screenshot.webp)
 
 ## Why BenjaminTerm
 
