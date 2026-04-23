@@ -22,6 +22,8 @@ status: active
 - Toast click-to-focus now routes notification clicks back to the pane/window that emitted the alert.
 - A short theme-accent attention pulse identifies the containing window when an agent-ready notification fires or a toast is clicked.
 - BenjaminTerm now uses a fully re-sourced softer 84-file CC0 cue set derived from Kenney UI Audio plus ObsydianX Interface SFX Pack 1; see [[Soft Cue Pack Refresh]].
+- `BenjaminTerm-windows-v1.4.0.zip` and `BenjaminTerm-windows-v1.4.1.zip` each contain 84 `benjaminterm-soft-cues` WAVs and 0 old `kenney-interface` entries.
+- Only attribute sound sources that ship. Current shipped sound attribution is Kenney UI Audio plus ObsydianX Interface SFX Pack 1.
 - The soft cue pack is per-file peak normalized around `-14 dB`; packaged measurement is quietest `-14.0 dB`, loudest `-13.9 dB`.
 - Current audio review folder: `dist/BenjaminTerm-windows-v2026.04.22-soft-cues-curated/sounds/benjaminterm-soft-cues/`.
 - Agent-ready notifications now prototype immediate pulse + per-pane sound even when no toast is shown.

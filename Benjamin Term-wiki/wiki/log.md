@@ -11,6 +11,13 @@ status: active
 
 # Operation Log
 
+## 2026-04-23 - Sound Attribution Final Check
+
+- Verified `BenjaminTerm-windows-v1.4.0.zip` and `BenjaminTerm-windows-v1.4.1.zip` each contain 84 files under `sounds/benjaminterm-soft-cues` and 0 old `kenney-interface` entries.
+- Verified installed `C:/Program Files/BenjaminTerm/sounds/benjaminterm-soft-cues` has 84 WAV files and `C:/Program Files/BenjaminTerm/sounds/kenney-interface` is absent.
+- Added `licenses/THIRD_PARTY_NOTICES.md`.
+- Recorded that current sound attribution is only Kenney UI Audio plus ObsydianX Interface SFX Pack 1.
+
 ## 2026-04-22 - Dedicated Glow Animation Loop
 
 - User corrected the prior assessment: the visible cursor-row highlight was static, not subtly pulsing.
