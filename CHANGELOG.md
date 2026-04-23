@@ -7,6 +7,8 @@
 - Declared GitHub Releases as the official distribution channel for Windows, macOS, and Linux.
 - Added `INSTALL.md` with direct install instructions for the Windows installer, macOS app zip, and Linux tarball.
 - Clarified that package-manager channels are not required for the official release.
+- Added screenshot scene scripts for creating an updated README terminal screenshot.
+- Linked the first README mentions of HyperYap to its GitHub repository.
 
 ## v1.4.1
 

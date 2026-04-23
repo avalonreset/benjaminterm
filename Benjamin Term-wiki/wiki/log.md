@@ -11,6 +11,12 @@ status: active
 
 # Operation Log
 
+## 2026-04-23 - README Screenshot Scene Started
+
+- Added `scripts/screenshot-scene.ps1` for printing an up-to-date screenshotable BenjaminTerm terminal scene.
+- Added `scripts/launch-screenshot-scene.ps1` to open that scene in BenjaminTerm.
+- Linked first README mentions of HyperYap to the HyperYap GitHub repository.
+
 ## 2026-04-23 - Official Install Path Clarified
 
 - Added `INSTALL.md` with Windows, macOS, and Linux install instructions.
