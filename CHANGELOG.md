@@ -4,12 +4,21 @@
 
 ### Changed
 
-- Declared GitHub Releases as the official distribution channel for Windows, macOS, and Linux.
-- Added `INSTALL.md` with direct install instructions for the Windows installer, macOS app zip, and Linux tarball.
-- Clarified that package-manager channels are not required for the official release.
-- Added screenshot scene scripts for creating an updated README terminal screenshot.
-- Linked the first README mentions of HyperYap to its GitHub repository.
-- Replaced the README screenshot with the approved WebP export.
+- Nothing yet.
+
+## v1.4.2
+
+Clickable local path release.
+
+### Added
+
+- Added built-in hyperlink rules for local terminal output paths in the shipped BenjaminTerm config.
+- Recognizes Windows absolute paths, quoted paths, UNC paths, relative paths, home-relative paths, and common artifact filenames.
+- Handles common `file:line` and `file:line:column` suffixes before opening the path.
+
+### Changed
+
+- Updated README and install docs to point to `v1.4.2` artifacts.
 
 ## v1.4.1
 
