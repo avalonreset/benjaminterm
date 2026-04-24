@@ -10,23 +10,23 @@ BenjaminTerm does not require Homebrew, WinGet, Flathub, Linuxbrew, or any other
 
 Download:
 
-- `BenjaminTerm-v1.4.1-setup.exe`
+- `BenjaminTerm-v1.4.2-setup.exe`
 
 Run the installer. Use the portable zip only if you specifically want a folder you can unpack and run without installation:
 
-- `BenjaminTerm-windows-v1.4.1.zip`
+- `BenjaminTerm-windows-v1.4.2.zip`
 
 ## macOS
 
 Download:
 
-- `BenjaminTerm-macos-v1.4.1.zip`
+- `BenjaminTerm-macos-v1.4.2.zip`
 
 Install:
 
 ```sh
-unzip BenjaminTerm-macos-v1.4.1.zip
-mv BenjaminTerm-macos-v1.4.1/BenjaminTerm.app /Applications/
+unzip BenjaminTerm-macos-v1.4.2.zip
+mv BenjaminTerm-macos-v1.4.2/BenjaminTerm.app /Applications/
 open /Applications/BenjaminTerm.app
 ```
 
@@ -41,13 +41,13 @@ open /Applications/BenjaminTerm.app
 
 Download:
 
-- `BenjaminTerm-linux-v1.4.1.tar.gz`
+- `BenjaminTerm-linux-v1.4.2.tar.gz`
 
 Run from the unpacked folder:
 
 ```sh
-tar -xzf BenjaminTerm-linux-v1.4.1.tar.gz
-cd BenjaminTerm-linux-v1.4.1
+tar -xzf BenjaminTerm-linux-v1.4.2.tar.gz
+cd BenjaminTerm-linux-v1.4.2
 ./BenjaminTerm-gui
 ```
 
@@ -55,8 +55,8 @@ Optional user-local install:
 
 ```sh
 mkdir -p "$HOME/.local/opt" "$HOME/.local/bin"
-tar -xzf BenjaminTerm-linux-v1.4.1.tar.gz -C "$HOME/.local/opt"
-ln -sf "$HOME/.local/opt/BenjaminTerm-linux-v1.4.1/BenjaminTerm-gui" "$HOME/.local/bin/benjaminterm"
+tar -xzf BenjaminTerm-linux-v1.4.2.tar.gz -C "$HOME/.local/opt"
+ln -sf "$HOME/.local/opt/BenjaminTerm-linux-v1.4.2/BenjaminTerm-gui" "$HOME/.local/bin/benjaminterm"
 benjaminterm
 ```
 
@@ -69,12 +69,12 @@ Each release artifact has a matching `.sha256` file on the GitHub release page.
 On macOS or Linux:
 
 ```sh
-shasum -a 256 BenjaminTerm-macos-v1.4.1.zip
-shasum -a 256 BenjaminTerm-linux-v1.4.1.tar.gz
+shasum -a 256 BenjaminTerm-macos-v1.4.2.zip
+shasum -a 256 BenjaminTerm-linux-v1.4.2.tar.gz
 ```
 
 On Windows PowerShell:
 
 ```powershell
-Get-FileHash .\BenjaminTerm-v1.4.1-setup.exe -Algorithm SHA256
+Get-FileHash .\BenjaminTerm-v1.4.2-setup.exe -Algorithm SHA256
 ```
