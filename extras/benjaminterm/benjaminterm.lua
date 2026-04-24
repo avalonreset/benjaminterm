@@ -284,23 +284,19 @@ config.hyperlink_rules = (function()
   local rules = wezterm.default_hyperlink_rules()
 
   table.insert(rules, {
-    regex = [=[["']([A-Za-z]:(?:[\/][^\/
-\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
+    regex = [=[["']([A-Za-z]:(?:[\/][^\/\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
     format = 'benpath:$1',
     highlight = 1,
   })
 
   table.insert(rules, {
-    regex = [[\b([A-Za-z]:(?:[\/][^\/
-\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?\b]],
+    regex = [[\b([A-Za-z]:(?:[\/][^\/\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?\b]],
     format = 'benpath:$1',
     highlight = 1,
   })
 
   table.insert(rules, {
-    regex = [=[["'](\\[^\/
-\s<>"'`|:*?]+(?:\[^\/
-\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
+    regex = [=[["'](\\[^\/\s<>"'`|:*?]+(?:\[^\/\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
     format = 'benpath:$1',
     highlight = 1,
   })
