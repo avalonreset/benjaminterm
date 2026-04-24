@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/banner.webp" alt="benjaminterm - AI coding terminal built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
+  <img src="assets/banner.webp" alt="benjaminterm, AI coding terminal built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
 </p>
 
-# benjaminterm - AI Coding Terminal for Windows, macOS, and Linux
+# benjaminterm, AI Coding Terminal for Windows, macOS, and Linux
 
 [![Release](https://img.shields.io/github/v/release/avalonreset/benjaminterm?label=release)](https://github.com/avalonreset/benjaminterm/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/avalonreset/benjaminterm/benjaminterm-release.yml?branch=main&label=release%20build)](https://github.com/avalonreset/benjaminterm/actions/workflows/benjaminterm-release.yml)
@@ -245,38 +245,17 @@ The repository includes `.node-version` so local development shells using `fnm` 
 
 ## Build From Source
 
-Required release tooling:
-
-```powershell
-node --version
-# v25.9.0
-```
-
-Windows release build:
-
-```powershell
-cargo build -p wezterm -p wezterm-gui -p wezterm-mux-server -p strip-ansi-escapes --release
-```
-
-Create a local Windows portable zip:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\ci\package-benjaminterm-windows.ps1 -TagName local
-```
-
-The tag-driven release workflow lives at:
-
-`.github/workflows/benjaminterm-release.yml`
+Release builds are produced by the tag-driven workflow at `.github/workflows/benjaminterm-release.yml`.
 
 Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
 ## Other Projects
 
-**[HyperYap](https://github.com/avalonreset/hyperyap)** - Local voice-to-text for Windows with hotkey remapping and smart clipboard image handling. The recommended companion for benjaminterm.
+**[HyperYap](https://github.com/avalonreset/hyperyap)**: Local voice-to-text for Windows with hotkey remapping and smart clipboard image handling. The recommended companion for benjaminterm.
 
-**[gemini-seo](https://github.com/avalonreset/gemini-seo)** - Professional SEO workflows for Gemini CLI.
+**[gemini-seo](https://github.com/avalonreset/gemini-seo)**: Professional SEO workflows for Gemini CLI.
 
-**[codex-seo](https://github.com/avalonreset/codex-seo)** - SEO workflows built for Codex CLI with parallel agents and client-ready reports.
+**[codex-seo](https://github.com/avalonreset/codex-seo)**: SEO workflows built for Codex CLI with parallel agents and client-ready reports.
 
 ## Upstream Credit
 
