@@ -29,7 +29,7 @@ Branding and distribution finalization.
 ### Changed
 
 - Published Windows installer, Windows portable zip, macOS app zip, Linux tarball, and SHA256 checksums on GitHub Releases.
-- Standardized visible app naming as `BenjaminTerm` across installer, shortcuts, shell labels, and macOS app directory naming.
+- Standardized visible app naming as `benjaminterm` across installer, shortcuts, shell labels, and macOS app directory naming.
 - Documented shipped sound cue attribution for Kenney UI Audio and ObsydianX Interface SFX Pack 1.
 - Confirmed the old `kenney-interface` prototype sound set is not included in the shipped artifacts.
 - Declared GitHub Releases as the official distribution channel for all supported platforms.
@@ -67,7 +67,7 @@ Fresh benjaminterm rebuild release.
 ### Added
 
 - Windows installer and portable Windows zip.
-- Best-effort macOS and Linux release artifacts.
+- macOS and Linux release artifacts.
 - benjaminterm release workflow for tags matching `v[0-9]*`.
 - Bundled benjaminterm config loaded as `wezterm.lua` in release packages.
 - Bundled 0xProto font.
@@ -92,7 +92,7 @@ Fresh benjaminterm rebuild release.
 - Expanded README philosophy for the 0xProto decision and the attention cue system.
 - Removed the old smart paste and image paste direction from benjaminterm scope.
 - Delegated speech-to-text and clipboard workflow to HyperYap.
-- Rebranded Windows installer identity to Benjamin Term.
+- Rebranded Windows installer identity to benjaminterm.
 - Added a distinct Windows AppUserModelID: `com.avalonreset.benjaminterm`.
 - Added a distinct Windows installer GUID: `E79835B5-C418-4C79-BD62-3A18E94B22C3`.
 - Disabled installer PATH edits to avoid shadowing vanilla WezTerm.
