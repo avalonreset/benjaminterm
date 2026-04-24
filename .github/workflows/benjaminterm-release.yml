@@ -35,11 +35,11 @@ jobs:
           tag="${GITHUB_REF_NAME}"
           notes_file="$(mktemp)"
           cat > "$notes_file" <<'NOTES'
-          BenjaminTerm release.
+          benjaminterm release.
 
           Windows is the primary supported platform. macOS and Linux artifacts are best-effort portable builds.
 
-          Release infrastructure verifies Node.js 25.9.0 on Windows, macOS, Linux, and release jobs before artifacts are published.
+          This release includes built-in clickable local path handling for terminal output.
           NOTES
 
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
@@ -87,15 +87,15 @@ jobs:
         shell: pwsh
         run: |
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          & $iscc -DMyAppVersion="${{ github.ref_name }}" -F"BenjaminTerm-${{ github.ref_name }}-setup" ci/windows-installer.iss
+          & $iscc -DMyAppVersion="${{ github.ref_name }}" -F"benjaminterm-${{ github.ref_name }}-setup" ci/windows-installer.iss
       - name: Upload Windows release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $files = @()
-          $files += Get-ChildItem -Path dist -Filter "BenjaminTerm-windows-*.zip" -File
-          $files += Get-ChildItem -Path . -Filter "BenjaminTerm-*.exe" -File
+          $files += Get-ChildItem -Path dist -Filter "benjaminterm-windows-*.zip" -File
+          $files += Get-ChildItem -Path . -Filter "benjaminterm-*.exe" -File
           if ($files.Count -eq 0) {
             throw "No Windows release assets were produced."
           }
@@ -154,7 +154,7 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          files=(BenjaminTerm-macos-*.zip)
+          files=(benjaminterm-macos-*.zip)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No macOS release assets were produced." >&2
             exit 1
@@ -199,12 +199,12 @@ jobs:
         run: |
           set -euo pipefail
           tag="${{ github.ref_name }}"
-          pkg="BenjaminTerm-linux-$tag"
+          pkg="benjaminterm-linux-$tag"
           rm -rf "$pkg" "$pkg.tar.gz"
           mkdir -p "$pkg/fonts" "$pkg/sounds"
-          cp target/release/wezterm "$pkg/BenjaminTerm"
-          cp target/release/wezterm-gui "$pkg/BenjaminTerm-gui"
-          cp target/release/wezterm-mux-server "$pkg/BenjaminTerm-mux-server"
+          cp target/release/wezterm "$pkg/benjaminterm"
+          cp target/release/wezterm-gui "$pkg/benjaminterm-gui"
+          cp target/release/wezterm-mux-server "$pkg/benjaminterm-mux-server"
           cp target/release/strip-ansi-escapes "$pkg/strip-ansi-escapes"
           cp extras/benjaminterm/benjaminterm.lua "$pkg/wezterm.lua"
           cp -r assets/fonts/* "$pkg/fonts/"
@@ -217,7 +217,7 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          files=(BenjaminTerm-linux-*.tar.gz)
+          files=(benjaminterm-linux-*.tar.gz)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No Linux release assets were produced." >&2
             exit 1
