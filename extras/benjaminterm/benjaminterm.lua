@@ -4,6 +4,9 @@ local act = wezterm.action
 local config = wezterm.config_builder()
 
 local state_path = wezterm.home_dir .. '/.benjaminterm-state.json'
+local target = wezterm.target_triple or ''
+local is_windows = target:find('windows', 1, true) ~= nil
+local click_open_extensions = 'html?|pdf|md|txt|json|csv|ya?ml|toml|log|png|jpe?g|webp|gif|svg|zip|tar|gz|tgz|xz'
 local builtin_schemes = wezterm.color.get_builtin_schemes()
 
 local function read_file(path)
@@ -51,6 +54,70 @@ local function save_state(st)
     pcall(write_file_atomic, state_path, json)
   end
 end
+
+local function decode_percent_escapes(s)
+  return (s:gsub('%%(%x%x)', function(hex)
+    return string.char(tonumber(hex, 16))
+  end))
+end
+
+local function resolve_clicked_path(uri_path, pane)
+  local path = decode_percent_escapes(uri_path or '')
+  path = path:gsub('^%s+', ''):gsub('%s+$', '')
+  path = path:gsub('^[<%(%[{]+', ''):gsub('[>%)%]}:,;]+$', '')
+  if path == '' then
+    return nil
+  end
+
+  path = path:gsub('^(.-%.[^\\/:]+):%d+:%d+$', '%1')
+  path = path:gsub('^(.-%.[^\\/:]+):%d+$', '%1')
+
+  if is_windows and path:match('^/[A-Za-z]:[\\/]') then
+    path = path:sub(2)
+  end
+
+  if path == '~' or path:match('^~[\\/]') then
+    return wezterm.home_dir .. path:sub(2)
+  end
+
+  if path:match('^[A-Za-z]:[\\/]') or path:match('^\\\\') or path:match('^/') then
+    return path
+  end
+
+  if path:match('^%.[\\/]') then
+    path = path:sub(3)
+  end
+
+  local cwd = pane:get_current_working_dir()
+  if cwd and cwd.scheme == 'file' and type(cwd.file_path) == 'string' and cwd.file_path ~= '' then
+    local base = cwd.file_path
+    if is_windows and base:match('^/[A-Za-z]:[\\/]') then
+      base = base:sub(2)
+    end
+    local sep = base:find('\\', 1, true) and '\\' or '/'
+    if base:sub(-1) ~= '\\' and base:sub(-1) ~= '/' then
+      base = base .. sep
+    end
+    return base .. path
+  end
+
+  return path
+end
+
+wezterm.on('open-uri', function(window, pane, uri)
+  local raw_path = uri:match '^benpath:(.+)$'
+  if not raw_path then
+    return
+  end
+
+  local path = resolve_clicked_path(raw_path, pane)
+  if not path then
+    return false
+  end
+
+  wezterm.open_with(path)
+  return false
+end)
 
 local function is_black_background(value)
   if type(value) ~= 'string' then
@@ -212,6 +279,46 @@ config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = true
 config.default_cursor_style = 'BlinkingBlock'
 config.notification_handling = 'SuppressFromFocusedPane'
+
+config.hyperlink_rules = (function()
+  local rules = wezterm.default_hyperlink_rules()
+
+  table.insert(rules, {
+    regex = [=[["']([A-Za-z]:(?:[\/][^\/
+\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
+    format = 'benpath:$1',
+    highlight = 1,
+  })
+
+  table.insert(rules, {
+    regex = [[\b([A-Za-z]:(?:[\/][^\/
+\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?\b]],
+    format = 'benpath:$1',
+    highlight = 1,
+  })
+
+  table.insert(rules, {
+    regex = [=[["'](\\[^\/
+\s<>"'`|:*?]+(?:\[^\/
+\s<>"'`|:*?]+)+[\/]?)(?::\d+(?::\d+)?)?["']]=],
+    format = 'benpath:$1',
+    highlight = 1,
+  })
+
+  table.insert(rules, {
+    regex = [[\b((?:\./|\.\./|~/)[^\s<>"'`|:*?]+[\/]?)(?::\d+(?::\d+)?)?\b]],
+    format = 'benpath:$1',
+    highlight = 1,
+  })
+
+  table.insert(rules, {
+    regex = [[(?<![/\\])\b([0-9A-Za-z][0-9A-Za-z._-]*\.(?i:]] .. click_open_extensions .. [[))(?::\d+(?::\d+)?)?\b(?![/\\])]],
+    format = 'benpath:$1',
+    highlight = 1,
+  })
+
+  return rules
+end)()
 
 config.keys = {
   { key = 't', mods = 'CTRL|ALT', action = cycle_theme },
