@@ -45,7 +45,7 @@ jobs:
           cat > "$notes_file" <<'NOTES'
           benjaminterm release.
 
-          Windows is the primary supported platform. macOS and Linux artifacts are best-effort portable builds.
+          Windows is the primary supported platform. macOS and Linux artifacts are portable builds.
 
           This release includes built-in clickable local path handling for terminal output.
           NOTES
