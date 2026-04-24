@@ -193,23 +193,23 @@ Package managers are not required. Homebrew, WinGet, Flathub, and Linuxbrew are 
 
 Recommended installer:
 
-`benjaminterm-v1.4.2-setup.exe`
+`benjaminterm-v1.4.3-setup.exe`
 
 Portable zip:
 
-`benjaminterm-windows-v1.4.2.zip`
+`benjaminterm-windows-v1.4.3.zip`
 
 ### macOS
 
 Download:
 
-`benjaminterm-macos-v1.4.2.zip`
+`benjaminterm-macos-v1.4.3.zip`
 
 Install:
 
 ```sh
-unzip benjaminterm-macos-v1.4.2.zip
-mv benjaminterm-macos-v1.4.2/benjaminterm.app /Applications/
+unzip benjaminterm-macos-v1.4.3.zip
+mv benjaminterm-macos-v1.4.3/benjaminterm.app /Applications/
 open /Applications/benjaminterm.app
 ```
 
@@ -224,13 +224,13 @@ open /Applications/benjaminterm.app
 
 Download:
 
-`benjaminterm-linux-v1.4.2.tar.gz`
+`benjaminterm-linux-v1.4.3.tar.gz`
 
 Run:
 
 ```sh
-tar -xzf benjaminterm-linux-v1.4.2.tar.gz
-cd benjaminterm-linux-v1.4.2
+tar -xzf benjaminterm-linux-v1.4.3.tar.gz
+cd benjaminterm-linux-v1.4.3
 ./benjaminterm-gui
 ```
 

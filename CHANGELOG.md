@@ -6,6 +6,22 @@
 
 - Nothing yet.
 
+## v1.4.3
+
+Clickable path and paste recovery release.
+
+### Added
+
+- Documented benjaminterm's built-in clickable local path handling in the README.
+- Added paste undo and redo to the bundled benjaminterm config.
+- `Ctrl+Z` now undoes a recent recorded paste when available and passes through normally otherwise.
+- `Ctrl+Shift+Z` redoes the most recent paste undo.
+
+### Changed
+
+- Restricted the release workflow to tag and manual release events so normal `main` pushes do not produce noisy failed release runs.
+- Disabled Dependabot branch noise for this release-focused repository.
+
 ## v1.4.2
 
 Clickable local path and lowercase naming release.
