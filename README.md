@@ -13,7 +13,7 @@
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
 [![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-BenjaminTerm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, and focused attention routing.
+BenjaminTerm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, and focused attention routing.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -45,7 +45,7 @@ BenjaminTerm is a cross-platform terminal for AI coding sessions, rebuilt from a
 
 Vanilla WezTerm is excellent, but it expects you to assemble your own workflow. BenjaminTerm is the opinionated build: the terminal is already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine does not nag you for fonts.
 
-[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. BenjaminTerm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, and a calmer default environment for agent-heavy work.
+[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. BenjaminTerm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, clickable terminal output, and a calmer default environment for agent-heavy work.
 
 The two projects are meant to be used together. HyperYap is the complete AI workstation layer. BenjaminTerm is the focused terminal inside that workstation. HyperYap includes BenjaminTerm by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
 
@@ -56,6 +56,7 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 | Windows toast click-to-focus | Basic app focus | No | Exact ready session workflow |
 | Theme shuffle-bag | No | Manual Lua config | Built-in |
 | Bundled coding font | Limited | User supplied | 0xProto bundled |
+| Clickable local paths | Limited | Config required | Built-in |
 | Single-line tab behavior | Basic | Config required | Fancy tabs, hidden for one tab |
 | Side-by-side install with WezTerm | N/A | N/A | Yes |
 | HyperYap companion workflow | No | Manual | Designed for it |
@@ -71,6 +72,13 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 - Shows Windows reminder toasts when the ready pane is not focused.
 - Clicking a toast focuses the matching terminal and triggers another visual cue.
 - Typing into the pane clears the pending reminder.
+
+### Clickable Local Paths
+
+- Recognizes Windows absolute paths like `E:\repo\file.txt` and `E:/repo/file.txt`.
+- Recognizes quoted paths, UNC paths, `./`, `../`, `~/`, and common artifact filenames.
+- Handles common `file:line` and `file:line:column` suffixes from editors, compilers, and test output.
+- Opens clicked local files or folders with the operating system default app.
 
 ### Theme Shuffle-Bag
 
@@ -171,23 +179,23 @@ Package managers are not required. Homebrew, WinGet, Flathub, and Linuxbrew are 
 
 Recommended installer:
 
-`BenjaminTerm-v1.4.1-setup.exe`
+`BenjaminTerm-v1.4.2-setup.exe`
 
 Portable zip:
 
-`BenjaminTerm-windows-v1.4.1.zip`
+`BenjaminTerm-windows-v1.4.2.zip`
 
 ### macOS
 
 Download:
 
-`BenjaminTerm-macos-v1.4.1.zip`
+`BenjaminTerm-macos-v1.4.2.zip`
 
 Install:
 
 ```sh
-unzip BenjaminTerm-macos-v1.4.1.zip
-mv BenjaminTerm-macos-v1.4.1/BenjaminTerm.app /Applications/
+unzip BenjaminTerm-macos-v1.4.2.zip
+mv BenjaminTerm-macos-v1.4.2/BenjaminTerm.app /Applications/
 open /Applications/BenjaminTerm.app
 ```
 
@@ -202,13 +210,13 @@ open /Applications/BenjaminTerm.app
 
 Download:
 
-`BenjaminTerm-linux-v1.4.1.tar.gz`
+`BenjaminTerm-linux-v1.4.2.tar.gz`
 
 Run:
 
 ```sh
-tar -xzf BenjaminTerm-linux-v1.4.1.tar.gz
-cd BenjaminTerm-linux-v1.4.1
+tar -xzf BenjaminTerm-linux-v1.4.2.tar.gz
+cd BenjaminTerm-linux-v1.4.2
 ./BenjaminTerm-gui
 ```
 
