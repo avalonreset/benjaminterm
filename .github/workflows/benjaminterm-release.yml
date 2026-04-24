@@ -2,6 +2,11 @@ name: benjaminterm-release
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Release tag to publish
+        required: true
+        default: v1.4.2
   push:
     tags:
       - "v[0-9]*"
@@ -11,11 +16,12 @@ permissions:
 
 env:
   BENJAMINTERM_NODE_VERSION: "25.9.0"
+  RELEASE_TAG: ${{ github.event.inputs.tag_name || github.ref_name }}
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Install Node latest
         uses: actions/setup-node@v5
@@ -32,7 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          tag="${GITHUB_REF_NAME}"
+          tag="$RELEASE_TAG"
           notes_file="$(mktemp)"
           cat > "$notes_file" <<'NOTES'
           benjaminterm release.
@@ -43,11 +49,12 @@ jobs:
           NOTES
 
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes
+            gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
           fi
 
           gh release create "$tag" \
             --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
             --title "$tag" \
             --notes-file "$notes_file" \
             --draft
@@ -55,7 +62,7 @@ jobs:
   windows:
     runs-on: windows-2022
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -79,7 +86,7 @@ jobs:
           cargo build -p wezterm -p wezterm-gui -p wezterm-mux-server -p strip-ansi-escapes --release
       - name: Package portable zip
         shell: pwsh
-        run: ./ci/package-benjaminterm-windows.ps1 -TagName "${{ github.ref_name }}"
+        run: ./ci/package-benjaminterm-windows.ps1 -TagName "$env:RELEASE_TAG"
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup -y
@@ -87,7 +94,7 @@ jobs:
         shell: pwsh
         run: |
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          & $iscc -DMyAppVersion="${{ github.ref_name }}" -F"benjaminterm-${{ github.ref_name }}-setup" ci/windows-installer.iss
+          & $iscc -DMyAppVersion="$env:RELEASE_TAG" -F"benjaminterm-$env:RELEASE_TAG-setup" ci/windows-installer.iss
       - name: Upload Windows release assets
         shell: pwsh
         env:
@@ -109,12 +116,12 @@ jobs:
             $releaseFiles += $checksumPath
           }
 
-          & gh release upload "${{ github.ref_name }}" @releaseFiles --repo "${{ github.repository }}" --clobber
+          & gh release upload "$env:RELEASE_TAG" @releaseFiles --repo "${{ github.repository }}" --clobber
 
   macos:
     runs-on: macos-latest
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -146,7 +153,7 @@ jobs:
           done
       - name: Package app zip
         shell: bash
-        run: TAG_NAME="${{ github.ref_name }}" bash ci/package-benjaminterm-macos.sh
+        run: TAG_NAME="$RELEASE_TAG" bash ci/package-benjaminterm-macos.sh
       - name: Upload macOS release assets
         shell: bash
         env:
@@ -166,12 +173,12 @@ jobs:
             checksum_files+=("$f.sha256")
           done
 
-          gh release upload "$GITHUB_REF_NAME" "${files[@]}" "${checksum_files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          gh release upload "$RELEASE_TAG" "${files[@]}" "${checksum_files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
 
   linux:
     runs-on: ubuntu-24.04
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -198,7 +205,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          tag="${{ github.ref_name }}"
+          tag="$RELEASE_TAG"
           pkg="benjaminterm-linux-$tag"
           rm -rf "$pkg" "$pkg.tar.gz"
           mkdir -p "$pkg/fonts" "$pkg/sounds"
@@ -229,7 +236,7 @@ jobs:
             checksum_files+=("$f.sha256")
           done
 
-          gh release upload "$GITHUB_REF_NAME" "${files[@]}" "${checksum_files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          gh release upload "$RELEASE_TAG" "${files[@]}" "${checksum_files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
 
   publish-release:
     runs-on: ubuntu-latest
@@ -237,7 +244,7 @@ jobs:
       - windows
       - macos
       - linux
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Install Node latest
         uses: actions/setup-node@v5
@@ -252,4 +259,4 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false --latest
+        run: gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
