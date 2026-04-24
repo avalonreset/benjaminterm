@@ -7,6 +7,8 @@ local state_path = wezterm.home_dir .. '/.benjaminterm-state.json'
 local target = wezterm.target_triple or ''
 local is_windows = target:find('windows', 1, true) ~= nil
 local click_open_extensions = 'html?|pdf|md|txt|json|csv|ya?ml|toml|log|png|jpe?g|webp|gif|svg|zip|tar|gz|tgz|xz'
+local paste_undo_window_seconds = 30
+local paste_undo_max_chars = 200000
 local builtin_schemes = wezterm.color.get_builtin_schemes()
 
 local function read_file(path)
@@ -117,6 +119,121 @@ wezterm.on('open-uri', function(window, pane, uri)
 
   wezterm.open_with(path)
   return false
+end)
+
+local function get_clipboard_text()
+  if is_windows then
+    local ok, stdout, _ = wezterm.run_child_process {
+      'powershell.exe',
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      "try { $t = Get-Clipboard -Raw -ErrorAction Stop } catch { $t = $null }; if ($null -ne $t) { [Console]::Out.Write($t) }",
+    }
+    if not ok then
+      return nil
+    end
+    return stdout or ''
+  end
+
+  local commands = {
+    { 'sh', '-lc', "command -v wl-paste >/dev/null 2>&1 && wl-paste --no-newline 2>/dev/null || true" },
+    { 'sh', '-lc', "command -v xclip >/dev/null 2>&1 && xclip -selection clipboard -o 2>/dev/null || true" },
+    { 'sh', '-lc', "command -v xsel >/dev/null 2>&1 && xsel --clipboard --output 2>/dev/null || true" },
+    { 'sh', '-lc', "command -v pbpaste >/dev/null 2>&1 && pbpaste || true" },
+  }
+
+  for _, cmd in ipairs(commands) do
+    local ok, stdout, _ = wezterm.run_child_process(cmd)
+    if ok and type(stdout) == 'string' and stdout ~= '' then
+      return stdout
+    end
+  end
+
+  return nil
+end
+
+local function now_epoch_seconds()
+  return tonumber(wezterm.time.now():format '%s') or 0
+end
+
+local paste_state_by_pane_id = {}
+
+local function state_for_pane(pane)
+  local id = pane:pane_id()
+  local st = paste_state_by_pane_id[id]
+  if not st then
+    st = { undo = {}, redo = {}, last_paste_s = 0 }
+    paste_state_by_pane_id[id] = st
+  end
+  return st
+end
+
+local function char_len(s)
+  if utf8 and utf8.len then
+    local n = utf8.len(s)
+    if n then
+      return n
+    end
+  end
+  return #s
+end
+
+local function send_back_delete(pane, count)
+  local chunk = 4096
+  local bs = string.char(0x08)
+  while count > 0 do
+    local n = math.min(count, chunk)
+    pane:send_text(string.rep(bs, n))
+    count = count - n
+  end
+end
+
+local smart_paste = wezterm.action_callback(function(window, pane)
+  local text = get_clipboard_text()
+  window:perform_action(act.PasteFrom 'Clipboard', pane)
+
+  if not text or text == '' then
+    return
+  end
+
+  local len = char_len(text)
+  if len > paste_undo_max_chars then
+    return
+  end
+
+  local st = state_for_pane(pane)
+  table.insert(st.undo, { text = text, len = len })
+  st.redo = {}
+  st.last_paste_s = now_epoch_seconds()
+end)
+
+local undo_paste = wezterm.action_callback(function(window, pane)
+  local st = state_for_pane(pane)
+  local age = now_epoch_seconds() - (st.last_paste_s or 0)
+  local entry = st.undo[#st.undo]
+
+  if age > paste_undo_window_seconds or not entry then
+    window:perform_action(act.SendKey { key = 'z', mods = 'CTRL' }, pane)
+    return
+  end
+
+  send_back_delete(pane, entry.len)
+  table.remove(st.undo)
+  table.insert(st.redo, entry)
+end)
+
+local redo_paste = wezterm.action_callback(function(window, pane)
+  local st = state_for_pane(pane)
+  local entry = st.redo[#st.redo]
+  if not entry then
+    return
+  end
+
+  pane:send_paste(entry.text)
+  table.remove(st.redo)
+  table.insert(st.undo, entry)
+  st.last_paste_s = now_epoch_seconds()
 end)
 
 local function is_black_background(value)
@@ -321,10 +438,27 @@ config.keys = {
   { key = 'T', mods = 'CTRL|ALT|SHIFT', action = cycle_theme },
   { key = 'mapped:t', mods = 'CTRL|ALT', action = cycle_theme },
   { key = 'mapped:T', mods = 'CTRL|ALT|SHIFT', action = cycle_theme },
+  { key = 'z', mods = 'CTRL', action = undo_paste },
+  { key = 'Z', mods = 'CTRL|SHIFT', action = redo_paste },
+  { key = 'mapped:z', mods = 'CTRL', action = undo_paste },
+  { key = 'mapped:Z', mods = 'CTRL|SHIFT', action = redo_paste },
   { key = '-', mods = 'CTRL', action = act.DecreaseFontSize },
   { key = '=', mods = 'CTRL', action = act.IncreaseFontSize },
   { key = '0', mods = 'CTRL', action = act.ResetFontSize },
 }
+
+if is_windows then
+  table.insert(config.keys, { key = 'v', mods = 'CTRL', action = smart_paste })
+  table.insert(config.keys, { key = 'mapped:v', mods = 'CTRL', action = smart_paste })
+  table.insert(config.keys, { key = 'V', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'v', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'Insert', mods = 'SHIFT', action = smart_paste })
+else
+  table.insert(config.keys, { key = 'V', mods = 'CTRL|SHIFT', action = smart_paste })
+  table.insert(config.keys, { key = 'v', mods = 'CTRL|SHIFT', action = smart_paste })
+  table.insert(config.keys, { key = 'Insert', mods = 'SHIFT', action = smart_paste })
+  table.insert(config.keys, { key = 'v', mods = 'ALT', action = act.PasteFrom 'Clipboard' })
+end
 
 if wezterm.target_triple and wezterm.target_triple:find('windows', 1, true) then
   config.win32_system_backdrop = 'Disable'

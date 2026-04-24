@@ -5,7 +5,7 @@
 # benjaminterm, AI Coding Terminal for Windows, macOS, and Linux
 
 [![Release](https://img.shields.io/github/v/release/avalonreset/benjaminterm?label=release)](https://github.com/avalonreset/benjaminterm/releases/latest)
-[![Build](https://img.shields.io/github/actions/workflow/status/avalonreset/benjaminterm/benjaminterm-release.yml?branch=main&label=release%20build)](https://github.com/avalonreset/benjaminterm/actions/workflows/benjaminterm-release.yml)
+[![Release Workflow](https://img.shields.io/github/actions/workflow/status/avalonreset/benjaminterm/benjaminterm-release.yml?label=release%20workflow)](https://github.com/avalonreset/benjaminterm/actions/workflows/benjaminterm-release.yml)
 [![License](https://img.shields.io/github/license/avalonreset/benjaminterm)](LICENSE.md)
 [![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/benjaminterm/releases/latest)
 [![macOS](https://img.shields.io/badge/macos-release%20artifact-111)](https://github.com/avalonreset/benjaminterm/releases/latest)
@@ -13,7 +13,7 @@
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
 [![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-benjaminterm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, and focused attention routing.
+benjaminterm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, paste undo, and focused attention routing.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -56,7 +56,8 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 | Windows toast click-to-focus | Basic app focus | No | Exact ready session workflow |
 | Theme shuffle-bag | No | Manual Lua config | Built-in |
 | Bundled coding font | Limited | User supplied | 0xProto bundled |
-| Clickable local paths | Limited | Config required | Built-in |
+| Clickable local paths | Limited | Config required | Built-in, agent-output aware |
+| Paste undo and redo | No | Manual Lua config | Built-in |
 | Single-line tab behavior | Basic | Config required | Fancy tabs, hidden for one tab |
 | Side-by-side install with WezTerm | N/A | N/A | Yes |
 | HyperYap companion workflow | No | Manual | Designed for it |
@@ -75,10 +76,20 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 
 ### Clickable Local Paths
 
+benjaminterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults, so agent output, build logs, test failures, and generated artifact names are easier to act on.
+
 - Recognizes Windows absolute paths like `E:\repo\file.txt` and `E:/repo/file.txt`.
 - Recognizes quoted paths, UNC paths, `./`, `../`, `~/`, and common artifact filenames.
 - Handles common `file:line` and `file:line:column` suffixes from editors, compilers, and test output.
 - Opens clicked local files or folders with the operating system default app.
+
+### Paste Undo And Redo
+
+- Records text pasted through benjaminterm's paste binding on a per-pane basis.
+- `Ctrl+Z` undoes the most recent recorded paste for a short window after the paste.
+- `Ctrl+Shift+Z` redoes the most recent paste undo.
+- Passes `Ctrl+Z` through to the running shell or app when there is no recent paste to undo.
+- Avoids OS toast noise while correcting accidental large or wrong-window pastes.
 
 ### Theme Shuffle-Bag
 
@@ -157,6 +168,9 @@ The standalone release exists because the terminal is useful on its own. The ful
 |--------|--------|
 | Cycle theme | `Ctrl+Alt+T` |
 | Cycle theme alternate | `Ctrl+Alt+Shift+T` |
+| Paste with undo tracking | `Ctrl+V` on Windows, `Ctrl+Shift+V` on macOS and Linux |
+| Undo recent paste | `Ctrl+Z` shortly after paste |
+| Redo recent paste undo | `Ctrl+Shift+Z` |
 | Font size down | `Ctrl+-` |
 | Font size up | `Ctrl+=` |
 | Reset font size | `Ctrl+0` |
