@@ -8,6 +8,8 @@ on:
         required: true
         default: v1.4.2
   push:
+    branches:
+      - main
     tags:
       - "v[0-9]*"
 
@@ -16,12 +18,12 @@ permissions:
 
 env:
   BENJAMINTERM_NODE_VERSION: "25.9.0"
-  RELEASE_TAG: ${{ github.event.inputs.tag_name || github.ref_name }}
+  RELEASE_TAG: ${{ github.event.inputs.tag_name || (github.ref == 'refs/heads/main' && 'v1.4.2') || github.ref_name }}
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release: trigger v1.4.2')
     steps:
       - name: Install Node latest
         uses: actions/setup-node@v5
@@ -62,7 +64,7 @@ jobs:
   windows:
     runs-on: windows-2022
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release: trigger v1.4.2')
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -121,7 +123,7 @@ jobs:
   macos:
     runs-on: macos-latest
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release: trigger v1.4.2')
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -178,7 +180,7 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     needs: prepare-release
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release: trigger v1.4.2')
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -244,7 +246,7 @@ jobs:
       - windows
       - macos
       - linux
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release: trigger v1.4.2')
     steps:
       - name: Install Node latest
         uses: actions/setup-node@v5
