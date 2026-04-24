@@ -12,7 +12,7 @@ if ([string]::IsNullOrWhiteSpace($TagName)) {
 }
 
 $releaseDir = Join-Path $TargetDir $Configuration
-$packageName = "BenjaminTerm-windows-$TagName"
+$packageName = "benjaminterm-windows-$TagName"
 $packageDir = Join-Path $DistDir $packageName
 $zipPath = Join-Path $DistDir "$packageName.zip"
 
@@ -29,9 +29,9 @@ New-Item -ItemType Directory -Force -Path (Join-Path $packageDir "fonts") | Out-
 New-Item -ItemType Directory -Force -Path (Join-Path $packageDir "sounds") | Out-Null
 
 $requiredFiles = @(
-  @{ Source = "wezterm.exe"; Destination = "BenjaminTerm.exe" },
-  @{ Source = "wezterm-gui.exe"; Destination = "BenjaminTerm-gui.exe" },
-  @{ Source = "wezterm-mux-server.exe"; Destination = "BenjaminTerm-mux-server.exe" },
+  @{ Source = "wezterm.exe"; Destination = "benjaminterm.exe" },
+  @{ Source = "wezterm-gui.exe"; Destination = "benjaminterm-gui.exe" },
+  @{ Source = "wezterm-mux-server.exe"; Destination = "benjaminterm-mux-server.exe" },
   @{ Source = "strip-ansi-escapes.exe"; Destination = "strip-ansi-escapes.exe" }
 )
 
