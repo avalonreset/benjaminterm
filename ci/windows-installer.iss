@@ -2,11 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; vim:ts=2:sw=2:et:
 
-#define MyAppName "BenjaminTerm"
+#define MyAppName "benjaminterm"
 ;#define MyAppVersion "1.5"
 #define MyAppPublisher "Avalon Reset"
-#define MyAppURL "https://github.com/avalonreset/BenjaminTerm"
-#define MyAppExeName "BenjaminTerm-gui.exe"
+#define MyAppURL "https://github.com/avalonreset/benjaminterm"
+#define MyAppExeName "benjaminterm-gui.exe"
 #define MyAppUserModelID "com.avalonreset.benjaminterm"
 
 [Setup]
@@ -20,14 +20,14 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\BenjaminTerm
+DefaultDirName={autopf}\benjaminterm
 DisableProgramGroupPage=yes
 ;LicenseFile=..\LICENSE.md
 ; Remove the following line to run in administrative install mode (install for all users.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..
-OutputBaseFilename=BenjaminTerm-Setup
+OutputBaseFilename=benjaminterm-setup
 SetupIconFile=..\assets\windows\terminal.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
@@ -46,11 +46,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [InstallDelete]
 Type: files; Name: "{autoprograms}\Benjamin Term.lnk"
 Type: files; Name: "{autodesktop}\Benjamin Term.lnk"
+Type: files; Name: "{autoprograms}\BenjaminTerm.lnk"
+Type: files; Name: "{autodesktop}\BenjaminTerm.lnk"
 
 [Files]
-Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; DestName: "BenjaminTerm.exe"; Flags: ignoreversion
-Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; DestName: "BenjaminTerm-gui.exe"; Flags: ignoreversion
-Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; DestName: "BenjaminTerm-mux-server.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; DestName: "benjaminterm.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; DestName: "benjaminterm-gui.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; DestName: "benjaminterm-mux-server.exe"; Flags: ignoreversion
 Source: "..\assets\windows\mesa\opengl32.dll"; DestDir: "{app}\mesa"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -73,15 +75,18 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Root: HKA; Subkey: "Software\Classes\Drive\shell\Open Benjamin Term here"; Flags: deletekey
 Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open Benjamin Term here"; Flags: deletekey
 Root: HKA; Subkey: "Software\Classes\Directory\shell\Open Benjamin Term here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BenjaminTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BenjaminTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BenjaminTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BenjaminTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BenjaminTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BenjaminTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BenjaminTerm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BenjaminTerm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BenjaminTerm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BenjaminTerm here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BenjaminTerm here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BenjaminTerm here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
 
 [Code]
 { https://stackoverflow.com/a/46609047/149111 }
