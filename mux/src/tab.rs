@@ -478,6 +478,29 @@ fn adjust_y_size(tree: &mut Tree, mut y_adjust: isize, cell_dimensions: &Termina
     }
 }
 
+/// Rankenstein Suite (M13): subtract `pane_top_inset_rows` from the
+/// terminal size we hand to a pane, so the inner process believes it
+/// has fewer rows than the visual allocation reserves. The freed top
+/// row becomes the in-pane title strip space; the GUI render code
+/// shifts pane content down by the same amount so nothing is clipped.
+///
+/// Returns the size as-is when the inset is 0 (default upstream
+/// behavior), or when the requested size is too small to safely shrink.
+fn apply_pane_top_inset(size: TerminalSize) -> TerminalSize {
+    let inset = configuration().pane_top_inset_rows;
+    if inset == 0 || size.rows <= inset + 1 {
+        return size;
+    }
+    let cell_h = size.pixel_height.checked_div(size.rows).unwrap_or(0);
+    TerminalSize {
+        rows: size.rows - inset,
+        cols: size.cols,
+        pixel_width: size.pixel_width,
+        pixel_height: size.pixel_height.saturating_sub(cell_h * inset),
+        dpi: size.dpi,
+    }
+}
+
 fn apply_sizes_from_splits(tree: &Tree, size: &TerminalSize) {
     match tree {
         Tree::Empty => return,
@@ -491,7 +514,7 @@ fn apply_sizes_from_splits(tree: &Tree, size: &TerminalSize) {
             apply_sizes_from_splits(&*right, &data.second);
         }
         Tree::Leaf(pane) => {
-            pane.resize(*size).ok();
+            pane.resize(apply_pane_top_inset(*size)).ok();
         }
     }
 }
@@ -904,7 +927,7 @@ impl TabInner {
             self.size_before_zoom = size;
             if let Some(pane) = self.get_active_pane() {
                 pane.set_zoomed(true);
-                pane.resize(size).ok();
+                pane.resize(apply_pane_top_inset(size)).ok();
                 self.zoomed.replace(pane);
             }
         }
@@ -1144,7 +1167,7 @@ impl TabInner {
 
         if let Some(zoomed) = &self.zoomed {
             self.size = size;
-            zoomed.resize(size).ok();
+            zoomed.resize(apply_pane_top_inset(size)).ok();
         } else {
             let dims = cell_dimensions(&size);
             let (min_x, min_y) = compute_min_size(self.pane.as_mut().unwrap());
@@ -1359,7 +1382,7 @@ impl TabInner {
 
             if cursor.is_leaf() {
                 // Apply our size to the tty
-                cursor.leaf_mut().map(|pane| pane.resize(pane_size));
+                cursor.leaf_mut().map(|pane| pane.resize(apply_pane_top_inset(pane_size)));
             } else {
                 self.apply_pane_size(pane_size, &mut cursor);
             }
@@ -1666,13 +1689,13 @@ impl TabInner {
                         };
 
                         if let Some(unsplit) = cursor.leaf_mut() {
-                            unsplit.resize(size).ok();
+                            unsplit.resize(apply_pane_top_inset(size)).ok();
                         } else {
                             self.apply_pane_size(size, &mut cursor);
                         }
                     } else if !dead_panes.is_empty() {
                         // Apply our revised size to the tty
-                        pane.resize(pane_size).ok();
+                        pane.resize(apply_pane_top_inset(pane_size)).ok();
                     }
 
                     pane_index += 1;
@@ -2057,8 +2080,8 @@ impl TabInner {
                 (pane, existing_pane)
             };
 
-            pane1.resize(split_info.first)?;
-            pane2.resize(split_info.second.clone())?;
+            pane1.resize(apply_pane_top_inset(split_info.first))?;
+            pane2.resize(apply_pane_top_inset(split_info.second.clone()))?;
 
             *cursor.leaf_mut().unwrap() = pane1;
 

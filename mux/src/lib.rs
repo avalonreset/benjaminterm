@@ -1293,7 +1293,23 @@ impl Mux {
 
         let tab = Arc::new(Tab::new(&size));
         tab.assign_pane(&pane);
-        pane.resize(size)?;
+        // Rankenstein Suite (M13): subtract pane_top_inset_rows from
+        // the size we hand to the inner terminal — the freed top row
+        // is reserved for the in-pane title strip.
+        let inset = config::configuration().pane_top_inset_rows;
+        let pane_size = if inset > 0 && size.rows > inset + 1 {
+            let cell_h = size.pixel_height.checked_div(size.rows).unwrap_or(0);
+            TerminalSize {
+                rows: size.rows - inset,
+                cols: size.cols,
+                pixel_width: size.pixel_width,
+                pixel_height: size.pixel_height.saturating_sub(cell_h * inset),
+                dpi: size.dpi,
+            }
+        } else {
+            size
+        };
+        pane.resize(pane_size)?;
         self.add_tab_and_active_pane(&tab)?;
         self.add_tab_to_window(&tab, window_id)?;
 

@@ -686,12 +686,19 @@ impl super::TermWindow {
                             is_click_to_focus_pane = true;
                         }
                         WMEK::Move => {
+                            // Rankenstein Suite (M12): on hover, always
+                            // route the move event to the pane under
+                            // the cursor so hyperlink hover-detection
+                            // hits the right pane. We DON'T change
+                            // focus though — typing still goes to
+                            // whichever pane was last clicked. That
+                            // way hover works on any pane regardless
+                            // of which one is "active".
+                            pane = Arc::clone(&pos.pane);
                             if self.config.pane_focus_follows_mouse {
                                 let mux = Mux::get();
                                 mux.get_active_tab_for_window(self.mux_window_id)
                                     .map(|tab| tab.set_active_idx(pos.index));
-
-                                pane = Arc::clone(&pos.pane);
                                 context.invalidate();
                             }
                         }
@@ -705,11 +712,21 @@ impl super::TermWindow {
                     }
                 }
                 column = column.saturating_sub(pos.left);
-                row = row.saturating_sub(pos.top as i64);
+                // M13: subtract the title-strip inset so terminal
+                // cell coordinates match the shifted-down content
+                // area. Clicks that land on the strip itself
+                // saturate to 0 — codex doesn't act on row-0 clicks
+                // in its TUI, so this is harmless.
+                let inset_rows = self.config.pane_top_inset_rows as i64;
+                row = row.saturating_sub(pos.top as i64).saturating_sub(inset_rows);
                 break;
             } else if is_already_captured && pane.pane_id() == pos.pane.pane_id() {
                 column = column.saturating_sub(pos.left);
-                row = row.saturating_sub(pos.top as i64).max(0);
+                let inset_rows = self.config.pane_top_inset_rows as i64;
+                row = row
+                    .saturating_sub(pos.top as i64)
+                    .saturating_sub(inset_rows)
+                    .max(0);
 
                 if position.column < pos.left {
                     x_pixel_offset -= self.render_metrics.cell_size.width
@@ -785,6 +802,10 @@ impl super::TermWindow {
                 stable_row,
             ));
 
+        // M12: by this point, `pane` has been reassigned to the pane
+        // under the cursor (see Move branch of the for loop above), and
+        // column/row are pane-local. So the hyperlink lookup naturally
+        // hits the right pane.
         pane.apply_hyperlinks(stable_row..stable_row + 1, &self.config.hyperlink_rules);
 
         struct FindCurrentLink {
@@ -813,20 +834,26 @@ impl super::TermWindow {
         pane.with_lines_mut(stable_row..stable_row + 1, &mut find_link);
         let new_highlight = find_link.current;
 
-        match (self.current_highlight.as_ref(), new_highlight) {
-            (Some(old_link), Some(new_link)) if Arc::ptr_eq(&old_link, &new_link) => {
-                // Unchanged
-            }
-            (None, None) => {
-                // Unchanged
-            }
-            (_, rhs) => {
-                // We're hovering over a different URL, so invalidate and repaint
-                // so that we render the underline correctly
-                self.current_highlight = rhs;
-                context.invalidate();
-            }
+        // Rankenstein Suite (M12): track which pane the hover landed
+        // on so the render gating can scope the underline to that pane
+        // only — even when it's not the active pane.
+        let new_pane_id = new_highlight.as_ref().map(|_| pane.pane_id());
+        let url_changed = match (self.current_highlight.as_ref(), new_highlight.as_ref()) {
+            (Some(old_link), Some(new_link)) => !Arc::ptr_eq(&old_link, &new_link),
+            (None, None) => false,
+            _ => true,
         };
+        let pane_changed = self.current_highlight_pane_id != new_pane_id;
+        if url_changed || pane_changed {
+            self.current_highlight = new_highlight;
+            self.current_highlight_pane_id = new_pane_id;
+            // No cache clear: the cache values now record
+            // current_highlight_pane_id, and the invalidation check at
+            // each cache-hit site compares both URL and pane. Stale
+            // entries are detected per-line on demand instead of nuking
+            // every cached line every hover-frame.
+            context.invalidate();
+        }
 
         let outside_window = event.coords.x < 0
             || event.coords.x as usize > self.dimensions.pixel_width

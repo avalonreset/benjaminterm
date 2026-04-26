@@ -206,6 +206,14 @@ pub struct PaneState {
     last_input: Option<Instant>,
     idle_text_glow_start: Option<Instant>,
     idle_text_glow_animation_active: bool,
+    /// Rankenstein Suite (M3): per-pane agent attention timestamp.
+    /// Set by start_visual_attention_for_pane; read by
+    /// paint_window_borders to draw the per-pane attention pulse.
+    /// Distinct from bell_start because the visual_bell render path
+    /// .take()s bell_start on the next frame (when its short fade
+    /// animation completes), making it useless for sustaining our
+    /// 900ms attention border.
+    pub agent_attention_start: Option<Instant>,
     pub mouse_terminal_coords: Option<(ClickPosition, StableRowIndex)>,
 }
 
@@ -423,6 +431,11 @@ pub struct TermWindow {
 
     /// The URL over which we are currently hovering
     current_highlight: Option<Arc<Hyperlink>>,
+    /// Rankenstein Suite (M12): pane_id of the pane the cursor was over
+    /// when current_highlight was set. The render path gates the hover
+    /// underline on (line's pane_id == this) so hovering a URL in one
+    /// pane doesn't highlight matching URLs in OTHER panes.
+    pub current_highlight_pane_id: Option<PaneId>,
 
     quad_generation: usize,
     shape_generation: usize,
@@ -731,6 +744,7 @@ impl TermWindow {
             current_mouse_capture: None,
             last_mouse_click: None,
             current_highlight: None,
+            current_highlight_pane_id: None,
             quad_generation: 0,
             shape_generation: 0,
             shape_cache: RefCell::new(LfuCache::new(
@@ -1348,6 +1362,7 @@ impl TermWindow {
 
                 self.clear_all_overlays();
                 self.current_highlight.take();
+                self.current_highlight_pane_id = None;
                 self.invalidate_fancy_tab_bar();
                 self.invalidate_modal();
 

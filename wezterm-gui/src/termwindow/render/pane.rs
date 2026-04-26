@@ -109,6 +109,15 @@ impl crate::TermWindow {
 
         let cell_width = self.render_metrics.cell_size.width as f32;
         let cell_height = self.render_metrics.cell_size.height as f32;
+        // Rankenstein Suite (M13): pane content is rendered shifted
+        // down by this many pixels to leave a strip at the top of
+        // each pane for the in-pane title. The pane's terminal has
+        // already been resized down by `pane_top_inset_rows` rows
+        // (see mux/tab.rs::apply_pane_top_inset) so iterating
+        // `dims.viewport_rows` covers exactly the shifted content
+        // area and never overflows.
+        let inset_rows = self.config.pane_top_inset_rows;
+        let inset_pixels = inset_rows as f32 * cell_height;
         let background_rect = {
             // We want to fill out to the edges of the splits
             let (x, width_delta) = if pos.left == 0 {
@@ -299,7 +308,11 @@ impl crate::TermWindow {
                 let pane_left = padding_left
                     + border.left.get() as f32
                     + (pos.left as f32 * cell_width);
-                let pane_top = top_pixel_y + (pos.top as f32 * cell_height);
+                // M13: pane_top includes the title-strip inset so
+                // the cursor row glow lines up with terminal content
+                // rendered below the strip.
+                let pane_top =
+                    top_pixel_y + (pos.top as f32 * cell_height) + inset_pixels;
                 let row_y = pane_top + (cursor_row as f32 * cell_height);
                 let pane_width = pos.width as f32 * cell_width;
 
@@ -382,7 +395,10 @@ impl crate::TermWindow {
                 selrange,
                 rectangular,
                 dims,
-                top_pixel_y,
+                // M13: shift the per-line render origin down by the
+                // title-strip inset so terminal row 0 lands below
+                // the strip instead of underneath it.
+                top_pixel_y: top_pixel_y + inset_pixels,
                 left_pixel_x,
                 pos,
                 pane_id,
@@ -490,10 +506,19 @@ impl crate::TermWindow {
                             .map(|i| Instant::now() >= i)
                             .unwrap_or(false);
                         let hover_changed = if cached_quad.invalidate_on_hover_change {
+                            // Invalidate if URL changed OR if THIS line's
+                            // pane_match status would flip (was matching
+                            // the hover pane, now isn't, or vice versa).
+                            // Avoids thrashing every pane's cache on
+                            // every hover-pane change.
+                            let was_match = cached_quad.current_highlight_pane_id
+                                == Some(self.pane_id);
+                            let now_match = self.term_window.current_highlight_pane_id
+                                == Some(self.pane_id);
                             !same_hyperlink(
                                 cached_quad.current_highlight.as_ref(),
                                 self.term_window.current_highlight.as_ref(),
-                            )
+                            ) || was_match != now_match
                         } else {
                             false
                         };
@@ -511,6 +536,7 @@ impl crate::TermWindow {
                     let next_due = self.term_window.has_animation.borrow_mut().take();
 
                     let shape_key = LineToEleShapeCacheKey {
+                        pane_id: self.pane_id,
                         shape_hash,
                         shape_generation: quad_key.shape_generation,
                         composing: if self.cursor.y == stable_row && self.pos.is_active {
@@ -582,6 +608,11 @@ impl crate::TermWindow {
                         invalidate_on_hover_change: render_result.invalidate_on_hover_change,
                         current_highlight: if render_result.invalidate_on_hover_change {
                             self.term_window.current_highlight.clone()
+                        } else {
+                            None
+                        },
+                        current_highlight_pane_id: if render_result.invalidate_on_hover_change {
+                            self.term_window.current_highlight_pane_id
                         } else {
                             None
                         },
@@ -687,13 +718,19 @@ impl crate::TermWindow {
             },
         );
 
+        // M13: terminal content sits BELOW the title strip — shift
+        // y down by inset and shrink height by the same amount so
+        // the bottom of pane content matches the pane's visual edge.
+        let inset_rows = self.config.pane_top_inset_rows;
+        let inset_pixels = inset_rows as f32 * cell_height;
         // Bounds for the terminal cells
         let content_rect = euclid::rect(
             padding_left + border.left.get() as f32 - (cell_width / 2.0)
                 + (pos.left as f32 * cell_width),
-            top_pixel_y + (pos.top as f32 * cell_height) - (cell_height / 2.0),
+            top_pixel_y + (pos.top as f32 * cell_height) - (cell_height / 2.0)
+                + inset_pixels,
             pos.width as f32 * cell_width,
-            pos.height as f32 * cell_height,
+            (pos.height as f32 * cell_height) - inset_pixels,
         );
 
         let palette = pos.pane.palette();

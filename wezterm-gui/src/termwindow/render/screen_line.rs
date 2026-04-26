@@ -121,10 +121,16 @@ impl crate::TermWindow {
             if let Some(entry) = cache.get(shape_key) {
                 let expired = entry.expires.map(|i| Instant::now() >= i).unwrap_or(false);
                 let hover_changed = if entry.invalidate_on_hover_change {
+                    // Same pane_match-flip logic as in pane.rs cache.
+                    let line_pane = params.pane.as_ref().map(|p| p.pane_id());
+                    let was_match = entry.current_highlight_pane_id == line_pane
+                        && line_pane.is_some();
+                    let now_match = self.current_highlight_pane_id == line_pane
+                        && line_pane.is_some();
                     !same_hyperlink(
                         entry.current_highlight.as_ref(),
                         self.current_highlight.as_ref(),
-                    )
+                    ) || was_match != now_match
                 } else {
                     false
                 };
@@ -148,6 +154,7 @@ impl crate::TermWindow {
                 window_is_transparent: params.window_is_transparent,
                 reverse_video: params.dims.reverse_video,
                 shape_key: &params.shape_key,
+                pane_id: params.pane.as_ref().map(|p| p.pane_id()),
             };
 
             let (shaped, invalidate_on_hover) = self.build_line_element_shape(params)?;
@@ -766,8 +773,15 @@ impl crate::TermWindow {
                 let attrs = &cluster.attrs;
                 let style = self.fonts.match_style(params.config, attrs);
                 let hyperlink = attrs.hyperlink();
-                let is_highlited_hyperlink =
-                    same_hyperlink(hyperlink, self.current_highlight.as_ref());
+                // Rankenstein Suite (M12): gate hover highlight to the
+                // specific pane the cursor is over. Hyperlinks in other
+                // panes that match the same URL must NOT light up.
+                let pane_matches_hover = match (params.pane_id, self.current_highlight_pane_id) {
+                    (Some(line_pane), Some(hover_pane)) => line_pane == hover_pane,
+                    _ => false,
+                };
+                let is_highlited_hyperlink = pane_matches_hover
+                    && same_hyperlink(hyperlink, self.current_highlight.as_ref());
                 if hyperlink.is_some() {
                     invalidate_on_hover_change = true;
                 }
@@ -906,6 +920,11 @@ impl crate::TermWindow {
                     invalidate_on_hover_change,
                     current_highlight: if invalidate_on_hover_change {
                         self.current_highlight.clone()
+                    } else {
+                        None
+                    },
+                    current_highlight_pane_id: if invalidate_on_hover_change {
+                        self.current_highlight_pane_id
                     } else {
                         None
                     },

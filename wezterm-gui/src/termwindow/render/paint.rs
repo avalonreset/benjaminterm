@@ -271,6 +271,12 @@ impl crate::TermWindow {
 
         self.paint_window_borders(&mut layers)
             .context("paint_window_borders")?;
+        // Rankenstein Suite (M13): in-pane title strip. Drawn after
+        // pane content + borders + tab bar so it overlays the pane's
+        // first row regardless of scroll state. Shares the layers
+        // allocator with M3 borders so it uses the same proven path.
+        self.paint_in_pane_titles(&mut layers)
+            .context("paint_in_pane_titles")?;
         drop(layers);
         self.paint_modal().context("paint_modal")?;
 

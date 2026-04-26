@@ -38,6 +38,7 @@ pub mod borders;
 pub mod corners;
 pub mod draw;
 pub mod fancy_tab_bar;
+pub mod in_pane_title;
 pub mod paint;
 pub mod pane;
 pub mod screen_line;
@@ -81,6 +82,11 @@ pub struct LineQuadCacheValue {
     // Only set if the line contains any hyperlinks, so
     // that we can invalidate when it changes
     pub current_highlight: Option<Arc<Hyperlink>>,
+    /// Rankenstein Suite (M12): pane_id that owned the highlight when
+    /// this entry was rendered. We invalidate when the current hover
+    /// pane differs (so a hover-pane change re-renders even if the URL
+    /// is the same).
+    pub current_highlight_pane_id: Option<mux::pane::PaneId>,
     pub invalidate_on_hover_change: bool,
 }
 
@@ -91,10 +97,17 @@ pub struct LineToElementParams<'a> {
     pub window_is_transparent: bool,
     pub reverse_video: bool,
     pub shape_key: &'a Option<LineToEleShapeCacheKey>,
+    /// Rankenstein Suite (M12): pane_id of the pane this line belongs
+    /// to. Used to gate hover-underline rendering so a URL hover in
+    /// one pane doesn't highlight matching URLs in adjacent panes.
+    pub pane_id: Option<mux::pane::PaneId>,
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
 pub struct LineToEleShapeCacheKey {
+    /// Rankenstein Suite (M12): include pane_id so panes don't share
+    /// cache entries.
+    pub pane_id: mux::pane::PaneId,
     pub shape_hash: [u8; 16],
     pub composing: Option<(usize, String)>,
     pub shape_generation: usize,
@@ -106,6 +119,8 @@ pub struct LineToElementShapeItem {
     // Only set if the line contains any hyperlinks, so
     // that we can invalidate when it changes
     pub current_highlight: Option<Arc<Hyperlink>>,
+    /// Rankenstein Suite (M12): pane_id at render time.
+    pub current_highlight_pane_id: Option<mux::pane::PaneId>,
     pub invalidate_on_hover_change: bool,
 }
 

@@ -544,6 +544,19 @@ pub struct Config {
     #[dynamic(default)]
     pub window_padding: WindowPadding,
 
+    /// Rankenstein Suite (M13): how many cell rows to reserve at the top
+    /// of every pane for an in-pane title strip. The terminal inside the
+    /// pane is sized down by this many rows (so the inner process sees
+    /// the smaller area and never writes to the reserved row), and the
+    /// pane content is rendered shifted down by this many cell rows. The
+    /// reserved space is filled by `paint_in_pane_titles` with a strip
+    /// matching the pane's terminal background and the agent name in the
+    /// terminal's foreground color and font.
+    ///
+    /// Default 0 = upstream behavior (no inset, no strip).
+    #[dynamic(default)]
+    pub pane_top_inset_rows: usize,
+
     #[dynamic(default)]
     pub window_content_alignment: WindowContentAlignment,
 
