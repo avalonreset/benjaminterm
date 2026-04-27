@@ -67,8 +67,8 @@ Codex emits OSC 9 natively when it finishes a turn. Plain shells and other agent
 
 ## Dismissal
 
-The cursor-row glow clears in `mark_pane_input` when the founder types. `last_input.replace(now)`, `idle_text_glow_start.take()`, animation deactivated. The border pulse runs its own short fade animation (`TOAST_ATTENTION_PULSE_DURATION ≈ 900ms`) and then settles. Sound is one-shot and does not need dismissal.
+The cursor-row glow clears in `mark_pane_input` when the user types. `last_input.replace(now)`, `idle_text_glow_start.take()`, animation deactivated. The border pulse runs its own short fade animation (`TOAST_ATTENTION_PULSE_DURATION ≈ 900ms`) and then settles. Sound is one-shot and does not need dismissal.
 
 ## Multi-window behavior
 
-Per-pane state is intentionally focus-independent. A pane in window A can fire its features while window B is focused; the founder sees window A's border pulse + glow on the corresponding pane and hears the cue, draws attention there. Toast notifications additionally use `notification_handling = SuppressFromFocusedPane` to suppress popups for the pane the founder is already on.
+Per-pane state is intentionally focus-independent. A pane in window A can fire its features while window B is focused; the user sees window A's border pulse + glow on the corresponding pane and hears the cue, draws attention there. Toast notifications additionally use `notification_handling = SuppressFromFocusedPane` to suppress popups for the pane the user is already on.
