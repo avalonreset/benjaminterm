@@ -6,6 +6,19 @@
 
 - Nothing yet.
 
+## v1.4.4
+
+Resilient first-launch release.
+
+### Added
+
+- Auto-discovers `~/.benjaminterm.lua` (and `<config-dir>/benjaminterm.lua`, and `<exe-dir>/benjaminterm.lua` on Windows) before falling back to the wezterm-named config files. Users with a `.benjaminterm.lua` no longer need to launch with `--config-file` to load their config.
+- Bundled pwsh shell-integration script at `assets/shell-integration/benjaminterm.ps1`. Sourcing it from `$PROFILE` enables the attention pulse, cursor-row glow, and soft-cue sound on every prompt without any user-side per-pane wiring.
+
+### Fixed
+
+- Plain BenjaminTerm launches (no `--config-file`, no launcher) now find the user's full daily config automatically. Previously the binary only looked for `.wezterm.lua`, leaving users with `.benjaminterm.lua` silently running on the wezterm-named fallback (or no config at all).
+
 ## v1.4.3
 
 Clickable path and paste recovery release.
