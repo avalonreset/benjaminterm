@@ -433,6 +433,40 @@ impl UserData for MuxPane {
             let pane = this.resolve(&mux)?;
             Ok(pane.tty_name())
         });
+
+        // Pin this pane's containing horizontal split at a fixed cell
+        // width. When set, the mux's window-resize logic will keep this
+        // pane (the first child of its split) at exactly N cells and
+        // absorb all width delta into the second child. Splitter drags
+        // still work and update the pin to the new width.
+        //
+        // No-op (returns false) if this pane is not the first child of
+        // any horizontal split — e.g., a top-level lone pane or the right
+        // side of a split. Pass nil to clear the pin.
+        methods.add_method("set_pinned_width_cols", |_, this, cols: Option<usize>| {
+            let mux = Mux::get();
+            let (_domain_id, _window_id, tab_id) = mux
+                .resolve_pane_id(this.0)
+                .ok_or_else(|| mlua::Error::external(format!("pane {} not found", this.0)))?;
+            let tab = mux
+                .get_tab(tab_id)
+                .ok_or_else(|| mlua::Error::external(format!("tab {tab_id} not found")))?;
+            Ok(tab.set_pinned_first_cols_for_pane(this.0, cols))
+        });
+
+        // Read the current pin value for this pane's containing horizontal
+        // split. Returns nil when the pin is unset, or when the pane is
+        // not the first child of any horizontal split.
+        methods.add_method("get_pinned_width_cols", |_, this, _: ()| {
+            let mux = Mux::get();
+            let (_domain_id, _window_id, tab_id) = mux
+                .resolve_pane_id(this.0)
+                .ok_or_else(|| mlua::Error::external(format!("pane {} not found", this.0)))?;
+            let tab = mux
+                .get_tab(tab_id)
+                .ok_or_else(|| mlua::Error::external(format!("tab {tab_id} not found")))?;
+            Ok(tab.get_pinned_first_cols_for_pane(this.0))
+        });
     }
 }
 
