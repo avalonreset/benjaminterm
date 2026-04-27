@@ -246,6 +246,8 @@ impl crate::TermWindow {
             let mut per_pane = self.pane_state(pane_id);
             per_pane.last_input.replace(Instant::now());
             per_pane.idle_text_glow_start.take();
+            per_pane.idle_text_glow_row.take();
+            per_pane.idle_text_glow_freeze_at.take();
             per_pane.idle_text_glow_animation_active = false;
         }
         self.quad_generation += 1;

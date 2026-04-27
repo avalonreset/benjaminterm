@@ -824,7 +824,13 @@ pub struct Config {
     #[dynamic(default = "default_true")]
     pub quit_when_all_windows_are_closed: bool,
 
-    #[dynamic(default = "default_true")]
+    // BenjaminTerm default flipped to false: Notification Noise Policy
+    // (BenjaminTerm-Wiki/wiki/concepts/Notification Noise Policy.md and
+    // Terminal Defaults.md) explicitly suppress missing-glyph toast
+    // warnings — common emoji codepoints in agent output (Claude Code,
+    // Codex) repeatedly fired the upstream warning. Power users can
+    // still set warn_about_missing_glyphs = true in their config.
+    #[dynamic(default)]
     pub warn_about_missing_glyphs: bool,
 
     #[dynamic(default)]

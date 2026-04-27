@@ -214,6 +214,19 @@ pub struct PaneState {
     /// animation completes), making it useless for sustaining our
     /// 900ms attention border.
     pub agent_attention_start: Option<Instant>,
+    /// Stable row the idle-text-glow is anchored to. Set initially in
+    /// start_visual_attention_for_pane to the cursor row at OSC 9
+    /// fire time, then live-updated each render frame until
+    /// idle_text_glow_freeze_at expires — that gives a TUI agent
+    /// (Claude Code, Codex) time to do its final repaint and land the
+    /// cursor on the actual input row before we lock the glow there.
+    /// Cleared in mark_pane_input when the founder starts typing.
+    pub idle_text_glow_row: Option<StableRowIndex>,
+    /// Until this instant, the renderer keeps live-updating
+    /// idle_text_glow_row to the current cursor row. After this
+    /// instant the row is frozen, so subsequent TUI repaints can't
+    /// drag the glow back off the founder's input line.
+    pub idle_text_glow_freeze_at: Option<Instant>,
     pub mouse_terminal_coords: Option<(ClickPosition, StableRowIndex)>,
 }
 

@@ -302,7 +302,27 @@ impl crate::TermWindow {
 
         if idle_text_glow_intensity > 0.0 && pos.is_active {
             let stable_top = current_viewport.unwrap_or(dims.physical_top);
-            let cursor_row = cursor.y - stable_top;
+            // Glow anchor: live-track the cursor for the first ~1s
+            // after the ready signal fires (gives a TUI agent like
+            // Claude Code / Codex time to do its final repaint and
+            // land the cursor on the real input row), then lock to
+            // whatever row the cursor settled on. After lock, TUI
+            // repaints that move the cursor cannot drag the glow.
+            let glow_anchor_y = {
+                let now = Instant::now();
+                let mut state = self.pane_state(pane_id);
+                let still_tracking = state
+                    .idle_text_glow_freeze_at
+                    .map(|t| now < t)
+                    .unwrap_or(false);
+                if still_tracking {
+                    state.idle_text_glow_row = Some(cursor.y);
+                    cursor.y
+                } else {
+                    state.idle_text_glow_row.unwrap_or(cursor.y)
+                }
+            };
+            let cursor_row = glow_anchor_y - stable_top;
 
             if cursor_row >= 0 && cursor_row < dims.viewport_rows as StableRowIndex {
                 let pane_left = padding_left

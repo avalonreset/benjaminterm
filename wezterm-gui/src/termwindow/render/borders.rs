@@ -58,11 +58,23 @@ impl crate::TermWindow {
                 self.agent_attention_tab_until
                     .borrow_mut()
                     .insert(tab_id, Instant::now() + TOAST_ATTENTION_PULSE_DURATION);
+                // Initial snapshot of the cursor row at OSC 9 fire
+                // time. The renderer keeps live-updating this for
+                // ~1s afterwards (until idle_text_glow_freeze_at) so
+                // a TUI agent's final repaint — which typically lands
+                // the cursor on its input row a beat after the ready
+                // signal — gets caught before we lock the row down.
+                let initial_row = mux
+                    .get_pane(pane_id)
+                    .map(|pane| pane.get_cursor_position().y);
                 {
                     let now = Instant::now();
                     let mut pane_state = self.pane_state(pane_id);
                     pane_state.bell_start.replace(now);
                     pane_state.idle_text_glow_start.replace(now);
+                    pane_state.idle_text_glow_row = initial_row;
+                    pane_state.idle_text_glow_freeze_at =
+                        Some(now + std::time::Duration::from_millis(1000));
                     // Rankenstein Suite (M3): dedicated attention timestamp
                     // not cleared by the visual_bell renderer.
                     pane_state.agent_attention_start.replace(now);
