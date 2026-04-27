@@ -6,6 +6,24 @@
 
 - Nothing yet.
 
+## v1.4.5
+
+Cursor-row glow stability + Claude Code attention bridge.
+
+### Added
+
+- Bundled `assets/shell-integration/benjaminterm-claude-stop.ps1` — a Claude Code Stop hook helper that walks the parent process chain, attaches to the conpty BenjaminTerm reads, and writes OSC 9 directly to it. Lets Claude Code emit the agent ready signal the same way Codex does natively, so the per-pane attention features fire when Claude finishes a turn. Wire it from `~/.claude/settings.json` (recipe in the wiki).
+- New wiki page `BenjaminTerm-Wiki/wiki/concepts/Attention Trigger Lifecycle.md` documenting the OSC 9 trigger, the per-shell integration patterns, and the anti-patterns to never re-introduce (idle-detection, BEL→attention).
+
+### Changed
+
+- `assets/shell-integration/benjaminterm.ps1` now emits OSC 9 (the spec's agent ready signal per Mandatory Requirements M1) instead of plain BEL, matching what Codex emits natively.
+- Missing-glyph warning toast (`warn_about_missing_glyphs`) now defaults to `false`, honoring the documented Notification Noise Policy. Common emoji codepoints in agent output (Claude Code, Codex) no longer fire the upstream warning.
+
+### Fixed
+
+- Cursor-row idle glow no longer drifts mid-render as TUI agents (Claude Code, Codex) move the cursor around their UI. The renderer now live-tracks the cursor for ~1s after the ready signal — enough for the agent's final repaint to land the cursor on its real input row — then locks the glow to that row until the founder types.
+
 ## v1.4.4
 
 Resilient first-launch release.
