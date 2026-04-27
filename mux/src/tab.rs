@@ -321,6 +321,58 @@ where
     }
 }
 
+/// Returns the pane_id of the leftmost (deepest-first-child) leaf in the
+/// subtree, or None if the subtree contains no leaves.
+fn leftmost_pane_id(tree: &Tree) -> Option<PaneId> {
+    match tree {
+        Tree::Empty => None,
+        Tree::Leaf(pane) => Some(pane.pane_id()),
+        Tree::Node { left, .. } => leftmost_pane_id(left),
+    }
+}
+
+/// Walks the tree looking for a horizontal split node whose first
+/// (leftmost) leaf descendant is `pane_id`, and sets `pinned_first_cols`
+/// on that node. Returns true if the target was found and updated.
+fn set_pin_for_pane(tree: &mut Tree, pane_id: PaneId, cols: Option<usize>) -> bool {
+    match tree {
+        Tree::Empty | Tree::Leaf(_) => false,
+        Tree::Node { data: None, left, right } => {
+            set_pin_for_pane(left, pane_id, cols) || set_pin_for_pane(right, pane_id, cols)
+        }
+        Tree::Node { data: Some(data), left, right } => {
+            if data.direction == SplitDirection::Horizontal
+                && leftmost_pane_id(left) == Some(pane_id)
+            {
+                data.pinned_first_cols = cols;
+                return true;
+            }
+            set_pin_for_pane(left, pane_id, cols) || set_pin_for_pane(right, pane_id, cols)
+        }
+    }
+}
+
+/// Read the pinned_first_cols value for the horizontal split where
+/// `pane_id` is the first leaf descendant. Returns None if the pane is
+/// not the first child of any horizontal split, or if it is but the pin
+/// is unset.
+fn get_pin_for_pane(tree: &Tree, pane_id: PaneId) -> Option<usize> {
+    match tree {
+        Tree::Empty | Tree::Leaf(_) => None,
+        Tree::Node { data: None, left, right } => {
+            get_pin_for_pane(left, pane_id).or_else(|| get_pin_for_pane(right, pane_id))
+        }
+        Tree::Node { data: Some(data), left, right } => {
+            if data.direction == SplitDirection::Horizontal
+                && leftmost_pane_id(left) == Some(pane_id)
+            {
+                return data.pinned_first_cols;
+            }
+            get_pin_for_pane(left, pane_id).or_else(|| get_pin_for_pane(right, pane_id))
+        }
+    }
+}
+
 /// Computes the minimum (x, y) size based on the panes in this portion
 /// of the tree.
 fn compute_min_size(tree: &mut Tree) -> (usize, usize) {
@@ -780,6 +832,23 @@ impl Tab {
 
     pub fn get_zoomed_pane(&self) -> Option<Arc<dyn Pane>> {
         self.inner.lock().get_zoomed_pane()
+    }
+
+    /// Pin the first child of the horizontal split where `pane_id` is the
+    /// leftmost leaf to N cols (or unset with None). Window-resize will
+    /// then absorb width delta entirely into the second child instead of
+    /// proportionally redistributing across the pinned pane. Returns true
+    /// if the pin was found and updated; false if `pane_id` is not the
+    /// first child of any horizontal split (no-op).
+    pub fn set_pinned_first_cols_for_pane(&self, pane_id: PaneId, cols: Option<usize>) -> bool {
+        self.inner.lock().set_pinned_first_cols_for_pane(pane_id, cols)
+    }
+
+    /// Read the pin value for the horizontal split where `pane_id` is the
+    /// first leaf descendant. Returns None when not pinned, or when the
+    /// pane is not the first child of any horizontal split.
+    pub fn get_pinned_first_cols_for_pane(&self, pane_id: PaneId) -> Option<usize> {
+        self.inner.lock().get_pinned_first_cols_for_pane(pane_id)
     }
 }
 
@@ -2127,6 +2196,24 @@ impl TabInner {
     fn get_zoomed_pane(&self) -> Option<Arc<dyn Pane>> {
         self.zoomed.clone()
     }
+
+    /// Set `pinned_first_cols` on the horizontal split where `pane_id` is
+    /// the first leaf descendant. No-op if the pane is not the first child
+    /// of any horizontal split.
+    fn set_pinned_first_cols_for_pane(&mut self, pane_id: PaneId, cols: Option<usize>) -> bool {
+        if let Some(tree) = self.pane.as_mut() {
+            set_pin_for_pane(tree, pane_id, cols)
+        } else {
+            false
+        }
+    }
+
+    /// Read the pin value for the horizontal split where `pane_id` is the
+    /// first leaf descendant. Returns None if not pinned or not a first child.
+    fn get_pinned_first_cols_for_pane(&self, pane_id: PaneId) -> Option<usize> {
+        let tree = self.pane.as_ref()?;
+        get_pin_for_pane(tree, pane_id)
+    }
 }
 
 /// This type is used directly by the codec, take care to bump
@@ -2558,5 +2645,103 @@ mod test {
     #[test]
     fn tab_is_send_and_sync() {
         assert!(is_send_and_sync::<Tab>());
+    }
+
+    /// Build a tab with one horizontal split: panes 1 (left) and 2 (right),
+    /// using the requested total dimensions. Returns the tab and the two
+    /// pane_ids so tests can reference them by id.
+    fn build_horizontal_split_tab(cols: usize, rows: usize) -> (Tab, PaneId, PaneId) {
+        let size = TerminalSize {
+            rows,
+            cols,
+            pixel_width: cols * 10,
+            pixel_height: rows * 25,
+            dpi: 96,
+        };
+        let tab = Tab::new(&size);
+        tab.assign_pane(&FakePane::new(1, size));
+
+        let split = tab
+            .compute_split_size(
+                0,
+                SplitRequest {
+                    direction: SplitDirection::Horizontal,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        tab.split_and_insert(
+            0,
+            SplitRequest {
+                direction: SplitDirection::Horizontal,
+                ..Default::default()
+            },
+            FakePane::new(2, split.second),
+        )
+        .unwrap();
+
+        (tab, 1, 2)
+    }
+
+    #[test]
+    fn pinned_first_cols_round_trip() {
+        let (tab, first_id, second_id) = build_horizontal_split_tab(80, 24);
+
+        // Initially unpinned.
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), None);
+
+        // Set pin on the first child.
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), Some(32));
+
+        // Clear pin.
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, None));
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), None);
+
+        // Setting on the second child is a no-op (false return) because
+        // it's not the first child of any horizontal split.
+        assert!(!tab.set_pinned_first_cols_for_pane(second_id, Some(32)));
+        assert_eq!(tab.get_pinned_first_cols_for_pane(second_id), None);
+    }
+
+    #[test]
+    fn pinned_first_cols_excludes_from_resize() {
+        // 80x24 split horizontally: first ≈ 39 cols, second ≈ 40 cols
+        // (split_dimension halves with the +1 boundary cell).
+        let (tab, first_id, _) = build_horizontal_split_tab(80, 24);
+        let panes = tab.iter_panes();
+        let initial_first = panes[0].width;
+        let initial_second = panes[1].width;
+
+        // Pin the first child to 32.
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+
+        // Shrink the tab by 20 cols. Pin should hold the first at 32, all
+        // delta should go into the second child.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 60,
+            pixel_width: 600,
+            pixel_height: 600,
+            dpi: 96,
+        });
+
+        let panes = tab.iter_panes();
+        // We can't predict exact baseline given split_dimension's rounding,
+        // but the invariant is:
+        //   first.width == 32
+        //   second.width == initial_second - (initial_first + initial_second - (32 + new_second))
+        // Simpler: pin held → first is 32, total fits 60.
+        assert_eq!(panes[0].width, 32, "first pane locked at pin value");
+        let total = panes[0].width + panes[1].width;
+        // Account for boundary cell in tab width.
+        assert!(total + 1 == 60 || total == 60, "total width = 60 (with boundary)");
+
+        // Window also stayed correct relative to the pin: confirm the pin is
+        // still recorded after resize (algorithm shouldn't clobber it).
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), Some(32));
+
+        // sanity: original baseline values to silence unused warnings
+        let _ = (initial_first, initial_second);
     }
 }
