@@ -1,4 +1,4 @@
-BenjaminTerm bundles some components provided by third parties.
+BENTERM bundles some components provided by third parties.
 Their respective licenses and source notes are included in this directory and
 near the bundled assets.
 

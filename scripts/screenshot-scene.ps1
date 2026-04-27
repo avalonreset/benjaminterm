@@ -42,10 +42,10 @@ try {
 }
 
 Clear-Host
-[Console]::Title = "BenjaminTerm - Screenshot Scene"
+[Console]::Title = "BENTERM - Screenshot Scene"
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-Line "  BEN  ${bold}BENJAMINTERM$reset$cyan  v1.4.1  $dim//  AI coding terminal for Windows, macOS, and Linux" $red
+Line "  BEN  ${bold}BENTERM$reset$cyan  v1.4.1  $dim//  AI coding terminal for Windows, macOS, and Linux" $red
 Line "  ================================================================================================" $blue
 Blank
 
@@ -66,7 +66,7 @@ Line "  $blue|$reset $gold*$reset Toast click jumps back to the exact session   
 Line "  $blue+---------------------------------------------+   +---------------------------------------+" $blue
 Blank
 
-Line "  $red+-- BENJAMINTERM OWNS -------------------------+   +-- HYPERYAP OWNS ----------------------+" $red
+Line "  $red+-- BENTERM OWNS -------------------------+   +-- HYPERYAP OWNS ----------------------+" $red
 Line "  $red|$reset Terminal identity and release packaging           $red|$reset   Voice to text and dictation             $red|" $white
 Line "  $red|$reset 0xProto bundled as the default coding font        $red|$reset   Smart paste and image routing           $red|" $white
 Line "  $red|$reset Per-pane sound identity for agent completion      $red|$reset   App-wide hotkeys and capture workflow    $red|" $white
@@ -75,13 +75,13 @@ Line "  $red+---------------------------------------------+   +-----------------
 Blank
 
 Line "  $dim No package-manager maze. No missing-font nags. No guessing which terminal is ready.$reset" $dim
-Line "  $dim Official download: https://github.com/avalonreset/BenjaminTerm/releases/latest$reset" $dim
+Line "  $dim Official download: https://github.com/avalonreset/BENTERM/releases/latest$reset" $dim
 Line "  $dim Companion project: https://github.com/avalonreset/hyperyap$reset" $dim
 Blank
 
 Line "  $cyan>$reset $white waiting for the next prompt $green#$reset" $white
 
-if (-not $NoHold -and $env:BENJAMINTERM_SCREENSHOT_NO_HOLD -ne "1") {
+if (-not $NoHold -and $env:BENTERM_SCREENSHOT_NO_HOLD -ne "1") {
   while ($true) {
     Start-Sleep -Seconds 3600
   }

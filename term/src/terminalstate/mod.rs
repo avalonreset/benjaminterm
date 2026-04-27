@@ -785,7 +785,7 @@ impl TerminalState {
             }
         }
         if self.focus_tracking {
-            // BenjaminTerm is optimized for agent CLIs that suppress their own
+            // BENTERM is optimized for agent CLIs that suppress their own
             // completion notifications while the terminal reports focus. Keep
             // those apps in their notification-capable path while preserving
             // the terminal's real focus state internally.

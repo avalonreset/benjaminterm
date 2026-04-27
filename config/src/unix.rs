@@ -122,11 +122,11 @@ impl UnixDomain {
                     .file_name()
                     .map(|name| name.to_string_lossy().to_ascii_lowercase())
                     .unwrap_or_default();
-                let mux_name = if exe_name.contains("benjaminterm") {
+                let mux_name = if exe_name.contains("benterm") {
                     if cfg!(windows) {
-                        "BenjaminTerm-mux-server.exe"
+                        "BENTERM-mux-server.exe"
                     } else {
-                        "benjaminterm-mux-server"
+                        "benterm-mux-server"
                     }
                 } else if cfg!(windows) {
                     "wezterm-mux-server.exe"

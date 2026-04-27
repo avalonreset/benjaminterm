@@ -151,12 +151,23 @@ mod imp {
     fn candidate_sound_dirs() -> Vec<PathBuf> {
         let mut dirs = vec![];
 
-        if let Some(dir) = std::env::var_os("BENJAMINTERM_SOUND_DIR") {
+        if let Some(dir) = std::env::var_os("BENTERM_SOUND_DIR") {
             dirs.push(PathBuf::from(dir));
         }
 
         if let Ok(exe) = std::env::current_exe() {
             if let Some(parent) = exe.parent() {
+                dirs.push(
+                    parent
+                        .join("assets")
+                        .join("sounds")
+                        .join("benterm-soft-cues"),
+                );
+                dirs.push(parent.join("sounds").join("benterm-soft-cues"));
+                // v2.0.0 backwards compat: pre-rename installs shipped
+                // benjaminterm-soft-cues. Keep the fallback for one
+                // release cycle so existing installs don't go silent
+                // mid-upgrade. Drop in v3.0.0.
                 dirs.push(
                     parent
                         .join("assets")
@@ -167,6 +178,13 @@ mod imp {
             }
         }
 
+        dirs.push(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("..")
+                .join("assets")
+                .join("sounds")
+                .join("benterm-soft-cues"),
+        );
         dirs.push(
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("..")

@@ -587,7 +587,7 @@ impl TextStyle {
 
         let mut default_font = FontAttributes::default();
 
-        // Insert our bundled BenjaminTerm default as a fallback
+        // Insert our bundled BENTERM default as a fallback
         // in case their preference doesn't match anything.
         // But don't add it if it is already their preference.
         if !font.iter().any(|f| *f == default_font) {

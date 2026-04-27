@@ -19,15 +19,15 @@ fi
 
 case $OSTYPE in
   darwin*)
-    zipdir=BenjaminTerm-macos-$TAG_NAME
+    zipdir=BENTERM-macos-$TAG_NAME
     if [[ "$BUILD_REASON" == "Schedule" ]] ; then
-      zipname=BenjaminTerm-macos-nightly.zip
+      zipname=BENTERM-macos-nightly.zip
     else
       zipname=$zipdir.zip
     fi
     rm -rf $zipdir $zipname
     mkdir $zipdir
-    appdir="$zipdir/BenjaminTerm.app"
+    appdir="$zipdir/BENTERM.app"
     cp -r assets/macos/WezTerm.app "$appdir"
     # Omit MetalANGLE for now; it's a bit laggy compared to CGL,
     # and on M1/Big Sur, CGL is implemented in terms of Metal anyway
@@ -38,9 +38,9 @@ case $OSTYPE in
     mkdir -p "$appdir/Contents/MacOS/sounds"
     cp -r assets/shell-integration/* "$appdir/Contents/Resources"
     cp -r assets/shell-completion "$appdir/Contents/Resources"
-    cp extras/benjaminterm/benjaminterm.lua "$appdir/Contents/MacOS/wezterm.lua"
+    cp extras/benterm/benterm.lua "$appdir/Contents/MacOS/wezterm.lua"
     cp -r assets/fonts/* "$appdir/Contents/MacOS/fonts/"
-    cp -r assets/sounds/benjaminterm-soft-cues "$appdir/Contents/MacOS/sounds/"
+    cp -r assets/sounds/benterm-soft-cues "$appdir/Contents/MacOS/sounds/"
     tic -xe wezterm -o "$appdir/Contents/Resources/terminfo" termwiz/data/wezterm.terminfo
 
     for bin in wezterm wezterm-mux-server wezterm-gui strip-ansi-escapes ; do
@@ -48,9 +48,9 @@ case $OSTYPE in
       # a single-arch package to be built
       if [[ -f $TARGET_DIR/release/$bin ]] ; then
         case "$bin" in
-          wezterm) dest=BenjaminTerm ;;
-          wezterm-gui) dest=BenjaminTerm-gui ;;
-          wezterm-mux-server) dest=BenjaminTerm-mux-server ;;
+          wezterm) dest=BENTERM ;;
+          wezterm-gui) dest=BENTERM-gui ;;
+          wezterm-mux-server) dest=BENTERM-mux-server ;;
           *) dest=$bin ;;
         esac
         cp $TARGET_DIR/release/$bin "$appdir/Contents/MacOS/$dest"
@@ -61,9 +61,9 @@ case $OSTYPE in
         # In that situation, we have two architectures to assemble into a
         # Universal ("fat") binary, so we use the `lipo` tool for that.
         case "$bin" in
-          wezterm) dest=BenjaminTerm ;;
-          wezterm-gui) dest=BenjaminTerm-gui ;;
-          wezterm-mux-server) dest=BenjaminTerm-mux-server ;;
+          wezterm) dest=BENTERM ;;
+          wezterm-gui) dest=BENTERM-gui ;;
+          wezterm-mux-server) dest=BENTERM-mux-server ;;
           *) dest=$bin ;;
         esac
         lipo $TARGET_DIR/*/release/$bin -output "$appdir/Contents/MacOS/$dest" -create
@@ -119,13 +119,13 @@ case $OSTYPE in
 
     ;;
   msys)
-    zipdir=BenjaminTerm-windows-$TAG_NAME
+    zipdir=BENTERM-windows-$TAG_NAME
     if [[ "$BUILD_REASON" == "Schedule" ]] ; then
-      zipname=BenjaminTerm-windows-nightly.zip
-      instname=BenjaminTerm-nightly-setup
+      zipname=BENTERM-windows-nightly.zip
+      instname=BENTERM-nightly-setup
     else
       zipname=$zipdir.zip
-      instname=BenjaminTerm-${TAG_NAME}-setup
+      instname=BENTERM-${TAG_NAME}-setup
     fi
     rm -rf $zipdir $zipname
     mkdir $zipdir
@@ -141,9 +141,9 @@ case $OSTYPE in
       assets/windows/angle/libEGL.dll \
       assets/windows/angle/libGLESv2.dll \
       $zipdir
-    cp extras/benjaminterm/benjaminterm.lua $zipdir/wezterm.lua
+    cp extras/benterm/benterm.lua $zipdir/wezterm.lua
     cp -r assets/fonts/* $zipdir/fonts/
-    cp -r assets/sounds/benjaminterm-soft-cues $zipdir/sounds/
+    cp -r assets/sounds/benterm-soft-cues $zipdir/sounds/
     mkdir $zipdir/mesa
     cp $TARGET_DIR/release/mesa/opengl32.dll \
         $zipdir/mesa

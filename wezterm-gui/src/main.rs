@@ -1174,7 +1174,7 @@ fn run() -> anyhow::Result<()> {
     {
         unsafe {
             ::windows::Win32::UI::Shell::SetCurrentProcessExplicitAppUserModelID(
-                ::windows::core::PCWSTR(wide_string("com.avalonreset.benjaminterm").as_ptr()),
+                ::windows::core::PCWSTR(wide_string("com.avalonreset.benterm").as_ptr()),
             )
             .unwrap();
         }

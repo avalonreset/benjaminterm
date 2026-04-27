@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: BenjaminTerm releases
-    url: https://github.com/avalonreset/BenjaminTerm/releases
-    about: Download the latest BenjaminTerm preview release
+  - name: BENTERM releases
+    url: https://github.com/avalonreset/BENTERM/releases
+    about: Download the latest BENTERM preview release
   - name: Upstream WezTerm docs
     url: https://wezterm.org/
-    about: Core terminal behavior still follows WezTerm unless BenjaminTerm documents a customization
+    about: Core terminal behavior still follows WezTerm unless BENTERM documents a customization

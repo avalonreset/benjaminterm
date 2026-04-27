@@ -776,11 +776,11 @@ fn delegate_to_gui(saver: UmaskSaver) -> anyhow::Result<()> {
         .file_name()
         .map(|name| name.to_string_lossy().to_ascii_lowercase())
         .unwrap_or_default();
-    let exe_name = if current_name.contains("benjaminterm") {
+    let exe_name = if current_name.contains("benterm") {
         if cfg!(windows) {
-            "BenjaminTerm-gui.exe"
+            "BENTERM-gui.exe"
         } else {
-            "benjaminterm-gui"
+            "benterm-gui"
         }
     } else if cfg!(windows) {
         "wezterm-gui.exe"

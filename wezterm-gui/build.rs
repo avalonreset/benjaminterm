@@ -119,12 +119,12 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName",      "Avalon Reset\0"
-            VALUE "FileDescription",  "BenjaminTerm - agent-focused terminal emulator\0"
+            VALUE "FileDescription",  "BENTERM - agent-focused terminal emulator\0"
             VALUE "FileVersion",      "{version}\0"
-            VALUE "LegalCopyright",   "BenjaminTerm contributors; WezTerm contributors, MIT licensed\0"
-            VALUE "InternalName",     "BenjaminTerm-gui\0"
-            VALUE "OriginalFilename", "BenjaminTerm-gui.exe\0"
-            VALUE "ProductName",      "BenjaminTerm\0"
+            VALUE "LegalCopyright",   "BENTERM contributors; WezTerm contributors, MIT licensed\0"
+            VALUE "InternalName",     "BENTERM-gui\0"
+            VALUE "OriginalFilename", "BENTERM-gui.exe\0"
+            VALUE "ProductName",      "BENTERM\0"
             VALUE "ProductVersion",   "{version}\0"
         END
     END

@@ -2,12 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; vim:ts=2:sw=2:et:
 
-#define MyAppName "benjaminterm"
+#define MyAppName "benterm"
 ;#define MyAppVersion "1.5"
 #define MyAppPublisher "Avalon Reset"
-#define MyAppURL "https://github.com/avalonreset/benjaminterm"
-#define MyAppExeName "benjaminterm-gui.exe"
-#define MyAppUserModelID "com.avalonreset.benjaminterm"
+#define MyAppURL "https://github.com/avalonreset/benterm"
+#define MyAppExeName "benterm-gui.exe"
+#define MyAppUserModelID "com.avalonreset.benterm"
 
 [Setup]
 AppId={{E79835B5-C418-4C79-BD62-3A18E94B22C3}
@@ -20,14 +20,14 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\benjaminterm
+DefaultDirName={autopf}\benterm
 DisableProgramGroupPage=yes
 ;LicenseFile=..\LICENSE.md
 ; Remove the following line to run in administrative install mode (install for all users.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..
-OutputBaseFilename=benjaminterm-setup
+OutputBaseFilename=benterm-setup
 SetupIconFile=..\assets\windows\terminal.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
@@ -44,24 +44,24 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [InstallDelete]
-Type: files; Name: "{autoprograms}\Benjamin Term.lnk"
-Type: files; Name: "{autodesktop}\Benjamin Term.lnk"
-Type: files; Name: "{autoprograms}\BenjaminTerm.lnk"
-Type: files; Name: "{autodesktop}\BenjaminTerm.lnk"
+Type: files; Name: "{autoprograms}\BENTERM.lnk"
+Type: files; Name: "{autodesktop}\BENTERM.lnk"
+Type: files; Name: "{autoprograms}\BENTERM.lnk"
+Type: files; Name: "{autodesktop}\BENTERM.lnk"
 
 [Files]
-Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; DestName: "benjaminterm.exe"; Flags: ignoreversion
-Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; DestName: "benjaminterm-gui.exe"; Flags: ignoreversion
-Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; DestName: "benjaminterm-mux-server.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm.exe"; DestDir: "{app}"; DestName: "benterm.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-gui.exe"; DestDir: "{app}"; DestName: "benterm-gui.exe"; Flags: ignoreversion
+Source: "..\target\release\wezterm-mux-server.exe"; DestDir: "{app}"; DestName: "benterm-mux-server.exe"; Flags: ignoreversion
 Source: "..\assets\windows\mesa\opengl32.dll"; DestDir: "{app}\mesa"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\angle\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\conhost\conpty.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\conhost\OpenConsole.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\target\release\strip-ansi-escapes.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\extras\benjaminterm\benjaminterm.lua"; DestDir: "{app}"; DestName: "wezterm.lua"; Flags: ignoreversion
+Source: "..\extras\benterm\benterm.lua"; DestDir: "{app}"; DestName: "wezterm.lua"; Flags: ignoreversion
 Source: "..\assets\fonts\*"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\assets\sounds\benjaminterm-soft-cues\*"; DestDir: "{app}\sounds\benjaminterm-soft-cues"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\assets\sounds\benterm-soft-cues\*"; DestDir: "{app}\sounds\benterm-soft-cues"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -72,21 +72,21 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open Benjamin Term here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open Benjamin Term here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open Benjamin Term here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BenjaminTerm here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BenjaminTerm here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BenjaminTerm here"; Flags: deletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benjaminterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open BENTERM here"; Flags: deletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Drive\shell\Open benterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\"""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\Open benterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benterm here"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benterm here"; ValueName: "icon"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\Directory\shell\Open benterm here\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" start --no-auto-connect --cwd ""%V\\"""; Flags: uninsdeletekey;
 
 [Code]
 { https://stackoverflow.com/a/46609047/149111 }

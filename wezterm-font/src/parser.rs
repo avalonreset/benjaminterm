@@ -814,7 +814,7 @@ impl ParsedFont {
 }
 
 /// In case the user has a broken configuration, or no configuration,
-/// BenjaminTerm bundles 0xProto as its selected default font.
+/// BENTERM bundles 0xProto as its selected default font.
 /// This function loads it.
 pub(crate) fn load_built_in_fonts(font_info: &mut Vec<ParsedFont>) -> anyhow::Result<()> {
     #[allow(unused_macros)]

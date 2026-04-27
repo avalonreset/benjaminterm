@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 static NEXT_TOAST_ID: AtomicU64 = AtomicU64::new(1);
 
 pub(crate) fn group_for_pane(pane_id: PaneId) -> String {
-    format!("benjaminterm-agent-ready-pane-{pane_id}")
+    format!("benterm-agent-ready-pane-{pane_id}")
 }
 
 pub(crate) fn tag_for_ready_event(pane_id: PaneId) -> String {

@@ -661,18 +661,18 @@ pub struct Config {
     #[dynamic(default)]
     pub text_min_contrast_ratio: Option<f32>,
 
-    /// BenjaminTerm: subtly pulse pane text after a ready attention event,
+    /// BENTERM: subtly pulse pane text after a ready attention event,
     /// making the next prompt easier to reacquire visually.
     #[dynamic(default = "default_true")]
-    pub benjaminterm_idle_text_glow: bool,
-    #[dynamic(default = "default_benjaminterm_idle_text_glow_delay_ms")]
-    pub benjaminterm_idle_text_glow_delay_ms: u64,
-    #[dynamic(default = "default_benjaminterm_idle_text_glow_input_suppression_ms")]
-    pub benjaminterm_idle_text_glow_input_suppression_ms: u64,
-    #[dynamic(default = "default_benjaminterm_idle_text_glow_period_ms")]
-    pub benjaminterm_idle_text_glow_period_ms: u64,
-    #[dynamic(default = "default_benjaminterm_idle_text_glow_strength")]
-    pub benjaminterm_idle_text_glow_strength: f32,
+    pub benterm_idle_text_glow: bool,
+    #[dynamic(default = "default_benterm_idle_text_glow_delay_ms")]
+    pub benterm_idle_text_glow_delay_ms: u64,
+    #[dynamic(default = "default_benterm_idle_text_glow_input_suppression_ms")]
+    pub benterm_idle_text_glow_input_suppression_ms: u64,
+    #[dynamic(default = "default_benterm_idle_text_glow_period_ms")]
+    pub benterm_idle_text_glow_period_ms: u64,
+    #[dynamic(default = "default_benterm_idle_text_glow_strength")]
+    pub benterm_idle_text_glow_strength: f32,
 
     #[dynamic(default)]
     pub force_reverse_video_cursor: bool,
@@ -824,8 +824,8 @@ pub struct Config {
     #[dynamic(default = "default_true")]
     pub quit_when_all_windows_are_closed: bool,
 
-    // BenjaminTerm default flipped to false: Notification Noise Policy
-    // (BenjaminTerm-Wiki/wiki/concepts/Notification Noise Policy.md and
+    // BENTERM default flipped to false: Notification Noise Policy
+    // (BENTERM-Wiki/wiki/concepts/Notification Noise Policy.md and
     // Terminal Defaults.md) explicitly suppress missing-glyph toast
     // warnings — common emoji codepoints in agent output (Claude Code,
     // Codex) repeatedly fired the upstream warning. Power users can
@@ -1045,10 +1045,15 @@ impl Config {
         // so we do this bit "by-hand"
 
         let mut paths = vec![
+            PathPossibility::optional(HOME_DIR.join(".benterm.lua")),
+            // v2.0.0 backwards compat: existing users with .benjaminterm.lua
+            // from the pre-rename era still get their config loaded. Drop
+            // this fallback in v3.0.0.
             PathPossibility::optional(HOME_DIR.join(".benjaminterm.lua")),
             PathPossibility::optional(HOME_DIR.join(".wezterm.lua")),
         ];
         for dir in CONFIG_DIRS.iter() {
+            paths.push(PathPossibility::optional(dir.join("benterm.lua")));
             paths.push(PathPossibility::optional(dir.join("benjaminterm.lua")));
             paths.push(PathPossibility::optional(dir.join("wezterm.lua")));
         }
@@ -1066,6 +1071,7 @@ impl Config {
                 if let Some(exe_dir) = exe_name.parent() {
                     paths.insert(0, PathPossibility::optional(exe_dir.join("wezterm.lua")));
                     paths.insert(0, PathPossibility::optional(exe_dir.join("benjaminterm.lua")));
+                    paths.insert(0, PathPossibility::optional(exe_dir.join("benterm.lua")));
                 }
             }
         }
@@ -1720,19 +1726,19 @@ fn default_text_blink_rate_rapid() -> u64 {
     250
 }
 
-fn default_benjaminterm_idle_text_glow_delay_ms() -> u64 {
+fn default_benterm_idle_text_glow_delay_ms() -> u64 {
     500
 }
 
-fn default_benjaminterm_idle_text_glow_input_suppression_ms() -> u64 {
+fn default_benterm_idle_text_glow_input_suppression_ms() -> u64 {
     1200
 }
 
-fn default_benjaminterm_idle_text_glow_period_ms() -> u64 {
+fn default_benterm_idle_text_glow_period_ms() -> u64 {
     2600
 }
 
-fn default_benjaminterm_idle_text_glow_strength() -> f32 {
+fn default_benterm_idle_text_glow_strength() -> f32 {
     0.42
 }
 

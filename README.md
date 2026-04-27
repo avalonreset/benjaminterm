@@ -1,19 +1,19 @@
 <p align="center">
-  <img src="assets/banner.webp" alt="benjaminterm, AI coding terminal built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
+  <img src="assets/banner.webp" alt="benterm, AI coding terminal built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
 </p>
 
-# benjaminterm, AI Coding Terminal for Windows, macOS, and Linux
+# benterm, AI Coding Terminal for Windows, macOS, and Linux
 
-[![Release](https://img.shields.io/github/v/release/avalonreset/benjaminterm?label=release)](https://github.com/avalonreset/benjaminterm/releases/latest)
-[![Release Workflow](https://img.shields.io/github/actions/workflow/status/avalonreset/benjaminterm/benjaminterm-release.yml?label=release%20workflow)](https://github.com/avalonreset/benjaminterm/actions/workflows/benjaminterm-release.yml)
-[![License](https://img.shields.io/github/license/avalonreset/benjaminterm)](LICENSE.md)
-[![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/benjaminterm/releases/latest)
-[![macOS](https://img.shields.io/badge/macos-release%20artifact-111)](https://github.com/avalonreset/benjaminterm/releases/latest)
-[![Linux](https://img.shields.io/badge/linux-release%20artifact-111)](https://github.com/avalonreset/benjaminterm/releases/latest)
+[![Release](https://img.shields.io/github/v/release/avalonreset/benterm?label=release)](https://github.com/avalonreset/benterm/releases/latest)
+[![Release Workflow](https://img.shields.io/github/actions/workflow/status/avalonreset/benterm/benterm-release.yml?label=release%20workflow)](https://github.com/avalonreset/benterm/actions/workflows/benterm-release.yml)
+[![License](https://img.shields.io/github/license/avalonreset/benterm)](LICENSE.md)
+[![Windows](https://img.shields.io/badge/windows-primary-1f6feb)](https://github.com/avalonreset/benterm/releases/latest)
+[![macOS](https://img.shields.io/badge/macos-release%20artifact-111)](https://github.com/avalonreset/benterm/releases/latest)
+[![Linux](https://img.shields.io/badge/linux-release%20artifact-111)](https://github.com/avalonreset/benterm/releases/latest)
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
 [![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-benjaminterm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, paste undo, and focused attention routing.
+benterm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, paste undo, and focused attention routing.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -25,7 +25,7 @@ benjaminterm is a cross-platform terminal for AI coding sessions, rebuilt from a
 ## Table of Contents
 
 - [Screenshot](#screenshot)
-- [Why benjaminterm](#why-benjaminterm)
+- [Why benterm](#why-benterm)
 - [Features](#features)
 - [Attention System](#attention-system)
 - [0xProto Philosophy](#0xproto-philosophy)
@@ -39,17 +39,17 @@ benjaminterm is a cross-platform terminal for AI coding sessions, rebuilt from a
 
 ## Screenshot
 
-![benjaminterm hacker terminal scene with agent ready cues](assets/icon/benjaminterm_screenshot.webp)
+![benterm hacker terminal scene with agent ready cues](assets/icon/benterm_screenshot.webp)
 
-## Why benjaminterm
+## Why benterm
 
-Vanilla WezTerm is excellent, but it expects you to assemble your own workflow. benjaminterm is the opinionated build: the terminal is already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine does not nag you for fonts.
+Vanilla WezTerm is excellent, but it expects you to assemble your own workflow. benterm is the opinionated build: the terminal is already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine does not nag you for fonts.
 
-[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. benjaminterm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, clickable terminal output, and a calmer default environment for agent-heavy work.
+[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. benterm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, clickable terminal output, and a calmer default environment for agent-heavy work.
 
-The two projects are meant to be used together. HyperYap is the complete AI workstation layer. benjaminterm is the focused terminal inside that workstation. HyperYap includes benjaminterm by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
+The two projects are meant to be used together. HyperYap is the complete AI workstation layer. benterm is the focused terminal inside that workstation. HyperYap includes benterm by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
 
-| Feature | Windows Terminal | WezTerm (vanilla) | benjaminterm |
+| Feature | Windows Terminal | WezTerm (vanilla) | benterm |
 |---------|------------------|-------------------|--------------|
 | AI session completion pulse | No | No | Built-in |
 | Per-pane sound identity | No | No | Built-in |
@@ -76,7 +76,7 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 
 ### Clickable Local Paths
 
-benjaminterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults, so agent output, build logs, test failures, and generated artifact names are easier to act on.
+benterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults, so agent output, build logs, test failures, and generated artifact names are easier to act on.
 
 - Recognizes Windows absolute paths like `E:\repo\file.txt` and `E:/repo/file.txt`.
 - Recognizes quoted paths, UNC paths, `./`, `../`, `~/`, and common artifact filenames.
@@ -85,7 +85,7 @@ benjaminterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults
 
 ### Paste Undo And Redo
 
-- Records text pasted through benjaminterm's paste binding on a per-pane basis.
+- Records text pasted through benterm's paste binding on a per-pane basis.
 - `Ctrl+Z` undoes the most recent recorded paste for a short window after the paste.
 - `Ctrl+Shift+Z` redoes the most recent paste undo.
 - Passes `Ctrl+Z` through to the running shell or app when there is no recent paste to undo.
@@ -93,10 +93,10 @@ benjaminterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults
 
 ### Theme Shuffle-Bag
 
-- benjaminterm picks from curated black-background themes on launch.
+- benterm picks from curated black-background themes on launch.
 - Rotation uses a shuffle-bag so new windows cycle through the pool instead of repeating the same theme over and over.
 - `Ctrl+Alt+T` cycles to another theme on demand.
-- Theme state is stored in the benjaminterm state file.
+- Theme state is stored in the benterm state file.
 
 ### 0xProto Built In
 
@@ -107,18 +107,18 @@ benjaminterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults
 
 ### Lowercase Branding
 
-- Custom benjaminterm app identity.
+- Custom benterm app identity.
 - BEN visual assets restored in the repo and README.
 - Windows installer, Windows portable zip, macOS app zip, and Linux tarball are published from GitHub Actions.
-- Vanilla WezTerm can still live beside benjaminterm.
+- Vanilla WezTerm can still live beside benterm.
 
 ## Attention System
 
-benjaminterm treats agent completion as an attention routing problem.
+benterm treats agent completion as an attention routing problem.
 
 The old terminal model assumes you are staring at one shell. AI coding does not work that way. A real workflow often has multiple windows, multiple tabs, and multiple agents moving at different speeds. When one finishes, the terminal should not merely shade the taskbar and hope you notice. It should route your attention cleanly.
 
-benjaminterm uses a layered strategy:
+benterm uses a layered strategy:
 
 - Sound first: each pane gets a sound from the bundled soft CC0 cue set.
 - Color second: the ready terminal gets a theme-aware visual pulse.
@@ -135,7 +135,7 @@ The font is not decoration. In a terminal, the font is part of the productivity 
 
 AI coding creates walls of text: patches, test logs, prompts, shell output, stack traces, and generated code. Every ambiguous character makes the loop slower. Every cramped glyph makes scanning harder. Every ugly fallback on a new machine breaks the product feeling.
 
-benjaminterm chooses [0xProto](https://github.com/0xType/0xProto) because it is hackerish without being sloppy, readable without being sterile, and legally bundleable with the project. It is designed for source code clarity, including strong differentiation between similar characters and a balanced monospace rhythm.
+benterm chooses [0xProto](https://github.com/0xType/0xProto) because it is hackerish without being sloppy, readable without being sterile, and legally bundleable with the project. It is designed for source code clarity, including strong differentiation between similar characters and a balanced monospace rhythm.
 
 Our thesis:
 
@@ -145,22 +145,22 @@ Our thesis:
 - A default font should be good enough that users do not need to think about it.
 - Packaging the right font is a product decision, not a cosmetic afterthought.
 
-benjaminterm does not ask users to install the font separately. It ships with the selected font because the selected font is part of the experience.
+benterm does not ask users to install the font separately. It ships with the selected font because the selected font is part of the experience.
 
 ## HyperYap Sister Project
 
-[HyperYap](https://github.com/avalonreset/hyperyap) and benjaminterm are sister projects.
+[HyperYap](https://github.com/avalonreset/hyperyap) and benterm are sister projects.
 
-HyperYap is the larger operating layer for AI work on Windows: voice-to-text, hotkey remapping, clipboard intelligence, image handling, and the kind of input workflow that should work across every app. benjaminterm is the terminal built to live inside that system.
+HyperYap is the larger operating layer for AI work on Windows: voice-to-text, hotkey remapping, clipboard intelligence, image handling, and the kind of input workflow that should work across every app. benterm is the terminal built to live inside that system.
 
 That separation is intentional:
 
 - HyperYap handles what you say, paste, capture, and route into the computer.
-- benjaminterm handles where the AI work runs, how it looks, how it sounds, and how it asks for your attention.
-- HyperYap can bundle benjaminterm as the default terminal experience.
-- benjaminterm remains available as a standalone release for users who want the terminal by itself.
+- benterm handles where the AI work runs, how it looks, how it sounds, and how it asks for your attention.
+- HyperYap can bundle benterm as the default terminal experience.
+- benterm remains available as a standalone release for users who want the terminal by itself.
 
-The standalone release exists because the terminal is useful on its own. The full vision is the pair: HyperYap as the workstation, benjaminterm as the terminal that feels native to that workstation.
+The standalone release exists because the terminal is useful on its own. The full vision is the pair: HyperYap as the workstation, benterm as the terminal that feels native to that workstation.
 
 ## Hotkeys
 
@@ -177,7 +177,7 @@ The standalone release exists because the terminal is useful on its own. The ful
 | New tab | WezTerm default, usually `Ctrl+Shift+T` |
 | Close tab | WezTerm default, usually `Ctrl+Shift+W` |
 
-Clipboard, speech-to-text, smart paste, image paste, and vibe-coding hotkeys belong to [HyperYap](https://github.com/avalonreset/hyperyap). benjaminterm is designed to work beside it.
+Clipboard, speech-to-text, smart paste, image paste, and vibe-coding hotkeys belong to [HyperYap](https://github.com/avalonreset/hyperyap). benterm is designed to work beside it.
 
 ## Install
 
@@ -185,7 +185,7 @@ Full install instructions: [INSTALL.md](INSTALL.md)
 
 Official downloads are published on GitHub Releases:
 
-https://github.com/avalonreset/benjaminterm/releases/latest
+https://github.com/avalonreset/benterm/releases/latest
 
 Package managers are not required. Homebrew, WinGet, Flathub, and Linuxbrew are out of scope for the current release. GitHub Releases are the official release path.
 
@@ -193,45 +193,45 @@ Package managers are not required. Homebrew, WinGet, Flathub, and Linuxbrew are 
 
 Recommended installer:
 
-`benjaminterm-v1.4.5-setup.exe`
+`benterm-v2.0.0-setup.exe`
 
 Portable zip:
 
-`benjaminterm-windows-v1.4.5.zip`
+`benterm-windows-v2.0.0.zip`
 
 ### macOS
 
 Download:
 
-`benjaminterm-macos-v1.4.5.zip`
+`benterm-macos-v2.0.0.zip`
 
 Install:
 
 ```sh
-unzip benjaminterm-macos-v1.4.5.zip
-mv benjaminterm-macos-v1.4.5/benjaminterm.app /Applications/
-open /Applications/benjaminterm.app
+unzip benterm-macos-v2.0.0.zip
+mv benterm-macos-v2.0.0/benterm.app /Applications/
+open /Applications/benterm.app
 ```
 
 If macOS blocks the unsigned app:
 
 ```sh
-xattr -dr com.apple.quarantine /Applications/benjaminterm.app
-open /Applications/benjaminterm.app
+xattr -dr com.apple.quarantine /Applications/benterm.app
+open /Applications/benterm.app
 ```
 
 ### Linux
 
 Download:
 
-`benjaminterm-linux-v1.4.5.tar.gz`
+`benterm-linux-v2.0.0.tar.gz`
 
 Run:
 
 ```sh
-tar -xzf benjaminterm-linux-v1.4.5.tar.gz
-cd benjaminterm-linux-v1.4.5
-./benjaminterm-gui
+tar -xzf benterm-linux-v2.0.0.tar.gz
+cd benterm-linux-v2.0.0
+./benterm-gui
 ```
 
 ## Platform Status
@@ -242,11 +242,11 @@ cd benjaminterm-linux-v1.4.5
 | macOS | Supported release artifact | App zip with bundled config, 0xProto, and sound cues |
 | Linux | Supported release artifact | Tarball with bundled config, 0xProto, and sound cues |
 
-Windows has the most platform-specific attention behavior because it includes the toast click-to-focus workflow. macOS and Linux ship the same benjaminterm terminal bundle and assets through GitHub Releases.
+Windows has the most platform-specific attention behavior because it includes the toast click-to-focus workflow. macOS and Linux ship the same benterm terminal bundle and assets through GitHub Releases.
 
 ## Release Infrastructure
 
-benjaminterm release infrastructure is pinned to Node.js `25.9.0`.
+benterm release infrastructure is pinned to Node.js `25.9.0`.
 
 The release workflow installs and verifies Node.js `25.9.0` on every release path:
 
@@ -259,13 +259,13 @@ The repository includes `.node-version` so local development shells using `fnm` 
 
 ## Build From Source
 
-Release builds are produced by the tag-driven workflow at `.github/workflows/benjaminterm-release.yml`.
+Release builds are produced by the tag-driven workflow at `.github/workflows/benterm-release.yml`.
 
 Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
 ## Other Projects
 
-**[HyperYap](https://github.com/avalonreset/hyperyap)**: Local voice-to-text for Windows with hotkey remapping and smart clipboard image handling. The recommended companion for benjaminterm.
+**[HyperYap](https://github.com/avalonreset/hyperyap)**: Local voice-to-text for Windows with hotkey remapping and smart clipboard image handling. The recommended companion for benterm.
 
 **[gemini-seo](https://github.com/avalonreset/gemini-seo)**: Professional SEO workflows for Gemini CLI.
 
@@ -273,13 +273,13 @@ Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
 ## Upstream Credit
 
-benjaminterm is a custom distribution built on [WezTerm](https://github.com/wezterm/wezterm) by Wez Furlong.
+benterm is a custom distribution built on [WezTerm](https://github.com/wezterm/wezterm) by Wez Furlong.
 
 - Upstream project: [wezterm/wezterm](https://github.com/wezterm/wezterm)
 - Upstream docs: [wezterm.org](https://wezterm.org/)
 
-benjaminterm changes are intentionally scoped. The goal is to add a productive AI coding layer without rewriting the terminal engine.
+benterm changes are intentionally scoped. The goal is to add a productive AI coding layer without rewriting the terminal engine.
 
 ## License
 
-benjaminterm keeps WezTerm's MIT license. The bundled 0xProto font and bundled soft CC0 sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/benjaminterm-soft-cues`.
+benterm keeps WezTerm's MIT license. The bundled 0xProto font and bundled soft CC0 sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/benterm-soft-cues`.

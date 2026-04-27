@@ -20,9 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-BenjaminTerm bundles `0xProto`, distributed under the SIL Open Font License
+BENTERM bundles `0xProto`, distributed under the SIL Open Font License
 1.1. Its license text is available in `assets/fonts/LICENSE_0XPROTO.txt`.
 
-BenjaminTerm bundles soft UI cues for agent attention from CC0 sources. Those
+BENTERM bundles soft UI cues for agent attention from CC0 sources. Those
 sound files are distributed under Creative Commons CC0 1.0 Universal. See
-`assets/sounds/benjaminterm-soft-cues/LICENSE_CC0.txt`.
+`assets/sounds/benterm-soft-cues/LICENSE_CC0.txt`.

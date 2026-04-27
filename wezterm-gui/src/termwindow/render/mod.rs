@@ -262,7 +262,7 @@ impl crate::TermWindow {
     ) -> (f32, LinearRgba, u8) {
         let glow_color = theme_idle_text_glow_color(palette);
 
-        if !self.config.benjaminterm_idle_text_glow {
+        if !self.config.benterm_idle_text_glow {
             return (0.0, glow_color, 0);
         }
 
@@ -275,7 +275,7 @@ impl crate::TermWindow {
         if let Some(last_input) = last_input {
             let suppress_until = last_input
                 + Duration::from_millis(
-                    self.config.benjaminterm_idle_text_glow_input_suppression_ms,
+                    self.config.benterm_idle_text_glow_input_suppression_ms,
                 );
             if now < suppress_until {
                 self.update_next_frame_time(Some(suppress_until));
@@ -288,20 +288,20 @@ impl crate::TermWindow {
         };
 
         let ready_at =
-            glow_start + Duration::from_millis(self.config.benjaminterm_idle_text_glow_delay_ms);
+            glow_start + Duration::from_millis(self.config.benterm_idle_text_glow_delay_ms);
         if now < ready_at {
             self.update_next_frame_time(Some(ready_at));
             return (0.0, glow_color, 0);
         }
 
-        let period_ms = self.config.benjaminterm_idle_text_glow_period_ms.max(500);
+        let period_ms = self.config.benterm_idle_text_glow_period_ms.max(500);
         let period = Duration::from_millis(period_ms).as_secs_f32();
         let elapsed = now.duration_since(ready_at).as_secs_f32();
         let phase = (elapsed % period) / period;
         let wave = 0.5 - 0.5 * (phase * std::f32::consts::TAU).cos();
         let strength = self
             .config
-            .benjaminterm_idle_text_glow_strength
+            .benterm_idle_text_glow_strength
             .clamp(0.0, 0.7);
         let intensity = strength * (0.12 + 0.88 * wave);
         let bucket = (intensity * 255.0).round().clamp(1.0, 255.0) as u8;

@@ -1,5 +1,5 @@
 param(
-  [string]$BenjaminTermExe = "",
+  [string]$BENTERMExe = "",
   [int]$Columns = 104,
   [int]$Rows = 34,
   [double]$FontSize = 16.0
@@ -10,25 +10,25 @@ $ErrorActionPreference = "Stop"
 $Repo = Resolve-Path (Join-Path $PSScriptRoot "..")
 $SceneScript = Join-Path $Repo "scripts\screenshot-scene.ps1"
 $TmpDir = Join-Path $Repo ".tmp\screenshot-scene"
-$ConfigFile = Join-Path $TmpDir "benjaminterm-screenshot.lua"
+$ConfigFile = Join-Path $TmpDir "benterm-screenshot.lua"
 
 if (-not (Test-Path -LiteralPath $SceneScript)) {
   throw "Screenshot scene script not found: $SceneScript"
 }
 
-$PortableExe = Join-Path $Repo "dist\BenjaminTerm-windows-v1.4.1\BenjaminTerm-gui.exe"
-$InstalledExe = "C:\Program Files\BenjaminTerm\BenjaminTerm-gui.exe"
+$PortableExe = Join-Path $Repo "dist\BENTERM-windows-v1.4.1\BENTERM-gui.exe"
+$InstalledExe = "C:\Program Files\BENTERM\BENTERM-gui.exe"
 
-if ([string]::IsNullOrWhiteSpace($BenjaminTermExe)) {
+if ([string]::IsNullOrWhiteSpace($BENTERMExe)) {
   if (Test-Path -LiteralPath $PortableExe) {
-    $BenjaminTermExe = $PortableExe
+    $BENTERMExe = $PortableExe
   } else {
-    $BenjaminTermExe = $InstalledExe
+    $BENTERMExe = $InstalledExe
   }
 }
 
-if (-not (Test-Path -LiteralPath $BenjaminTermExe)) {
-  throw "BenjaminTerm executable not found. Tried: $BenjaminTermExe"
+if (-not (Test-Path -LiteralPath $BENTERMExe)) {
+  throw "BENTERM executable not found. Tried: $BENTERMExe"
 }
 
 New-Item -ItemType Directory -Force -Path $TmpDir | Out-Null
@@ -79,7 +79,7 @@ return {
 
 Set-Content -LiteralPath $ConfigFile -Value $config -Encoding UTF8
 
-Start-Process -FilePath $BenjaminTermExe -ArgumentList @(
+Start-Process -FilePath $BENTERMExe -ArgumentList @(
   "--config-file",
   $ConfigFile,
   "start",
