@@ -104,6 +104,13 @@ pub struct SplitDirectionAndSize {
     pub direction: SplitDirection,
     pub first: TerminalSize,
     pub second: TerminalSize,
+    /// When `Some(N)`, the first child of this split is locked at N cols
+    /// during window-resize. Window-resize delta is fully absorbed by the
+    /// second child and its sub-tree. Splitter drags still work and update
+    /// this value to the new width. Only meaningful when
+    /// `direction == SplitDirection::Horizontal`; ignored otherwise.
+    #[serde(default)]
+    pub pinned_first_cols: Option<usize>,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Serialize, Deserialize)]
@@ -1942,6 +1949,7 @@ impl TabInner {
                     pixel_width: cell_dims.pixel_width * width2,
                     dpi: cell_dims.dpi,
                 },
+                pinned_first_cols: None,
             });
         }
 
@@ -1976,6 +1984,7 @@ impl TabInner {
                     pixel_width: cell_dims.pixel_width * width2,
                     dpi: cell_dims.dpi,
                 },
+                pinned_first_cols: None,
             }
         })
     }
@@ -2398,6 +2407,7 @@ mod test {
                     pixel_height: 600,
                     dpi: 96,
                 },
+                pinned_first_cols: None,
             }
         );
 
@@ -2427,7 +2437,8 @@ mod test {
                     pixel_width: 800,
                     pixel_height: 275,
                     dpi: 96,
-                }
+                },
+                pinned_first_cols: None,
             }
         );
 
