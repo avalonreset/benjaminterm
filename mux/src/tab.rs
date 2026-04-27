@@ -1480,6 +1480,14 @@ impl TabInner {
                     node.second.cols = width.saturating_sub(node.first.cols.saturating_add(1));
                     node.second.pixel_width =
                         node.second.cols.saturating_mul(cell_dimensions.pixel_width);
+
+                    // If this split has a pinned first child, the user's
+                    // manual drag becomes the new pin intent — so subsequent
+                    // window resizes preserve the new width instead of
+                    // snapping back to the old pin value.
+                    if node.pinned_first_cols.is_some() {
+                        node.pinned_first_cols = Some(node.first.cols);
+                    }
                 }
                 SplitDirection::Vertical => {
                     let height = node.height();
@@ -2775,6 +2783,39 @@ mod test {
         assert_eq!(tab.get_pinned_first_cols_for_pane(second_id), None);
     }
 
+    fn build_vertical_split_tab(cols: usize, rows: usize) -> (Tab, PaneId, PaneId) {
+        let size = TerminalSize {
+            rows,
+            cols,
+            pixel_width: cols * 10,
+            pixel_height: rows * 25,
+            dpi: 96,
+        };
+        let tab = Tab::new(&size);
+        tab.assign_pane(&FakePane::new(1, size));
+
+        let split = tab
+            .compute_split_size(
+                0,
+                SplitRequest {
+                    direction: SplitDirection::Vertical,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        tab.split_and_insert(
+            0,
+            SplitRequest {
+                direction: SplitDirection::Vertical,
+                ..Default::default()
+            },
+            FakePane::new(2, split.second),
+        )
+        .unwrap();
+
+        (tab, 1, 2)
+    }
+
     #[test]
     fn pinned_first_cols_excludes_from_resize() {
         // 80x24 split horizontally: first ≈ 39 cols, second ≈ 40 cols
@@ -2814,5 +2855,168 @@ mod test {
 
         // sanity: original baseline values to silence unused warnings
         let _ = (initial_first, initial_second);
+    }
+
+    #[test]
+    fn pinned_first_cols_grow() {
+        let (tab, first_id, _) = build_horizontal_split_tab(80, 24);
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+
+        // Grow tab by 30 cols (80 → 110). Pin holds first at 32, second
+        // takes the full +30.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 110,
+            pixel_width: 1100,
+            pixel_height: 600,
+            dpi: 96,
+        });
+
+        let panes = tab.iter_panes();
+        assert_eq!(panes[0].width, 32);
+        // total = first + second + boundary cell
+        let total = panes[0].width + panes[1].width;
+        assert!(total + 1 == 110 || total == 110);
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), Some(32));
+    }
+
+    #[test]
+    fn pinned_first_cols_unset_uses_default_logic() {
+        // No pin set — resize should distribute proportionally
+        // (1-col-per-iter alternating, biased to first/left).
+        let (tab, _, _) = build_horizontal_split_tab(80, 24);
+        let panes = tab.iter_panes();
+        let initial_first = panes[0].width;
+
+        // Grow by 10 cols. Default behavior splits roughly evenly.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 90,
+            pixel_width: 900,
+            pixel_height: 600,
+            dpi: 96,
+        });
+
+        let panes = tab.iter_panes();
+        // Without pin, first should have grown some. Just assert it's not
+        // pinned to its initial value (proportional growth happened).
+        assert!(panes[0].width > initial_first);
+    }
+
+    #[test]
+    fn pinned_first_cols_clamps_to_min_under_pressure() {
+        let (tab, first_id, _) = build_horizontal_split_tab(80, 24);
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+
+        // Shrink to a width too small to honor pin + min_second (each
+        // FakePane has min_size 1, so the only hard floor is 1+1+1=3
+        // boundary cell, but with pin=32 and tab=20, second can't be 0).
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 20,
+            pixel_width: 200,
+            pixel_height: 600,
+            dpi: 96,
+        });
+
+        let panes = tab.iter_panes();
+        // Pin floats below 32 (graceful degrade), but config preserved.
+        assert!(panes[0].width <= 32);
+        assert!(panes[1].width >= 1);
+        assert_eq!(
+            tab.get_pinned_first_cols_for_pane(first_id),
+            Some(32),
+            "pin config preserved across degraded resize"
+        );
+
+        // Restore window size — pin should re-honor 32.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 80,
+            pixel_width: 800,
+            pixel_height: 600,
+            dpi: 96,
+        });
+        let panes = tab.iter_panes();
+        assert_eq!(panes[0].width, 32, "pin restored once room is available");
+    }
+
+    #[test]
+    fn splitter_drag_updates_pin() {
+        let (tab, first_id, _) = build_horizontal_split_tab(80, 24);
+        assert!(tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+
+        // Trigger a real window resize (1-col delta) so adjust_x_size runs
+        // and the pin's drift-correction snaps first.cols to 32.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 81,
+            pixel_width: 810,
+            pixel_height: 600,
+            dpi: 96,
+        });
+        assert_eq!(tab.iter_panes()[0].width, 32, "pin honored on first resize");
+
+        // User drags the splitter +18 cols (sidebar grows to 50).
+        tab.resize_split_by(0, 18);
+
+        let panes = tab.iter_panes();
+        assert_eq!(panes[0].width, 50, "first grew via drag");
+        assert_eq!(
+            tab.get_pinned_first_cols_for_pane(first_id),
+            Some(50),
+            "pin updated to new first.cols after manual drag"
+        );
+
+        // Subsequent window resize should respect the NEW pin (50), not the
+        // original (32).
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 100,
+            pixel_width: 1000,
+            pixel_height: 600,
+            dpi: 96,
+        });
+        assert_eq!(tab.iter_panes()[0].width, 50, "new pin survives window resize");
+    }
+
+    #[test]
+    fn splitter_drag_with_no_pin_does_not_create_pin() {
+        let (tab, first_id, _) = build_horizontal_split_tab(80, 24);
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), None);
+
+        // Drag without an existing pin.
+        tab.resize_split_by(0, 5);
+
+        // Pin remains None — drag-update is conditional on the pin already
+        // being set, so this drag doesn't suddenly create a pin.
+        assert_eq!(tab.get_pinned_first_cols_for_pane(first_id), None);
+    }
+
+    #[test]
+    fn vertical_split_ignores_pinned_first_cols() {
+        // Vertical splits stack panes top/bottom and share cols by
+        // construction. pinned_first_cols on a vertical split is meaningless;
+        // the algorithm's Vertical branch never reads the field, so resize
+        // proceeds normally.
+        let (tab, first_id, _) = build_vertical_split_tab(80, 24);
+
+        // set_pinned_first_cols_for_pane only matches Horizontal splits, so
+        // setting on a vertical-split pane returns false (no-op). This is
+        // by design — but verify the algorithm doesn't crash even if the
+        // field somehow ended up Some on a vertical split.
+        assert!(!tab.set_pinned_first_cols_for_pane(first_id, Some(32)));
+
+        // Standard vertical resize still works.
+        tab.resize(TerminalSize {
+            rows: 24,
+            cols: 60,
+            pixel_width: 600,
+            pixel_height: 600,
+            dpi: 96,
+        });
+        let panes = tab.iter_panes();
+        assert_eq!(panes[0].width, 60, "top pane gets new total cols");
+        assert_eq!(panes[1].width, 60, "bottom pane gets new total cols");
     }
 }
