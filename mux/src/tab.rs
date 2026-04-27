@@ -426,36 +426,107 @@ fn adjust_x_size(tree: &mut Tree, mut x_adjust: isize, cell_dimensions: &Termina
                         }
                         return;
                     }
-                    SplitDirection::Horizontal if x_adjust > 0 => {
-                        adjust_x_size(&mut *left, 1, cell_dimensions);
-                        data.first.cols += 1;
-                        data.first.pixel_width =
-                            data.first.cols.saturating_mul(cell_dimensions.pixel_width);
-                        x_adjust -= 1;
-
-                        if x_adjust > 0 {
-                            adjust_x_size(&mut *right, 1, cell_dimensions);
-                            data.second.cols += 1;
-                            data.second.pixel_width =
-                                data.second.cols.saturating_mul(cell_dimensions.pixel_width);
-                            x_adjust -= 1;
-                        }
-                    }
                     SplitDirection::Horizontal => {
-                        // x_adjust is negative
-                        if data.first.cols > 1 {
-                            adjust_x_size(&mut *left, -1, cell_dimensions);
-                            data.first.cols -= 1;
-                            data.first.pixel_width =
-                                data.first.cols.saturating_mul(cell_dimensions.pixel_width);
-                            x_adjust += 1;
+                        // Pinned-first path: lock first child at pin value and
+                        // redirect the resize delta entirely to the second
+                        // subtree (with overflow back to first if the second
+                        // hits its minimum size).
+                        if let Some(pin) = data.pinned_first_cols {
+                            let pin_isize = pin as isize;
+                            // Correct any drift from a prior proportional pass.
+                            let drift = (data.first.cols as isize) - pin_isize;
+                            if drift != 0 {
+                                adjust_x_size(&mut *left, -drift, cell_dimensions);
+                                data.first.cols = pin;
+                                data.first.pixel_width = data
+                                    .first
+                                    .cols
+                                    .saturating_mul(cell_dimensions.pixel_width);
+                                x_adjust = x_adjust.saturating_add(drift);
+                            }
+
+                            if x_adjust != 0 {
+                                let (right_min_x, _) = compute_min_size(&mut *right);
+                                let new_second_cols = (data.second.cols as isize)
+                                    .saturating_add(x_adjust)
+                                    .max(right_min_x as isize);
+                                let absorbed = new_second_cols
+                                    .saturating_sub(data.second.cols as isize);
+                                if absorbed != 0 {
+                                    adjust_x_size(&mut *right, absorbed, cell_dimensions);
+                                    data.second.cols = new_second_cols as usize;
+                                    data.second.pixel_width = data
+                                        .second
+                                        .cols
+                                        .saturating_mul(cell_dimensions.pixel_width);
+                                }
+                                // Overflow: second couldn't absorb (hit min).
+                                // Bleed remainder into first as graceful degrade.
+                                // Pin config stays Some(pin); restored next time
+                                // there's room.
+                                let overflow = x_adjust.saturating_sub(absorbed);
+                                if overflow != 0 {
+                                    let new_first_cols = (data.first.cols as isize)
+                                        .saturating_add(overflow)
+                                        .max(1);
+                                    let first_delta = new_first_cols
+                                        .saturating_sub(data.first.cols as isize);
+                                    if first_delta != 0 {
+                                        adjust_x_size(
+                                            &mut *left,
+                                            first_delta,
+                                            cell_dimensions,
+                                        );
+                                        data.first.cols = new_first_cols as usize;
+                                        data.first.pixel_width = data
+                                            .first
+                                            .cols
+                                            .saturating_mul(cell_dimensions.pixel_width);
+                                    }
+                                }
+                            }
+                            return;
                         }
-                        if x_adjust < 0 && data.second.cols > 1 {
-                            adjust_x_size(&mut *right, -1, cell_dimensions);
-                            data.second.cols -= 1;
-                            data.second.pixel_width =
-                                data.second.cols.saturating_mul(cell_dimensions.pixel_width);
-                            x_adjust += 1;
+
+                        // Unpinned: original 1-col-per-iter alternating.
+                        if x_adjust > 0 {
+                            adjust_x_size(&mut *left, 1, cell_dimensions);
+                            data.first.cols += 1;
+                            data.first.pixel_width = data
+                                .first
+                                .cols
+                                .saturating_mul(cell_dimensions.pixel_width);
+                            x_adjust -= 1;
+
+                            if x_adjust > 0 {
+                                adjust_x_size(&mut *right, 1, cell_dimensions);
+                                data.second.cols += 1;
+                                data.second.pixel_width = data
+                                    .second
+                                    .cols
+                                    .saturating_mul(cell_dimensions.pixel_width);
+                                x_adjust -= 1;
+                            }
+                        } else {
+                            // x_adjust is negative
+                            if data.first.cols > 1 {
+                                adjust_x_size(&mut *left, -1, cell_dimensions);
+                                data.first.cols -= 1;
+                                data.first.pixel_width = data
+                                    .first
+                                    .cols
+                                    .saturating_mul(cell_dimensions.pixel_width);
+                                x_adjust += 1;
+                            }
+                            if x_adjust < 0 && data.second.cols > 1 {
+                                adjust_x_size(&mut *right, -1, cell_dimensions);
+                                data.second.cols -= 1;
+                                data.second.pixel_width = data
+                                    .second
+                                    .cols
+                                    .saturating_mul(cell_dimensions.pixel_width);
+                                x_adjust += 1;
+                            }
                         }
                     }
                 }
