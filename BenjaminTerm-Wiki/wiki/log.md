@@ -10,6 +10,15 @@ tags:
 
 # Wiki Log
 
+## 2026-04-27 - v1.4.5 Released: Cursor-Row Glow Stability + Claude Code OSC 9 Bridge
+
+- Shipped [[Attention Trigger Lifecycle]] capturing the canonical OSC 9 / OSC 777 trigger design and the per-shell integration patterns. Documents anti-patterns to never re-introduce: idle-detection on `PaneOutput`, BEL → attention firing.
+- Bundled `assets/shell-integration/benjaminterm-claude-stop.ps1`, a Claude Code `Stop` hook helper that walks the parent process chain, calls `FreeConsole` + `AttachConsole` to attach to the conpty BenjaminTerm reads (Claude detaches its hook subprocesses from the conpty by default, so a naive `printf > /dev/tty` or direct `CONOUT$` open lands on an ephemeral console nobody reads), and writes OSC 9 directly. Bridges Claude Code into the same per-pane attention path Codex uses natively.
+- Switched `assets/shell-integration/benjaminterm.ps1` from BEL emission to OSC 9 emission to match Mandatory Requirements M1.
+- Cursor-row idle glow now live-tracks the cursor for ~1s after the ready signal (gives Claude Code / Codex time to do their final repaint and land the cursor on the actual input row), then locks. `mark_pane_input` clears the freeze. New `idle_text_glow_row` and `idle_text_glow_freeze_at` fields on `PaneState`.
+- `warn_about_missing_glyphs` default flipped to `false` per the existing [[Notification Noise Policy]] - the policy was documented but the code default was still `true`. Common emoji codepoints in agent output (Claude Code, Codex) no longer fire the upstream missing-glyph toast.
+- v1.4.4 also shipped today as a precursor: auto-discover `~/.benjaminterm.lua` (and `<config-dir>/benjaminterm.lua`, and `<exe-dir>/benjaminterm.lua` on Windows) before the wezterm-named fallback. Plain BenjaminTerm launches now load the user's full config without `--config-file` or a launcher script.
+
 ## 2026-04-23 - Banner Workflow Added And Sanitized
 
 - Added [[README Banner Asset Workflow]] to document the public README banner path, `21:9` ratio, WebP delivery format, and local candidate promotion flow.

@@ -12,20 +12,23 @@ tags:
 
 ## Last Updated
 
-2026-04-23
+2026-04-27
 
 ## Key Recent Facts
 
-- BenjaminTerm is being prepared as a cross-platform WezTerm-based terminal distribution.
-- The current release target is GitHub release artifacts for Windows, Linux, and macOS.
+- v1.4.5 is the latest tag (released 2026-04-27). Headline changes: cursor-row glow stability + Claude Code OSC 9 bridge. See [[Attention Trigger Lifecycle]] for the full spec.
+- The attention trigger is **OSC 9 / OSC 777**. Anything else (idle-detection on `PaneOutput`, BEL → attention) is an anti-pattern. Codex emits OSC 9 natively. Claude Code does NOT - it needs a `Stop` hook that runs `assets/shell-integration/benjaminterm-claude-stop.ps1`. Plain pwsh shells emit OSC 9 from the bundled `assets/shell-integration/benjaminterm.ps1` integration.
+- Claude Code hooks are spawned with their stdio redirected to pipes AND detached from the parent conpty. A naive `printf '\033]9;...' > /dev/tty` from a hook lands on an ephemeral console BenjaminTerm never sees. The bundled helper walks the parent process chain, `FreeConsole`s, `AttachConsole(parent_pid)`s, and writes OSC 9 to the now-correct `CONOUT$`. Skip `bash.exe` wrappers (they have their own ephemeral consoles); stop on first non-wrapper success to avoid double-firing.
+- Cursor-row glow live-tracks the cursor for ~1s after the ready signal (gives TUI agents time to settle on their real input row), then locks. Cleared in `mark_pane_input` when the user types.
+- v1.4.4 made BenjaminTerm auto-discover `~/.benjaminterm.lua` before falling back to `~/.wezterm.lua` (and same in `<config-dir>` and `<exe-dir>` on Windows). Plain launches without `--config-file` now load the user's full config.
+- `warn_about_missing_glyphs` default is `false` (matching the documented [[Notification Noise Policy]]).
+- BenjaminTerm is a cross-platform WezTerm-based terminal distribution. Release target is GitHub release artifacts for Windows, Linux, and macOS.
 - Homebrew, Linuxbrew, Flathub, WinGet, and Gemfury are optional package-manager channels gated by repo variables.
-- Missing-glyph notifications are suppressed by default for BenjaminTerm.
-- Smart `Ctrl+C` was tested in a spawned dev window and works: selection copies, no selection interrupts.
-- Hyper Yap should own dictated-block undo and wrong-window recovery; BenjaminTerm should keep terminal-level defaults.
-- README positioning now explains BenjaminTerm as a sensory workflow layer for vibe coding, centered on idle glow cues, pane-aware notifications, soft randomized sounds, fresh theme rotation, and fast attention switching.
+- Smart `Ctrl+C` works: selection copies, no selection interrupts.
+- Hyper Yap owns dictated-block undo and wrong-window recovery; BenjaminTerm keeps terminal-level defaults.
+- README positioning: BenjaminTerm as a sensory workflow layer for vibe coding, centered on idle glow cues, pane-aware notifications, soft randomized sounds, fresh theme rotation, and fast attention switching.
 - Sound cue licensing was traced in the `sound-refresh-soft-cues` worktree: 84 generated WAV files from CC0 Kenney UI Audio and CC0 ObsydianX Interface SFX Pack 1 sources.
-- Latest checked packages `BenjaminTerm-windows-v1.4.0.zip` and `BenjaminTerm-windows-v1.4.1.zip` each contain 84 `benjaminterm-soft-cues` WAVs and 0 old `kenney-interface` entries.
-- The public README banner now lives at `assets/banner.webp` and should remain a `21:9` WebP asset promoted from reviewed local candidates.
+- The public README banner lives at `assets/banner.webp`, `21:9` WebP.
 
 ## Recent Changes
 
