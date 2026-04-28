@@ -51,6 +51,22 @@ impl Drop for AgentProxy {
     }
 }
 
+/// Log a failed symlink update at the right severity. Windows refuses to
+/// create symlinks without admin privileges or Developer Mode (returns
+/// os error 1314 = ERROR_PRIVILEGE_NOT_HELD), and that's the dominant
+/// case for ordinary users — emitting at `error!` level on every launch
+/// pollutes the log without surfacing anything actionable. Downgrade to
+/// `debug!` for the privilege-not-held case; keep `error!` for real
+/// failures.
+fn log_symlink_failure(context: &str, err: &anyhow::Error) {
+    let msg = format!("{err:#}");
+    if msg.contains("os error 1314") || msg.contains("required privilege is not held") {
+        log::debug!("{context}: {msg} (skipped — Windows symlink requires admin/dev mode)");
+    } else {
+        log::error!("{context}: {msg}");
+    }
+}
+
 fn update_symlink<P: AsRef<Path>, Q: AsRef<Path>>(original: P, link: Q) -> anyhow::Result<()> {
     let original = original.as_ref();
     let link = link.as_ref();
@@ -86,7 +102,10 @@ impl AgentProxy {
 
         if let Some(inherited) = Self::default_ssh_auth_sock() {
             if let Err(err) = update_symlink(&inherited, &sock_path) {
-                log::error!("failed to set {sock_path:?} to initial inherited SSH_AUTH_SOCK value of {inherited:?}: {err:#}");
+                log_symlink_failure(
+                    &format!("failed to set {sock_path:?} to initial inherited SSH_AUTH_SOCK value of {inherited:?}"),
+                    &err,
+                );
             }
         }
 
@@ -195,9 +214,12 @@ impl AgentProxy {
                     self.current_target.write().replace(info.client_id.clone());
 
                     if let Err(err) = update_symlink(ssh_auth_sock, &self.sock_path) {
-                        log::error!(
-                            "Problem updating {} -> {ssh_auth_sock}: {err:#}",
-                            self.sock_path.display(),
+                        log_symlink_failure(
+                            &format!(
+                                "Problem updating {} -> {ssh_auth_sock}",
+                                self.sock_path.display(),
+                            ),
+                            &err,
                         );
                     }
                 }
@@ -206,9 +228,12 @@ impl AgentProxy {
                 if self.current_target.write().take().is_some() {
                     log::trace!("Updating agent to be bogus");
                     if let Err(err) = update_symlink(".", &self.sock_path) {
-                        log::error!(
-                            "Problem updating {} -> .: {err:#}",
-                            self.sock_path.display()
+                        log_symlink_failure(
+                            &format!(
+                                "Problem updating {} -> .",
+                                self.sock_path.display()
+                            ),
+                            &err,
                         );
                     }
                 }
