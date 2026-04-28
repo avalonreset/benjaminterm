@@ -3277,24 +3277,35 @@ impl TermWindow {
     }
 
     /// Rankenstein Suite: returns true when the tab at `tab_idx` is
-    /// "EA-anchored" — i.e., its active pane carries the AGENT_IS_EA
-    /// user var. The fork uses this to (a) suppress the X close button
-    /// in the fancy tab bar render, and (b) refuse the close action in
+    /// "EA-anchored" — i.e., it contains the Executive Assistant agent
+    /// pane. The fork uses this to (a) suppress the X close button in
+    /// the fancy tab bar render, and (b) refuse the close action in
     /// close_specific_tab / close_current_tab. The Executive Assistant
     /// is the founder's home surface; closing it would orphan the
     /// project hierarchy.
+    ///
+    /// Anchor predicate: a pane in the tab has BOTH AGENT_IS_EA=1 AND
+    /// AGENT_IS_LEADER=1. Sidebar panes also emit AGENT_IS_EA=1 (so
+    /// their M13 in-pane title strip can render the ♚ crown alongside
+    /// "Executive Assistant"), but they don't emit AGENT_IS_LEADER —
+    /// requiring both disambiguates the actual EA codex pane from
+    /// sidebar panes that just brand their surface as the EA's.
     pub fn tab_is_ea_anchored(&self, tab_idx: usize) -> Option<bool> {
         let mux = Mux::try_get()?;
         let mux_window = mux.get_window(self.mux_window_id)?;
         let tab = mux_window.get_by_idx(tab_idx)?;
-        let active_pane = tab.get_active_pane()?;
-        Some(
-            active_pane
-                .copy_user_vars()
-                .get("AGENT_IS_EA")
+        for pos in tab.iter_panes_ignoring_zoom() {
+            let vars = pos.pane.copy_user_vars();
+            let is_ea = vars.get("AGENT_IS_EA").map(|v| v == "1").unwrap_or(false);
+            let is_leader = vars
+                .get("AGENT_IS_LEADER")
                 .map(|v| v == "1")
-                .unwrap_or(false),
-        )
+                .unwrap_or(false);
+            if is_ea && is_leader {
+                return Some(true);
+            }
+        }
+        Some(false)
     }
 
     fn close_specific_tab(&mut self, tab_idx: usize, confirm: bool) {
@@ -3346,16 +3357,24 @@ impl TermWindow {
             None => return,
         };
         // Refuse to close EA-anchored tabs (see tab_is_ea_anchored).
-        if let Some(active_pane) = tab.get_active_pane() {
-            if active_pane
-                .copy_user_vars()
-                .get("AGENT_IS_EA")
+        // Use the same predicate as the tab-bar X suppression: any pane
+        // with both AGENT_IS_EA and AGENT_IS_LEADER set.
+        let mut anchored = false;
+        for pos in tab.iter_panes_ignoring_zoom() {
+            let vars = pos.pane.copy_user_vars();
+            let is_ea = vars.get("AGENT_IS_EA").map(|v| v == "1").unwrap_or(false);
+            let is_leader = vars
+                .get("AGENT_IS_LEADER")
                 .map(|v| v == "1")
-                .unwrap_or(false)
-            {
-                log::info!("[suite] refusing to close current EA-anchored tab");
-                return;
+                .unwrap_or(false);
+            if is_ea && is_leader {
+                anchored = true;
+                break;
             }
+        }
+        if anchored {
+            log::info!("[suite] refusing to close current EA-anchored tab");
+            return;
         }
         let tab_id = tab.tab_id();
         let mux_window_id = self.mux_window_id;

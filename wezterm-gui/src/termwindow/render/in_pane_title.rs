@@ -458,9 +458,19 @@ fn derive_display_title(
     if let Some(name) = user_vars.get("AGENT_NAME") {
         let trimmed = name.trim();
         if !trimmed.is_empty() {
-            // Plain name, matches terminal styling. Leader/worker
-            // distinction is conveyed by the sidebar, not duplicated
-            // here — keeps the strip uncluttered.
+            // The Executive Assistant gets a ♚ crown next to its name in
+            // the strip — the founder reserved that glyph exclusively
+            // for EA, and it appears wherever "Executive Assistant"
+            // shows: the EA codex pane's strip, and (because the
+            // sidebar binary also emits AGENT_IS_EA=1) every sidebar
+            // pane's strip too. Project leaders / workers stay plain.
+            let is_ea = user_vars
+                .get("AGENT_IS_EA")
+                .map(|v| v == "1")
+                .unwrap_or(false);
+            if is_ea {
+                return format!("{} ♚", trimmed);
+            }
             return trimmed.to_string();
         }
     }
