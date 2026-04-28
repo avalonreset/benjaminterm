@@ -31,6 +31,7 @@ use crate::quad::TripleLayerQuadAllocator;
 use crate::termwindow::box_model::*;
 use crate::termwindow::render::borders::attention_color_from_palette;
 use config::{Dimension, DimensionContext};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use window::color::LinearRgba;
@@ -38,6 +39,69 @@ use window::color::LinearRgba;
 const MIN_PANE_WIDTH_COLS: usize = 6;
 
 static FIRST_CALL_LOGGED: AtomicBool = AtomicBool::new(false);
+
+// =====================================================================
+// M13 strip render cache
+//
+// `compute_element(ElementContent::Text(...))` calls `font.shape()` which
+// runs HarfBuzz on every invocation — that's the expensive step in the
+// strip render path. Without caching, paint_in_pane_titles re-shapes
+// every pane's title on every frame (sidebars animate at 500ms, codex
+// blinks the cursor, the cockpit repaints freely), pegging ~60% of one
+// CPU core at 12 panes.
+//
+// For our use case the title text is sticky: AGENT_NAME is set once by
+// agent-launch.ps1 and never changes for the life of the pane. Same for
+// the per-pane theme color (set at pane creation). So we cache the full
+// ComputedElement per pane keyed by all the inputs that could matter,
+// and on cache hit just feed it to render_element — skipping the entire
+// compute_element path including the HarfBuzz shape() call.
+//
+// Cache keys: pane_id + title + aux + bounds + color + cell metrics.
+// Any change (resize, theme cycle, AGENT_NAME update) misses and we
+// recompute that one entry. At idle steady-state, the cache hits 100%.
+//
+// Eviction: not needed in practice — Suite has ~16 panes and pane_ids
+// are reused only over very long sessions. If churn becomes real, we'd
+// add an LRU cap; for now an unbounded HashMap is fine and simple.
+//
+// Invalidation gaps (deliberately accepted):
+//   * Font reload (rare; user would just rerun the cockpit anyway).
+//   * Glyph atlas eviction (CachedGlyph Rc keeps the atlas slot pinned
+//     so glyphs we hold won't be repacked under us).
+//
+// thread_local because all rendering happens on the GUI thread; no
+// locking needed and the cache is naturally per-window.
+
+#[derive(Debug)]
+struct StripCacheEntry {
+    title: String,
+    title_computed: ComputedElement,
+    aux: Option<String>,
+    aux_computed: Option<ComputedElement>,
+    x: f32,
+    y: f32,
+    w: f32,
+    fg: LinearRgba,
+    cell_width: f32,
+    cell_height: f32,
+}
+
+thread_local! {
+    static STRIP_CACHE: RefCell<HashMap<mux::pane::PaneId, StripCacheEntry>> =
+        RefCell::new(HashMap::new());
+}
+
+fn approx_eq(a: f32, b: f32, eps: f32) -> bool {
+    (a - b).abs() < eps
+}
+
+fn linear_rgba_eq(a: LinearRgba, b: LinearRgba) -> bool {
+    approx_eq(a.0, b.0, 1e-4)
+        && approx_eq(a.1, b.1, 1e-4)
+        && approx_eq(a.2, b.2, 1e-4)
+        && approx_eq(a.3, b.3, 1e-4)
+}
 
 impl crate::TermWindow {
     pub fn paint_in_pane_titles(
@@ -134,6 +198,7 @@ impl crate::TermWindow {
             // to the pixel grid — sub-pixel positions cause the same
             // monospace font to render with broken-up strokes.
             strips.push(StripPlan {
+                pane_id: pos.pane.pane_id(),
                 x: x.round(),
                 y: y.round(),
                 w: w.round(),
@@ -194,8 +259,58 @@ impl crate::TermWindow {
         let abs_right = self.dimensions.pixel_width as f32;
 
         for s in strips {
-            // Left-aligned title (project / agent name).
-            self.render_strip_text(
+            // Aux geometry (right-justified, reserves chars × cell_w
+            // at right edge). Computed up-front so the cache key /
+            // miss path can both reference the same numbers.
+            let aux_geom: Option<(String, f32, f32)> = s.aux.as_ref().map(|aux| {
+                let aux_chars = aux.chars().count() as f32;
+                let aux_w = aux_chars * cell_width;
+                let aux_x = (s.x + s.w - aux_w).max(s.x);
+                (aux.clone(), aux_x, aux_w)
+            });
+
+            // Cache hit? Compare the full input fingerprint. On hit we
+            // skip compute_element entirely — including font.shape() —
+            // and just re-emit the cached quads via render_element.
+            // That's the optimization: at idle steady-state every
+            // frame is a hit and the strip costs ~nothing.
+            let cache_hit = STRIP_CACHE.with(|cache| {
+                let cache = cache.borrow();
+                cache.get(&s.pane_id).and_then(|entry| {
+                    let aux_text_match = match (&entry.aux, &aux_geom) {
+                        (None, None) => true,
+                        (Some(a), Some((b, _, _))) => a == b,
+                        _ => false,
+                    };
+                    if entry.title == s.title
+                        && aux_text_match
+                        && approx_eq(entry.x, s.x, 0.5)
+                        && approx_eq(entry.y, s.y, 0.5)
+                        && approx_eq(entry.w, s.w, 0.5)
+                        && linear_rgba_eq(entry.fg, s.fg)
+                        && approx_eq(entry.cell_width, cell_width, 0.01)
+                        && approx_eq(entry.cell_height, cell_height, 0.01)
+                    {
+                        Some((
+                            entry.title_computed.clone(),
+                            entry.aux_computed.clone(),
+                        ))
+                    } else {
+                        None
+                    }
+                })
+            });
+
+            if let Some((title_computed, aux_computed)) = cache_hit {
+                self.render_element(&title_computed, gl_state, None)?;
+                if let Some(ac) = aux_computed {
+                    self.render_element(&ac, gl_state, None)?;
+                }
+                continue;
+            }
+
+            // Cache miss: compute fresh, render, then store.
+            let title_computed = self.compute_strip_element(
                 &font,
                 &s.title,
                 s.x,
@@ -210,21 +325,15 @@ impl crate::TermWindow {
                 transparent,
                 gl_state,
             )?;
+            self.render_element(&title_computed, gl_state, None)?;
 
-            // Right-justified aux text (e.g. uptime). Reserve
-            // approximately `aux.chars() * cell_width` pixels at the
-            // right edge — assumes the user's terminal font is
-            // monospace, which it always is for our use case.
-            if let Some(aux) = s.aux {
-                let aux_chars = aux.chars().count() as f32;
-                let aux_w = aux_chars * cell_width;
-                let aux_x = (s.x + s.w - aux_w).max(s.x);
-                self.render_strip_text(
+            let aux_computed = if let Some((aux_text, aux_x, aux_w)) = aux_geom.as_ref() {
+                let computed = self.compute_strip_element(
                     &font,
-                    &aux,
-                    aux_x,
+                    aux_text,
+                    *aux_x,
                     s.y,
-                    aux_w,
+                    *aux_w,
                     s.fg,
                     strip_height,
                     cell_width,
@@ -234,7 +343,29 @@ impl crate::TermWindow {
                     transparent,
                     gl_state,
                 )?;
-            }
+                self.render_element(&computed, gl_state, None)?;
+                Some(computed)
+            } else {
+                None
+            };
+
+            STRIP_CACHE.with(|cache| {
+                cache.borrow_mut().insert(
+                    s.pane_id,
+                    StripCacheEntry {
+                        title: s.title.clone(),
+                        title_computed,
+                        aux: aux_geom.as_ref().map(|(t, _, _)| t.clone()),
+                        aux_computed,
+                        x: s.x,
+                        y: s.y,
+                        w: s.w,
+                        fg: s.fg,
+                        cell_width,
+                        cell_height,
+                    },
+                );
+            });
         }
 
         Ok(())
@@ -242,12 +373,14 @@ impl crate::TermWindow {
 }
 
 impl crate::TermWindow {
-    /// Render a single text run inside a strip rectangle. Used for
-    /// both the left-aligned title and the optional right-justified
-    /// aux text — same rendering path so font / color / metrics stay
-    /// identical between the two.
+    /// Build an Element + run compute_element to produce the
+    /// ComputedElement for a single strip text run. Caller is
+    /// responsible for calling `render_element` on the result and (if
+    /// caching) storing it in STRIP_CACHE. compute_element is the part
+    /// that calls `font.shape()` and walks the box-model pipeline,
+    /// which is what we want to skip on cached frames.
     #[allow(clippy::too_many_arguments)]
-    fn render_strip_text(
+    fn compute_strip_element(
         &self,
         font: &std::rc::Rc<wezterm_font::LoadedFont>,
         text: &str,
@@ -262,7 +395,7 @@ impl crate::TermWindow {
         abs_right: f32,
         transparent: LinearRgba,
         gl_state: &crate::termwindow::RenderState,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<ComputedElement> {
         let element = Element::new(font, ElementContent::Text(text.to_string()))
             .colors(ElementColors {
                 border: BorderColor::default(),
@@ -280,7 +413,7 @@ impl crate::TermWindow {
             })
             .display(DisplayType::Inline);
 
-        let computed = self.compute_element(
+        self.compute_element(
             &LayoutContext {
                 height: DimensionContext {
                     dpi,
@@ -298,13 +431,12 @@ impl crate::TermWindow {
                 zindex: 12,
             },
             &element,
-        )?;
-
-        self.render_element(&computed, gl_state, None)
+        )
     }
 }
 
 struct StripPlan {
+    pane_id: mux::pane::PaneId,
     x: f32,
     y: f32,
     w: f32,
