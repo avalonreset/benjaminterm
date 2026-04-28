@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=BENTERM
+Comment=BENTERM — Attention-friendly terminal distro
+Keywords=shell;prompt;command;commandline;cmd;terminal;
+Icon=com.avalonreset.benterm
+StartupWMClass=org.wezfurlong.wezterm
+TryExec=benterm
+Exec=benterm start --cwd .
+Type=Application
+Categories=System;TerminalEmulator;Utility;
+Terminal=false

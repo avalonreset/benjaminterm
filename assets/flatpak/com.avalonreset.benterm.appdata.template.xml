@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <content_rating type="oars-1.0" />
+  <id>com.avalonreset.benterm</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>BENTERM</name>
+  <summary>Attention-friendly terminal distro for AI coding sessions</summary>
+  <description>
+    <p>
+      BENTERM is a cross-platform terminal tuned for AI coding sessions with
+      Codex, Claude, and other terminal agents. It bundles 0xProto, ships a
+      curated dark-theme shuffle-bag, plays per-pane sound cues when an agent
+      is ready for the next prompt, and routes attention through visual pulses
+      and click-to-focus toast notifications.
+    </p>
+
+    <p>
+      Configuration is expressed in Lua. BENTERM ships an opinionated default
+      config so a fresh machine is ready out of the box, while still exposing
+      every Lua hook for personal customization.
+    </p>
+
+    <p>
+      Designed to be paired with HyperYap for speech-to-text, smart paste, and
+      clipboard intelligence — BENTERM owns the terminal-side surface (sound,
+      attention, readability, clickable paths) and stays out of HyperYap's way.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">com.avalonreset.benterm.desktop</launchable>
+
+  <url type="homepage">https://github.com/avalonreset/benterm</url>
+  <url type="bugtracker">https://github.com/avalonreset/benterm/issues</url>
+
+  <developer_name>Avalon Reset</developer_name>
+
+  <releases>
+    <release version="@TAG_NAME@" date="@DATE@">
+      <description>
+        <p>
+          See the GitHub release notes for the full changelog.
+        </p>
+      </description>
+    </release>
+  </releases>
+</component>

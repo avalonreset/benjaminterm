@@ -213,7 +213,7 @@ jobs:
           cp target/release/wezterm-gui "$pkg/benterm-gui"
           cp target/release/wezterm-mux-server "$pkg/benterm-mux-server"
           cp target/release/strip-ansi-escapes "$pkg/strip-ansi-escapes"
-          cp extras/benterm/benterm.lua "$pkg/wezterm.lua"
+          cp extras/benterm/benterm.lua "$pkg/benterm.lua"
           cp -r assets/fonts/* "$pkg/fonts/"
           cp -r assets/sounds/benterm-soft-cues "$pkg/sounds/"
           tar czf "$pkg.tar.gz" "$pkg"

@@ -60,7 +60,7 @@ if (Test-Path $mesaFromBuild) {
   Copy-Item -LiteralPath "assets\windows\mesa\opengl32.dll" -Destination (Join-Path $packageDir "mesa")
 }
 
-Copy-Item -LiteralPath "extras\benterm\benterm.lua" -Destination (Join-Path $packageDir "wezterm.lua")
+Copy-Item -LiteralPath "extras\benterm\benterm.lua" -Destination (Join-Path $packageDir "benterm.lua")
 Copy-Item -Path "assets\fonts\*" -Destination (Join-Path $packageDir "fonts") -Recurse
 Copy-Item -LiteralPath "assets\sounds\benterm-soft-cues" -Destination (Join-Path $packageDir "sounds") -Recurse
 

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>BENTERM-gui</string>
+	<string>benterm-gui</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.avalonreset.benterm</string>
 	<key>CFBundleInfoDictionaryVersion</key>

@@ -21,12 +21,12 @@ TRIGGER_PATHS_APPIMAGE = [
 ]
 
 TRIGGER_PATHS_UNIX = [
-    "assets/open-wezterm-here",
+    "assets/open-benterm-here",
     "assets/shell-completion/**/*",
     "assets/shell-integration/**/*",
-    "assets/wezterm-nautilus.py",
-    "assets/wezterm.appdata.xml",
-    "assets/wezterm.desktop",
+    "assets/benterm-nautilus.py",
+    "assets/benterm.appdata.xml",
+    "assets/benterm.desktop",
     "get-deps",
     "ci/tag-name.sh",
     "termwiz/data/wezterm.terminfo",

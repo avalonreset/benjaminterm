@@ -11,7 +11,7 @@ appdir="$zipdir/benterm.app"
 
 rm -rf "$zipdir" "$zipname"
 mkdir -p "$zipdir"
-cp -r assets/macos/WezTerm.app "$appdir"
+cp -r assets/macos/BENTERM.app "$appdir"
 
 rm -f "$appdir"/*.dylib
 mkdir -p "$appdir/Contents/MacOS"
@@ -21,7 +21,7 @@ mkdir -p "$appdir/Contents/MacOS/sounds"
 
 cp -r assets/shell-integration/* "$appdir/Contents/Resources"
 cp -r assets/shell-completion "$appdir/Contents/Resources"
-cp extras/benterm/benterm.lua "$appdir/Contents/MacOS/wezterm.lua"
+cp extras/benterm/benterm.lua "$appdir/Contents/MacOS/benterm.lua"
 cp -r assets/fonts/* "$appdir/Contents/MacOS/fonts/"
 cp -r assets/sounds/benterm-soft-cues "$appdir/Contents/MacOS/sounds/"
 tic -xe wezterm -o "$appdir/Contents/Resources/terminfo" termwiz/data/wezterm.terminfo

@@ -20,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\benterm
+DefaultDirName={autopf}\BENTERM
 DisableProgramGroupPage=yes
 ;LicenseFile=..\LICENSE.md
 ; Remove the following line to run in administrative install mode (install for all users.)
@@ -59,9 +59,16 @@ Source: "..\assets\windows\angle\libGLESv2.dll"; DestDir: "{app}"; Flags: ignore
 Source: "..\assets\windows\conhost\conpty.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\windows\conhost\OpenConsole.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\target\release\strip-ansi-escapes.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\extras\benterm\benterm.lua"; DestDir: "{app}"; DestName: "wezterm.lua"; Flags: ignoreversion
+Source: "..\extras\benterm\benterm.lua"; DestDir: "{app}"; DestName: "benterm.lua"; Flags: ignoreversion
 Source: "..\assets\fonts\*"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\assets\sounds\benterm-soft-cues\*"; DestDir: "{app}\sounds\benterm-soft-cues"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Install bundled 0xProto into the system fonts directory so the BENTERM
+; default font works for every user without any per-machine setup. The
+; uninsneveruninstall flag leaves fonts behind on uninstall (recommended
+; by Inno Setup, since other apps may have started using them).
+Source: "..\assets\fonts\0xProto-Regular.ttf"; DestDir: "{autofonts}"; FontInstall: "0xProto Regular (TrueType)"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "..\assets\fonts\0xProto-Bold.ttf"; DestDir: "{autofonts}"; FontInstall: "0xProto Bold (TrueType)"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "..\assets\fonts\0xProto-Italic.ttf"; DestDir: "{autofonts}"; FontInstall: "0xProto Italic (TrueType)"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

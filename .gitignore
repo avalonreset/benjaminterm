@@ -75,3 +75,10 @@ dhat-heap.json
 /assets/flatpak/generated-sources.json
 /__pycache__/
 /nix/result
+
+# BENTERM local dev / install logs
+/.build.log
+/.install-*.log
+/.run-elevated-install.ps1
+/install-v1.4.5-local.ps1
+/tmp/

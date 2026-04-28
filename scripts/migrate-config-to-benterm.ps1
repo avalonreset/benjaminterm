@@ -34,6 +34,23 @@ $content = $content -replace 'benjaminterm_idle_text_glow', 'benterm_idle_text_g
 # identifier characters or punctuation that suggests code.
 $content = $content -replace '\bbenjaminterm_', 'benterm_'
 
+# v2.0.0 default font bump: 0xProto is now bundled with the installer
+# and registered system-wide, so it's the new distro default. Old configs
+# from before commit a249c815d still default to OCR A Extended; flip them.
+$content = $content -replace "local DEFAULT_FONT_PRIMARY = 'OCR A Extended'", "local DEFAULT_FONT_PRIMARY = '0xProto'"
+
+# Make sure the new default is actually in the cycling rotation. Insert
+# 0xProto at the top of hacker_font_candidates if it isn't already there.
+if ($content -notmatch "(?m)^\s*'0xProto',") {
+    $content = $content -replace "(?m)^(local hacker_font_candidates = \{\r?\n  -- Installed \(Windows\)\r?\n)", "`$1  '0xProto',`r`n"
+}
+
+# v2.0.0 LOCALAPPDATA path bump: pre-rename configs wrote runtime data
+# (clipboard images, pane state, etc.) to %LOCALAPPDATA%\BenjaminTerm\.
+# Migrate any embedded references to use the new BENTERM folder so the
+# new binary doesn't keep populating the legacy directory.
+$content = $content -replace "'BenjaminTerm\\\\", "'BENTERM\\"
+
 Set-Content -Path $dst -Value $content -NoNewline
 
 Write-Host "Migrated ~/.benjaminterm.lua -> ~/.benterm.lua" -ForegroundColor Green

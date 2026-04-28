@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/banner.webp" alt="benterm, AI coding terminal built from WezTerm with 0xProto, dark themes, sound cues, and toast focus" width="100%">
+  <img src="assets/banner.webp" alt="BENTERM banner — attention-friendly terminal distro" width="100%">
 </p>
 
-# benterm, AI Coding Terminal for Windows, macOS, and Linux
+# BENTERM, AI Coding Terminal for Windows, macOS, and Linux
 
 [![Release](https://img.shields.io/github/v/release/avalonreset/benterm?label=release)](https://github.com/avalonreset/benterm/releases/latest)
 [![Release Workflow](https://img.shields.io/github/actions/workflow/status/avalonreset/benterm/benterm-release.yml?label=release%20workflow)](https://github.com/avalonreset/benterm/actions/workflows/benterm-release.yml)
@@ -11,9 +11,8 @@
 [![macOS](https://img.shields.io/badge/macos-release%20artifact-111)](https://github.com/avalonreset/benterm/releases/latest)
 [![Linux](https://img.shields.io/badge/linux-release%20artifact-111)](https://github.com/avalonreset/benterm/releases/latest)
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
-[![Built from WezTerm](https://img.shields.io/badge/built%20from-WezTerm-111)](https://wezterm.org/)
 
-benterm is a cross-platform terminal for AI coding sessions, rebuilt from a fresh WezTerm baseline and tuned for Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It keeps the power of WezTerm, then adds a sharper product layer: bundled 0xProto, theme shuffle-bag, per-pane sound identity, visual completion pulse, clickable local paths, paste undo, and focused attention routing.
+BENTERM is a cross-platform terminal distro tuned for AI coding sessions: Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It ships bundled 0xProto, a theme shuffle-bag, per-pane sound identity, visual completion pulses, clickable local paths, paste undo, and focused attention routing — the productivity layer a coding terminal actually needs, without setup theater.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -24,8 +23,7 @@ benterm is a cross-platform terminal for AI coding sessions, rebuilt from a fres
 
 ## Table of Contents
 
-- [Screenshot](#screenshot)
-- [Why benterm](#why-benterm)
+- [Why BENTERM](#why-benterm)
 - [Features](#features)
 - [Attention System](#attention-system)
 - [0xProto Philosophy](#0xproto-philosophy)
@@ -37,30 +35,25 @@ benterm is a cross-platform terminal for AI coding sessions, rebuilt from a fres
 - [Upstream Credit](#upstream-credit)
 - [License](#license)
 
-## Screenshot
+## Why BENTERM
 
-![benterm hacker terminal scene with agent ready cues](assets/icon/benterm_screenshot.webp)
+Most terminals expect you to assemble your own workflow. BENTERM is the opinionated build: already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine doesn't nag you for fonts.
 
-## Why benterm
+[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. BENTERM doesn't duplicate that. The terminal focuses on the part HyperYap can't own: attention, readability, sound cues, terminal identity, clickable terminal output, and a calmer default environment for agent-heavy work.
 
-Vanilla WezTerm is excellent, but it expects you to assemble your own workflow. benterm is the opinionated build: the terminal is already styled, already branded, already tuned for AI coding, and already packaged so a fresh machine does not nag you for fonts.
+The two projects are meant to be used together. HyperYap is the complete AI workstation layer. BENTERM is the focused terminal inside that workstation. HyperYap includes BENTERM by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
 
-[HyperYap](https://github.com/avalonreset/hyperyap) owns the speech-to-text, smart paste, image paste, and clipboard intelligence layer. benterm does not duplicate that. The terminal focuses on the part HyperYap cannot own: attention, readability, sound cues, terminal identity, clickable terminal output, and a calmer default environment for agent-heavy work.
-
-The two projects are meant to be used together. HyperYap is the complete AI workstation layer. benterm is the focused terminal inside that workstation. HyperYap includes benterm by default because the best speech and clipboard system still needs a terminal that knows how to route attention when agents finish their work.
-
-| Feature | Windows Terminal | WezTerm (vanilla) | benterm |
-|---------|------------------|-------------------|--------------|
-| AI session completion pulse | No | No | Built-in |
-| Per-pane sound identity | No | No | Built-in |
-| Windows toast click-to-focus | Basic app focus | No | Exact ready session workflow |
-| Theme shuffle-bag | No | Manual Lua config | Built-in |
-| Bundled coding font | Limited | User supplied | 0xProto bundled |
-| Clickable local paths | Limited | Config required | Built-in, agent-output aware |
-| Paste undo and redo | No | Manual Lua config | Built-in |
-| Single-line tab behavior | Basic | Config required | Fancy tabs, hidden for one tab |
-| Side-by-side install with WezTerm | N/A | N/A | Yes |
-| HyperYap companion workflow | No | Manual | Designed for it |
+| Feature | Windows Terminal | BENTERM |
+|---------|------------------|---------|
+| AI session completion pulse | No | Built-in |
+| Per-pane sound identity | No | Built-in |
+| Windows toast click-to-focus | Basic app focus | Exact ready session workflow |
+| Theme shuffle-bag | No | Built-in |
+| Bundled coding font | Limited | 0xProto bundled |
+| Clickable local paths | Limited | Built-in, agent-output aware |
+| Paste undo and redo | No | Built-in |
+| Single-line tab behavior | Basic | Fancy tabs, hidden for one tab |
+| HyperYap companion workflow | No | Designed for it |
 
 ## Features
 
@@ -76,7 +69,7 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 
 ### Clickable Local Paths
 
-benterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults, so agent output, build logs, test failures, and generated artifact names are easier to act on.
+BENTERM ships built-in local path hyperlinks tuned for agent output, build logs, test failures, and generated artifact names — anything an AI session prints that you might want to click.
 
 - Recognizes Windows absolute paths like `E:\repo\file.txt` and `E:/repo/file.txt`.
 - Recognizes quoted paths, UNC paths, `./`, `../`, `~/`, and common artifact filenames.
@@ -105,12 +98,11 @@ benterm adds built-in local path hyperlinks beyond vanilla WezTerm defaults, so 
 - Fresh installs work without sending users on a font hunt.
 - The 0xProto license is included with the font files.
 
-### Lowercase Branding
+### Branding
 
-- Custom benterm app identity.
-- BEN visual assets restored in the repo and README.
-- Windows installer, Windows portable zip, macOS app zip, and Linux tarball are published from GitHub Actions.
-- Vanilla WezTerm can still live beside benterm.
+- Custom BENTERM app identity end-to-end: Windows .exe + installer, macOS .app, Linux desktop entry.
+- BEN visual assets across the repo, README, and platform icons.
+- Windows installer, Windows portable zip, macOS app zip, and Linux tarball are all published from GitHub Actions.
 
 ## Attention System
 
@@ -174,8 +166,8 @@ The standalone release exists because the terminal is useful on its own. The ful
 | Font size down | `Ctrl+-` |
 | Font size up | `Ctrl+=` |
 | Reset font size | `Ctrl+0` |
-| New tab | WezTerm default, usually `Ctrl+Shift+T` |
-| Close tab | WezTerm default, usually `Ctrl+Shift+W` |
+| New tab | `Ctrl+Shift+T` |
+| Close tab | `Ctrl+Shift+W` |
 
 Clipboard, speech-to-text, smart paste, image paste, and vibe-coding hotkeys belong to [HyperYap](https://github.com/avalonreset/hyperyap). benterm is designed to work beside it.
 
@@ -273,13 +265,10 @@ Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
 ## Upstream Credit
 
-benterm is a custom distribution built on [WezTerm](https://github.com/wezterm/wezterm) by Wez Furlong.
+BENTERM is built on the WezTerm terminal engine by Wez Furlong, distributed under the MIT license. Upstream: [github.com/wezterm/wezterm](https://github.com/wezterm/wezterm).
 
-- Upstream project: [wezterm/wezterm](https://github.com/wezterm/wezterm)
-- Upstream docs: [wezterm.org](https://wezterm.org/)
-
-benterm changes are intentionally scoped. The goal is to add a productive AI coding layer without rewriting the terminal engine.
+BENTERM is its own product — separate brand, separate identity, separate release cadence — but the terminal engine credit belongs upstream. BENTERM-specific changes layer a productive AI-coding distribution on top: bundled font, attention system, sound cues, theme shuffle-bag, paste undo, BEN brand assets, packaged installers.
 
 ## License
 
-benterm keeps WezTerm's MIT license. The bundled 0xProto font and bundled soft CC0 sounds retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/benterm-soft-cues`.
+BENTERM is MIT-licensed (inherited from upstream). The bundled 0xProto font and bundled soft CC0 sound cues retain their own licenses. See [LICENSE.md](LICENSE.md), `assets/fonts`, and `assets/sounds/benterm-soft-cues`.
