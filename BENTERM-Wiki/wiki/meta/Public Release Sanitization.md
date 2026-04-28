@@ -49,3 +49,5 @@ Expected acceptable hits:
 2026-04-22: Initial scan found local absolute paths only. Those were replaced with `<repo-root>`. No secret values were found in the vault seed content.
 
 2026-04-23: A follow-up scan removed remaining machine-specific references from sound and validation notes, added durable banner asset rules, and confirmed local Obsidian workspace state stays ignored instead of entering the public vault.
+
+2026-04-28: Pre-publish scan run for the v2.0.0 rebrand release. Replaced one remaining local absolute path in `[[Claude Code Bridge]]` with `<repo-root>`. New notes [[v2.0.0 Rebrand Release]] and [[Release Workflow Tax]] passed the scan clean. No secret values, no personal identifiers, no machine names found in any wiki content.

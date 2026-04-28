@@ -70,7 +70,7 @@ In `~/.claude/settings.json`:
 }
 ```
 
-Use forward slashes in the `-File` path. Bash (which Claude uses to run the hook command when `CLAUDE_CODE_GIT_BASH_PATH` is set) treats backslash + letter as an escape and silently mangles the path - `E:\benterm\...` becomes `E:benterm...` and `iscc` errors with "file does not exist."
+Use forward slashes in the `-File` path. Bash (which Claude uses to run the hook command when `CLAUDE_CODE_GIT_BASH_PATH` is set) treats backslash + letter as an escape and silently mangles the path - `<repo-root>\subdir\...` becomes `<repo-root>subdir...` and `iscc` errors with "file does not exist."
 
 ## Diagnostics
 

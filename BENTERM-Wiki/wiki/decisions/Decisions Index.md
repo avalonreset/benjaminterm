@@ -14,3 +14,4 @@ tags:
 - [[Key Decisions]]
 - [[BENTERM and Hyper Yap Boundary]]
 - [[Release Readiness 2026-04-22]]
+- [[v2.0.0 Rebrand Release]]

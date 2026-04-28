@@ -2,13 +2,45 @@
 type: log
 title: "Wiki Log"
 created: 2026-04-22
-updated: 2026-04-23
+updated: 2026-04-28
 status: active
 tags:
   - log
 ---
 
 # Wiki Log
+
+## 2026-04-28 - v2.0.0 Re-Released: WezTerm Visual Brand Purge + Banner / Icon Regen
+
+Force-pushed `v2.0.0` to a new commit (`4ccbe04a6`) replacing the original v2.0.0 release. The rebrand was a pure-visual pass, not a functional change. Internal namespacing (`org.wezfurlong.wezterm` window class, mux socket prefix, `%LOCALAPPDATA%\wezterm` data dir, terminfo entry, Cargo package names) is intentionally unchanged because tools like Hyper Yap key off the window class and renaming would break interop. Layer to revisit in v3.
+
+**Shipped artifacts** (https://github.com/avalonreset/benterm/releases/tag/v2.0.0):
+- `benterm-v2.0.0-setup.exe` (Windows Inno Setup installer, 42.7 MB)
+- `benterm-windows-v2.0.0.zip` (Windows portable, 68 MB)
+- `benterm-macos-v2.0.0.zip` (macOS universal x86_64 + arm64, 96 MB)
+- `benterm-linux-v2.0.0.tar.gz` (Linux portable, 49.9 MB)
+- `.sha256` next to each.
+
+**Visual rebrand work** (commit `7c93e6b27`):
+- New `assets/banner.webp` and `assets/github-social-preview.jpg` regenerated via KIE.ai gpt-image-2 (`scripts/regenerate-banner.py` is the reusable script). New banner reads "BENTERM" big white sans-serif left, retro CRT TV right with green phosphor halo, BEN red badge on the bezel, `benjamin@benterm ~` on the screen, glossy floor reflection. Same aesthetic as the old BenjaminTerm banner, fully rebranded.
+- `assets/icon/terminal.png` (Linux 128px), `assets/windows/terminal.ico` (7 sizes 16–256), and `assets/macos/BENTERM.app/Contents/Resources/terminal.icns` (7 sizes 16–1024) all regenerated from `assets/icon/BENTERM.jpg` (the BEN red graphic).
+- macOS bundle dir renamed `WezTerm.app` → `BENTERM.app`. Info.plist `CFBundleExecutable` case-fixed (`BENTERM-gui` → `benterm-gui`) so macOS can find the binary the package script writes.
+- Linux integration files renamed and rewritten with `com.avalonreset.benterm` ids: `wezterm.desktop` → `benterm.desktop`, `wezterm.appdata.xml` → `benterm.appdata.xml`, `wezterm-nautilus.py` → `benterm-nautilus.py`, `open-wezterm-here` → `open-benterm-here`. `StartupWMClass` deliberately kept as `org.wezfurlong.wezterm` to match the unchanged Rust window class.
+- Flatpak templates renamed to `com.avalonreset.benterm.*` with internals rewritten.
+- 30+ `gen_*.yml` workflow trigger paths updated; `ci/generate-workflows.py` `TRIGGER_PATHS_UNIX` updated.
+- Bundled distro config now ships as `benterm.lua` instead of `wezterm.lua` (installer + zip + macOS + Linux release scripts all updated).
+- Legacy upstream SVGs (`wezterm-icon.svg`, `wezterm-ghifarit53-{1,2,3}.svg`) deleted.
+- `assets/icon/benterm_screenshot.{jpg,webp}` deleted (had "WEZTERM-POWERED" text baked into the screenshot).
+- README softened: "Built from WezTerm" badge dropped, "WezTerm (vanilla)" comparison column removed, alt text de-WezTerm'd. Upstream credit retained in the dedicated section per MIT requirements.
+
+**macOS build.rs bug** (commit `4ccbe04a6`):
+- `wezterm-gui/build.rs:165` was hardcoding `assets/macos/WezTerm.app/Contents/Info.plist` for a `UNUserNotificationCenter` plist copy. The bundle rename broke macOS builds with `panicked: ... copy ... assets/macos/WezTerm.app/Contents/Info.plist -> ... target/release/Info.plist: No such file or directory`. Linux + Windows weren't affected (cfg-gated). Caught after the first v2.0.0 push; fix landed and re-tagged.
+
+**Process lessons** captured in [[Release Workflow Tax]]:
+- The `benterm-release.yml` workflow's `prepare-release` step deletes the existing release on every run (`gh release delete --cleanup-tag --yes` at lines 51-53). On a single-platform code-bug failure, this forces a full all-platforms restart instead of allowing surgical re-run of the broken job. Workflow design choice, fixable in ~5 lines of YAML.
+- No `sccache` configured for `benterm-release.yml` (the per-distro `gen_*.yml` workflows DO use it). Every release is cold compile, ~25 min wall clock per run.
+- macOS Build step serializes 8 cargo invocations in a for-loop (4 binaries × 2 archs). Could be one `cargo build -p A -p B -p C -p D --target X --release` per arch, two parallel jobs.
+- `gh release view v2.0.0 --json assets` is the ground-truth check for "is the installer ready," not the job status. Per-job upload steps complete before the job itself finishes cleanup; the job-level `in_progress` indicator can hide an already-uploaded artifact. **Cost**: I told the user "the installer doesn't exist yet" while it had already uploaded; they sat through unnecessary wait. Fixed for future status checks.
 
 ## 2026-04-27 - v1.4.5 Released: Cursor-Row Glow Stability + Claude Code OSC 9 Bridge
 

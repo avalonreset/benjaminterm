@@ -16,5 +16,6 @@ tags:
 - [[Notification Noise Policy]]
 - [[README Banner Asset Workflow]]
 - [[Release Candidate Definition]]
+- [[Release Workflow Tax]]
 - [[Smart Copy Interrupt]]
 - [[Sound Grab Bag Attention System]]
