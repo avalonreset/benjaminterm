@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.webp" alt="BENTERM banner — attention-friendly terminal distro" width="100%">
+  <img src="assets/banner.webp" alt="BENTERM banner - attention-friendly terminal distro" width="100%">
 </p>
 
 # BENTERM, AI Coding Terminal for Windows, macOS, and Linux
@@ -12,7 +12,7 @@
 [![Linux](https://img.shields.io/badge/linux-release%20artifact-111)](https://github.com/avalonreset/benterm/releases/latest)
 [![0xProto](https://img.shields.io/badge/font-0xProto-7c3aed)](https://github.com/0xType/0xProto)
 
-BENTERM is a cross-platform terminal distro tuned for AI coding sessions: Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It ships bundled 0xProto, a theme shuffle-bag, per-pane sound identity, visual completion pulses, clickable local paths, paste undo, and focused attention routing — the productivity layer a coding terminal actually needs, without setup theater.
+BENTERM is a cross-platform terminal distro tuned for AI coding sessions: Codex, Claude, [HyperYap](https://github.com/avalonreset/hyperyap), and multi-window agent work. It ships bundled 0xProto, a theme shuffle-bag, per-pane sound identity, visual completion pulses, clickable local paths, paste undo, and focused attention routing - the productivity layer a coding terminal actually needs, without setup theater.
 
 ```text
    ___  _____  __   _____   __  ________  _______________  __  ___
@@ -69,7 +69,7 @@ The two projects are meant to be used together. HyperYap is the complete AI work
 
 ### Clickable Local Paths
 
-BENTERM ships built-in local path hyperlinks tuned for agent output, build logs, test failures, and generated artifact names — anything an AI session prints that you might want to click.
+BENTERM ships built-in local path hyperlinks tuned for agent output, build logs, test failures, and generated artifact names - anything an AI session prints that you might want to click.
 
 - Recognizes Windows absolute paths like `E:\repo\file.txt` and `E:/repo/file.txt`.
 - Recognizes quoted paths, UNC paths, `./`, `../`, `~/`, and common artifact filenames.
@@ -267,7 +267,7 @@ Tags matching `v[0-9]*` build Windows, macOS, and Linux artifacts.
 
 BENTERM is built on the WezTerm terminal engine by Wez Furlong, distributed under the MIT license. Upstream: [github.com/wezterm/wezterm](https://github.com/wezterm/wezterm).
 
-BENTERM is its own product — separate brand, separate identity, separate release cadence — but the terminal engine credit belongs upstream. BENTERM-specific changes layer a productive AI-coding distribution on top: bundled font, attention system, sound cues, theme shuffle-bag, paste undo, BEN brand assets, packaged installers.
+BENTERM is its own product - separate brand, separate identity, separate release cadence - but the terminal engine credit belongs upstream. BENTERM-specific changes layer a productive AI-coding distribution on top: bundled font, attention system, sound cues, theme shuffle-bag, paste undo, BEN brand assets, packaged installers.
 
 ## License
 

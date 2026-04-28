@@ -20,7 +20,7 @@ The release workflow at `.github/workflows/benterm-release.yml` works, but pays 
 
 This page captures the design issues and the optimization punch list. None of these are blocking; all are worth landing before the next non-trivial release.
 
-## Issue 1 — Cold Compile Every Run
+## Issue 1 - Cold Compile Every Run
 
 The release workflow does not configure `sccache`, cargo registry caching, or any other compiler cache between runs. Every release is a from-zero compile of the entire crate graph (~700 deps including heavy native libs: cairo, freetype, harfbuzz, openssl-sys, ring).
 
@@ -29,7 +29,7 @@ The release workflow does not configure `sccache`, cargo registry caching, or an
 - **Fix**: add the sccache action and the standard `SCCACHE_GHA_ENABLED=true` + `RUSTC_WRAPPER=sccache` env vars to each platform job. Estimated ~10 lines of YAML.
 - **Expected gain**: subsequent runs drop from ~25 min to ~10 min once the cache warms.
 
-## Issue 2 — `prepare-release` Deletes The Release Every Run
+## Issue 2 - `prepare-release` Deletes The Release Every Run
 
 `benterm-release.yml` lines 51-53:
 
@@ -46,7 +46,7 @@ This deletes the existing GitHub release (and its assets) at the start of every 
 - **Better pattern (idempotent prepare-release)**: skip-if-exists rather than delete-then-create. Each platform job already calls `gh release upload --clobber`, so re-uploading replaces specific assets cleanly without touching the others. A code-bug failure becomes "push fix → manually re-run only the failed platform job → it overwrites its asset → publish." Linux + Windows untouched.
 - **Estimated cost**: ~5 lines of YAML to gate the delete behind a `force_recreate` workflow input that defaults to `false`.
 
-## Issue 3 — macOS Universal Build Serializes 8 Cargo Invocations
+## Issue 3 - macOS Universal Build Serializes 8 Cargo Invocations
 
 `benterm-release.yml` lines 149-153:
 
@@ -75,7 +75,7 @@ Eight sequential `cargo build` calls. Cargo can parallelize across packages with
 
   Saves ~10 min. Trade-off: ships two macOS .zip artifacts (Intel + Apple Silicon) instead of one universal. Apple is deprecating Intel macOS; arm64-only is increasingly defensible.
 
-## Issue 4 — Job Status Is Not The Same As Asset Availability
+## Issue 4 - Job Status Is Not The Same As Asset Availability
 
 A platform job's `Upload release assets` step typically completes well before the job itself transitions to `completed` status. The job runs cleanup steps (post-checkout, post-Node, etc.) after the upload, during which the job-level status remains `in_progress`.
 
@@ -83,7 +83,7 @@ A platform job's `Upload release assets` step typically completes well before th
 - **Cost during v2.0.0 ship**: a status check confidently reported "the installer doesn't exist yet" while it had been uploaded ~2 minutes earlier. Caused unnecessary user wait and a force-push that would have been wiser had we already-grabbed the local copy.
 - **Fix**: ground-truth check during a release ship is `gh release view "$TAG" --json assets --jq '.assets[].name'`. Use this in addition to (or instead of) job status when the question is "can we install yet?".
 
-## Issue 5 — Code Signing Is Configured But Not Active
+## Issue 5 - Code Signing Is Configured But Not Active
 
 `ci/package-benterm-macos.sh` includes a code-signing block gated on `MACOS_TEAM_ID`. That secret is not currently set in the repo's GitHub Actions secrets, so the block is a no-op. Released macOS artifacts are unsigned and unnotarized; users must `xattr -dr com.apple.quarantine` after download to launch.
 
@@ -102,11 +102,11 @@ When a single platform job fails on a release run:
 3. **Then** push the fix and re-tag. The new run's `prepare-release` will wipe the GitHub release, but you have local copies.
 4. After the fresh run lands, the locally-downloaded artifacts and the new release artifacts will be byte-identical for unchanged platforms (same code, same compile flags). For the platform you fixed, the new run produces a corrected artifact.
 
-This cost us a Windows installer's worth of wait during the v2.0.0 ship — captured in the [[v2.0.0 Rebrand Release]] log.
+This cost us a Windows installer's worth of wait during the v2.0.0 ship - captured in the [[v2.0.0 Rebrand Release]] log.
 
 ## Optimization Punch List (Ordered by ROI)
 
-1. ⭐ Wire `sccache` into `benterm-release.yml` — biggest single-line-of-YAML win. Drops subsequent builds from ~25 min to ~10.
+1. ⭐ Wire `sccache` into `benterm-release.yml` - biggest single-line-of-YAML win. Drops subsequent builds from ~25 min to ~10.
 2. ⭐ Make `prepare-release` idempotent. Enables surgical recovery from single-platform failures.
 3. Collapse macOS for-loop to one-cargo-per-arch. ~3-5 min saved.
 4. Split macOS into parallel arch-specific jobs. ~10 min saved, two artifacts shipped.

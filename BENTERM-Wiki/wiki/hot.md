@@ -16,10 +16,10 @@ tags:
 
 ## Key Recent Facts
 
-- **v2.0.0 is the latest tag** (re-released 2026-04-28). Headline change: full WezTerm visual brand purge. Same engine as v1.4.5, no functional changes — banner / social preview / Linux + macOS + Windows icons / desktop integration files / Flatpak templates all rebranded to BENTERM with the BEN red graphic. See [[v2.0.0 Rebrand Release]] and [[Release Workflow Tax]].
+- **v2.0.0 is the latest tag** (re-released 2026-04-28). Headline change: full WezTerm visual brand purge. Same engine as v1.4.5, no functional changes - banner / social preview / Linux + macOS + Windows icons / desktop integration files / Flatpak templates all rebranded to BENTERM with the BEN red graphic. See [[v2.0.0 Rebrand Release]] and [[Release Workflow Tax]].
 - v2.0.0 release artifacts: `benterm-v2.0.0-setup.exe`, `benterm-windows-v2.0.0.zip`, `benterm-macos-v2.0.0.zip`, `benterm-linux-v2.0.0.tar.gz` plus four `.sha256` files. Live at https://github.com/avalonreset/benterm/releases/tag/v2.0.0.
 - The bundled distro Lua config now ships as `benterm.lua` (was `wezterm.lua`). Binary still falls back to `.wezterm.lua` and `.benjaminterm.lua` per [[config search order]].
-- Internal namespacing intentionally NOT renamed in v2.0.0: `org.wezfurlong.wezterm` window class, mux socket prefix, `%LOCALAPPDATA%\wezterm` data dir, terminfo entry, Cargo package names. Hyper Yap targets the window class for hotkey detection — rename would break interop. Revisit in v3.
+- Internal namespacing intentionally NOT renamed in v2.0.0: `org.wezfurlong.wezterm` window class, mux socket prefix, `%LOCALAPPDATA%\wezterm` data dir, terminfo entry, Cargo package names. Hyper Yap targets the window class for hotkey detection - rename would break interop. Revisit in v3.
 - v1.4.5 brought cursor-row glow stability + Claude Code OSC 9 bridge. See [[Attention Trigger Lifecycle]] for the canonical OSC 9 / OSC 777 spec.
 - The attention trigger is **OSC 9 / OSC 777**. Anything else (idle-detection on `PaneOutput`, BEL → attention) is an anti-pattern. Codex emits OSC 9 natively. Claude Code does NOT - it needs a `Stop` hook that runs `assets/shell-integration/benterm-claude-stop.ps1`. Plain pwsh shells emit OSC 9 from the bundled `assets/shell-integration/benterm.ps1` integration.
 - v1.4.4 made BENTERM auto-discover `~/.benterm.lua` before falling back to `~/.wezterm.lua` (and same in `<config-dir>` and `<exe-dir>` on Windows).
@@ -49,7 +49,7 @@ tags:
 
 - Verify v2.0.0 install on the maintainer's Windows machine via the official `benterm-v2.0.0-setup.exe` (font system-wide, BEN icon in Apps & Features, Start Menu shortcut, registry "Open BENTERM here" entries).
 - Optimize `benterm-release.yml`: wire `sccache` (drops subsequent builds from ~25 min to ~10), make `prepare-release` idempotent (skip-if-exists rather than delete-then-create), split macOS universal job into two parallel arch-specific jobs. See [[Release Workflow Tax]].
-- Fix legacy `ci/deploy.sh` and `ci/appimage.sh` so the per-distro `*_continuous.yml` workflows turn green again (still reference `assets/wezterm.appdata.xml`, `assets/wezterm.desktop`, `WezTerm.app` etc. — all renamed in v2.0.0). Doesn't ship anything but the badge is red.
+- Fix legacy `ci/deploy.sh` and `ci/appimage.sh` so the per-distro `*_continuous.yml` workflows turn green again (still reference `assets/wezterm.appdata.xml`, `assets/wezterm.desktop`, `WezTerm.app` etc. - all renamed in v2.0.0). Doesn't ship anything but the badge is red.
 - Decide whether macOS release should be signed/notarized before public announcement (currently `MACOS_TEAM_ID` secret isn't set so the signing block in `package-benterm-macos.sh` is a no-op).
 - Keep optional package-manager publishing disabled until target repos/accounts are ready.
 - Use [[Wiki Maintenance Flow]] as the default process for future vault edits.

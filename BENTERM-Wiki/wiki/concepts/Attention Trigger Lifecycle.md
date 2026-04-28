@@ -19,7 +19,7 @@ sources:
 
 # Attention Trigger Lifecycle
 
-The attention features — per-pane border pulse, cursor-row idle glow, soft-cue sound — fire on a single signal: **OSC 9** (or **OSC 777**) emitted into a pane. This is the *agent ready signal* per the rankenstein-suite Mandatory Requirements (M1, M3). Anything else (BEL, idle-detection heuristics, prompt timers) is **not** the trigger and should not be wired in.
+The attention features - per-pane border pulse, cursor-row idle glow, soft-cue sound - fire on a single signal: **OSC 9** (or **OSC 777**) emitted into a pane. This is the *agent ready signal* per the rankenstein-suite Mandatory Requirements (M1, M3). Anything else (BEL, idle-detection heuristics, prompt timers) is **not** the trigger and should not be wired in.
 
 ## Trigger Source
 
@@ -30,15 +30,15 @@ A pane fires the attention pipeline when its terminal output contains an OSC 9 (
 \x1b]777;<message>\x07
 ```
 
-Codex emits OSC 9 natively when it finishes a turn. Plain shells and other agents do not — they need integration glue to emit it (see *Integrations* below).
+Codex emits OSC 9 natively when it finishes a turn. Plain shells and other agents do not - they need integration glue to emit it (see *Integrations* below).
 
 ## Pipeline (BENTERM Rust core)
 
 1. Terminal parser receives OSC 9 → emits `Alert::ToastNotification`.
 2. `wezterm-gui/src/frontend.rs` routes the alert to `trigger_attention_for_pane(window_id, pane_id)`.
 3. `trigger_attention_for_pane`:
-   - Calls `attention_sound::play_for_pane(pane_id)` — random Kenney UI cue from the per-pane shuffle-bag.
-   - Calls `term_window.start_visual_attention_for_pane(pane_id)` — sets `bell_start`, `idle_text_glow_start`, `agent_attention_start`, starts the per-pane attention pulse and cursor-row glow animation.
+   - Calls `attention_sound::play_for_pane(pane_id)` - random Kenney UI cue from the per-pane shuffle-bag.
+   - Calls `term_window.start_visual_attention_for_pane(pane_id)` - sets `bell_start`, `idle_text_glow_start`, `agent_attention_start`, starts the per-pane attention pulse and cursor-row glow animation.
 4. `notification_handling` config gates **only** the Windows toast popup, **not** the per-pane in-terminal features. Toast is suppressible; attention features always fire.
 
 ## Anti-patterns (do not introduce)
@@ -49,9 +49,9 @@ Codex emits OSC 9 natively when it finishes a turn. Plain shells and other agent
 
 ## Integrations (how each shell/agent ends up emitting OSC 9)
 
-- **Codex** — emits OSC 9 natively. No glue required.
-- **pwsh / bash plain shell** — bundle a shell-integration script that emits OSC 9 from the `prompt` function on command end. Lives in `assets/shell-integration/benterm.ps1` (pwsh). Sourced from `$PROFILE` or via `default_prog`.
-- **Claude Code** — does not emit OSC 9 by default. Bridge it with a `Stop` hook in `~/.claude/settings.json`:
+- **Codex** - emits OSC 9 natively. No glue required.
+- **pwsh / bash plain shell** - bundle a shell-integration script that emits OSC 9 from the `prompt` function on command end. Lives in `assets/shell-integration/benterm.ps1` (pwsh). Sourced from `$PROFILE` or via `default_prog`.
+- **Claude Code** - does not emit OSC 9 by default. Bridge it with a `Stop` hook in `~/.claude/settings.json`:
   ```json
   "hooks": {
     "Stop": [{
@@ -63,7 +63,7 @@ Codex emits OSC 9 natively when it finishes a turn. Plain shells and other agent
   }
   ```
   The hook writes OSC 9 directly to the controlling tty when Claude finishes responding. BENTERM receives it, fires per-pane attention.
-- **Other agent CLIs** — same pattern: emit OSC 9 on turn end via whatever hook/wrapper that CLI exposes.
+- **Other agent CLIs** - same pattern: emit OSC 9 on turn end via whatever hook/wrapper that CLI exposes.
 
 ## Dismissal
 
