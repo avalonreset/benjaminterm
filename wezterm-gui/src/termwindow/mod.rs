@@ -1953,6 +1953,20 @@ impl TermWindow {
         }
 
         let mux = Mux::get();
+
+        // Suite (M13): SUPPRESS_TITLE arriving on a pane means it
+        // wants to opt out of the in-pane title strip. The pane was
+        // initially sized smaller (apply_pane_top_inset reserved the
+        // strip's row) but now needs its full rows back. Trigger a
+        // tab resize so apply_pane_top_inset_for re-runs with the
+        // updated user_vars and returns the size unchanged.
+        if name == "SUPPRESS_TITLE" && value == "1" {
+            if let Some(tab) = mux.get_tab_for_pane(pane_id) {
+                let cur_size = tab.get_size();
+                tab.resize(cur_size);
+            }
+        }
+
         let window = GuiWin::new(self);
         let pane = match mux.get_pane(pane_id) {
             Some(pane) => mux_lua::MuxPane(pane.pane_id()),

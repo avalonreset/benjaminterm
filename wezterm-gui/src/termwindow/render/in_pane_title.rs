@@ -148,6 +148,15 @@ impl crate::TermWindow {
             }
 
             let user_vars = pos.pane.copy_user_vars();
+            // Suite: panes that emit SUPPRESS_TITLE=1 opt out of the
+            // M13 strip entirely. Sidebar panes are special — they
+            // render their own gold "Executive Assistant ♚" row at
+            // the top of the TUI; an additional in-pane title strip
+            // would duplicate that branding. Right-side codex panes
+            // do NOT emit SUPPRESS_TITLE, so they keep their strip.
+            if user_vars.get("SUPPRESS_TITLE").map(|v| v == "1").unwrap_or(false) {
+                continue;
+            }
             let raw_title = pos.pane.get_title();
             let display_title =
                 derive_display_title(&user_vars, &raw_title, pos.pane.pane_id());
@@ -179,10 +188,10 @@ impl crate::TermWindow {
             };
 
             let palette = pos.pane.palette();
-            // Title color: most vibrant accent from the pane's
-            // palette (same scoring M3 attention borders use). Ties
-            // the strip to the per-pane theme and signals "this is
-            // chrome" without needing a separator.
+            // Title color tracks the pane's theme accent (same scoring
+            // M3 attention borders use). EA branding lives ONLY on the
+            // sidebar's clickable gold row — the strip stays palette-
+            // driven so it doesn't double up the EA identity.
             let fg = opaque(attention_color_from_palette(&palette));
 
             // Optional right-justified aux text (e.g. "up 4m" set
@@ -463,10 +472,6 @@ fn derive_display_title(
         .get("TAB_TITLE")
         .map(|s| s.trim())
         .filter(|s| !s.is_empty());
-    let is_ea = user_vars
-        .get("AGENT_IS_EA")
-        .map(|v| v == "1")
-        .unwrap_or(false);
 
     // Composition rule:
     //   TAB_TITLE && AGENT_NAME && distinct  → "Project • Agent"
@@ -474,7 +479,7 @@ fn derive_display_title(
     //   TAB_TITLE only                        → "Project"
     //   neither                               → fall back to raw title
     //                                            or "pane <id>"
-    let base = match (tab_title, agent_name) {
+    match (tab_title, agent_name) {
         (Some(t), Some(a)) if t != a => format!("{} \u{2022} {}", t, a),
         (_, Some(a)) => a.to_string(),
         (Some(t), None) => t.to_string(),
@@ -486,15 +491,6 @@ fn derive_display_title(
                 format!("pane {}", pane_id)
             }
         }
-    };
-
-    // ♚ crown is reserved for the Executive Assistant — sidebar panes
-    // and the EA codex pane both emit AGENT_IS_EA=1. Project leaders
-    // / workers stay uncrowned.
-    if is_ea && !base.is_empty() {
-        format!("{} \u{265a}", base)
-    } else {
-        base
     }
 }
 
@@ -572,13 +568,15 @@ mod tests {
     }
 
     #[test]
-    fn ea_gets_crown_with_no_project() {
+    fn ea_pane_renders_plain_name() {
+        // The M13 strip no longer crowns the EA — that branding lives
+        // exclusively on the sidebar's gold "Executive Assistant" row.
         let mut vars = HashMap::new();
         vars.insert("AGENT_NAME".to_string(), "Executive Assistant".to_string());
         vars.insert("AGENT_IS_EA".to_string(), "1".to_string());
         assert_eq!(
             derive_display_title(&vars, "python.exe", 5),
-            "Executive Assistant \u{265a}"
+            "Executive Assistant"
         );
     }
 

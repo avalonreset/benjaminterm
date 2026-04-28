@@ -631,6 +631,18 @@ fn apply_pane_top_inset(size: TerminalSize) -> TerminalSize {
     }
 }
 
+/// Like `apply_pane_top_inset`, but pane-aware: returns the size as-is
+/// when the pane has emitted SUPPRESS_TITLE=1 (sidebar opt-out — those
+/// panes render their own top line and don't want the M13 inset row
+/// reserved). Used at every resize site that has the pane in scope.
+pub fn apply_pane_top_inset_for(size: TerminalSize, pane: &Arc<dyn Pane>) -> TerminalSize {
+    let vars = pane.copy_user_vars();
+    if vars.get("SUPPRESS_TITLE").map(|v| v == "1").unwrap_or(false) {
+        return size;
+    }
+    apply_pane_top_inset(size)
+}
+
 fn apply_sizes_from_splits(tree: &Tree, size: &TerminalSize) {
     match tree {
         Tree::Empty => return,
@@ -644,7 +656,7 @@ fn apply_sizes_from_splits(tree: &Tree, size: &TerminalSize) {
             apply_sizes_from_splits(&*right, &data.second);
         }
         Tree::Leaf(pane) => {
-            pane.resize(apply_pane_top_inset(*size)).ok();
+            pane.resize(apply_pane_top_inset_for(*size, pane)).ok();
         }
     }
 }
@@ -1074,7 +1086,7 @@ impl TabInner {
             self.size_before_zoom = size;
             if let Some(pane) = self.get_active_pane() {
                 pane.set_zoomed(true);
-                pane.resize(apply_pane_top_inset(size)).ok();
+                pane.resize(apply_pane_top_inset_for(size, &pane)).ok();
                 self.zoomed.replace(pane);
             }
         }
@@ -1314,7 +1326,7 @@ impl TabInner {
 
         if let Some(zoomed) = &self.zoomed {
             self.size = size;
-            zoomed.resize(apply_pane_top_inset(size)).ok();
+            zoomed.resize(apply_pane_top_inset_for(size, zoomed)).ok();
         } else {
             let dims = cell_dimensions(&size);
             let (min_x, min_y) = compute_min_size(self.pane.as_mut().unwrap());
@@ -1537,7 +1549,7 @@ impl TabInner {
 
             if cursor.is_leaf() {
                 // Apply our size to the tty
-                cursor.leaf_mut().map(|pane| pane.resize(apply_pane_top_inset(pane_size)));
+                cursor.leaf_mut().map(|pane| pane.resize(apply_pane_top_inset_for(pane_size, pane)));
             } else {
                 self.apply_pane_size(pane_size, &mut cursor);
             }
@@ -1844,13 +1856,13 @@ impl TabInner {
                         };
 
                         if let Some(unsplit) = cursor.leaf_mut() {
-                            unsplit.resize(apply_pane_top_inset(size)).ok();
+                            unsplit.resize(apply_pane_top_inset_for(size, unsplit)).ok();
                         } else {
                             self.apply_pane_size(size, &mut cursor);
                         }
                     } else if !dead_panes.is_empty() {
                         // Apply our revised size to the tty
-                        pane.resize(apply_pane_top_inset(pane_size)).ok();
+                        pane.resize(apply_pane_top_inset_for(pane_size, &pane)).ok();
                     }
 
                     pane_index += 1;
@@ -2237,8 +2249,8 @@ impl TabInner {
                 (pane, existing_pane)
             };
 
-            pane1.resize(apply_pane_top_inset(split_info.first))?;
-            pane2.resize(apply_pane_top_inset(split_info.second.clone()))?;
+            pane1.resize(apply_pane_top_inset_for(split_info.first, &pane1))?;
+            pane2.resize(apply_pane_top_inset_for(split_info.second.clone(), &pane2))?;
 
             *cursor.leaf_mut().unwrap() = pane1;
 

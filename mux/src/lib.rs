@@ -1042,6 +1042,20 @@ impl Mux {
             .collect()
     }
 
+    /// Find the tab that contains the given pane, if any. Linear scan
+    /// across all tabs — fine for low-frequency callers (e.g., user-var
+    /// change handlers).
+    pub fn get_tab_for_pane(&self, pane_id: PaneId) -> Option<Arc<Tab>> {
+        for tab in self.tabs.read().values() {
+            for p in tab.iter_panes() {
+                if p.pane.pane_id() == pane_id {
+                    return Some(Arc::clone(tab));
+                }
+            }
+        }
+        None
+    }
+
     pub fn iter_windows_in_workspace(&self, workspace: &str) -> Vec<WindowId> {
         let mut windows: Vec<WindowId> = self
             .windows
@@ -1295,20 +1309,9 @@ impl Mux {
         tab.assign_pane(&pane);
         // Rankenstein Suite (M13): subtract pane_top_inset_rows from
         // the size we hand to the inner terminal — the freed top row
-        // is reserved for the in-pane title strip.
-        let inset = config::configuration().pane_top_inset_rows;
-        let pane_size = if inset > 0 && size.rows > inset + 1 {
-            let cell_h = size.pixel_height.checked_div(size.rows).unwrap_or(0);
-            TerminalSize {
-                rows: size.rows - inset,
-                cols: size.cols,
-                pixel_width: size.pixel_width,
-                pixel_height: size.pixel_height.saturating_sub(cell_h * inset),
-                dpi: size.dpi,
-            }
-        } else {
-            size
-        };
+        // is reserved for the in-pane title strip. Sidebar panes that
+        // emit SUPPRESS_TITLE=1 opt out (pane keeps full rows).
+        let pane_size = crate::tab::apply_pane_top_inset_for(size, &pane);
         pane.resize(pane_size)?;
         self.add_tab_and_active_pane(&tab)?;
         self.add_tab_to_window(&tab, window_id)?;

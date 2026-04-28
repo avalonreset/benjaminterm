@@ -405,26 +405,27 @@ impl crate::TermWindow {
                     }
                 }
                 TabBarItem::Tab { tab_idx, active } => {
-                    let mut elem = item_to_elem(item);
-                    elem.max_width = Some(Dimension::Pixels(max_tab_width));
-
-                    // Rankenstein Suite: tabs whose active pane has the
-                    // AGENT_IS_EA user var are permanent — the founder
-                    // explicitly does not want to be able to close the
-                    // EA tab (the entire system is anchored on it).
-                    // Suppressing the X removes the affordance; the
-                    // close action itself is also refused in
-                    // close_specific_tab as a defense-in-depth.
+                    // Rankenstein Suite: tabs anchored to the EA
+                    // (any pane has BOTH AGENT_IS_EA=1 AND
+                    // AGENT_IS_LEADER=1) are HIDDEN from the strip.
+                    // The founder rule is "tabs are projects" — the EA
+                    // doesn't get a visible tab. The hidden EA tab is
+                    // still in the mux and reachable via the sidebar's
+                    // gold EA row, which fires SUITE_EA_FOCUS to
+                    // activate it.
                     let tab_is_permanent =
                         self.tab_is_ea_anchored(tab_idx).unwrap_or(false);
+                    if tab_is_permanent {
+                        continue;
+                    }
+                    let mut elem = item_to_elem(item);
+                    elem.max_width = Some(Dimension::Pixels(max_tab_width));
 
                     elem.content = match elem.content {
                         ElementContent::Text(_) => unreachable!(),
                         ElementContent::Poly { .. } => unreachable!(),
                         ElementContent::Children(mut kids) => {
-                            if self.config.show_close_tab_button_in_tabs
-                                && !tab_is_permanent
-                            {
+                            if self.config.show_close_tab_button_in_tabs {
                                 kids.push(make_x_button(&font, &metrics, &colors, tab_idx, active));
                             }
                             ElementContent::Children(kids)

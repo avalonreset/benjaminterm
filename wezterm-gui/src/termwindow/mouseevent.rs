@@ -717,12 +717,33 @@ impl super::TermWindow {
                 // area. Clicks that land on the strip itself
                 // saturate to 0 — codex doesn't act on row-0 clicks
                 // in its TUI, so this is harmless.
-                let inset_rows = self.config.pane_top_inset_rows as i64;
+                // SUPPRESS_TITLE panes have no inset → no offset.
+                let suppress_title = pos
+                    .pane
+                    .copy_user_vars()
+                    .get("SUPPRESS_TITLE")
+                    .map(|v| v == "1")
+                    .unwrap_or(false);
+                let inset_rows = if suppress_title {
+                    0
+                } else {
+                    self.config.pane_top_inset_rows as i64
+                };
                 row = row.saturating_sub(pos.top as i64).saturating_sub(inset_rows);
                 break;
             } else if is_already_captured && pane.pane_id() == pos.pane.pane_id() {
                 column = column.saturating_sub(pos.left);
-                let inset_rows = self.config.pane_top_inset_rows as i64;
+                let suppress_title = pos
+                    .pane
+                    .copy_user_vars()
+                    .get("SUPPRESS_TITLE")
+                    .map(|v| v == "1")
+                    .unwrap_or(false);
+                let inset_rows = if suppress_title {
+                    0
+                } else {
+                    self.config.pane_top_inset_rows as i64
+                };
                 row = row
                     .saturating_sub(pos.top as i64)
                     .saturating_sub(inset_rows)

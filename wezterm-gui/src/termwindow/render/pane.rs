@@ -116,7 +116,21 @@ impl crate::TermWindow {
         // (see mux/tab.rs::apply_pane_top_inset) so iterating
         // `dims.viewport_rows` covers exactly the shifted content
         // area and never overflows.
-        let inset_rows = self.config.pane_top_inset_rows;
+        //
+        // SUPPRESS_TITLE=1 panes (sidebars) opt out: no shift. Their
+        // terminal was sized to full rows in apply_pane_top_inset_for,
+        // and they render starting at the very top of the pane.
+        let suppress_title = pos
+            .pane
+            .copy_user_vars()
+            .get("SUPPRESS_TITLE")
+            .map(|v| v == "1")
+            .unwrap_or(false);
+        let inset_rows = if suppress_title {
+            0
+        } else {
+            self.config.pane_top_inset_rows
+        };
         let inset_pixels = inset_rows as f32 * cell_height;
         let background_rect = {
             // We want to fill out to the edges of the splits
@@ -741,7 +755,18 @@ impl crate::TermWindow {
         // M13: terminal content sits BELOW the title strip — shift
         // y down by inset and shrink height by the same amount so
         // the bottom of pane content matches the pane's visual edge.
-        let inset_rows = self.config.pane_top_inset_rows;
+        // SUPPRESS_TITLE panes (sidebars) opt out — start at top.
+        let suppress_title = pos
+            .pane
+            .copy_user_vars()
+            .get("SUPPRESS_TITLE")
+            .map(|v| v == "1")
+            .unwrap_or(false);
+        let inset_rows = if suppress_title {
+            0
+        } else {
+            self.config.pane_top_inset_rows
+        };
         let inset_pixels = inset_rows as f32 * cell_height;
         // Bounds for the terminal cells
         let content_rect = euclid::rect(
