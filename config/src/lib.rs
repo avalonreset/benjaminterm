@@ -7,7 +7,7 @@ use ordered_float::NotNan;
 use smol::channel::{Receiver, Sender};
 use smol::prelude::*;
 use std::cell::RefCell;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::ffi::OsString;
 use std::fs::DirBuilder;
 #[cfg(unix)]
@@ -473,6 +473,12 @@ struct ConfigInner {
     warnings: Vec<String>,
     generation: usize,
     watcher: Option<notify::RecommendedWatcher>,
+    /// Paths currently registered with the watcher. Without this, every
+    /// reload would re-call `notify::Watcher::watch()` on the same paths,
+    /// and the notify crate accumulates ReadDirectoryChangesW handles
+    /// instead of replacing — observed leaking ~8 directory handles per
+    /// second on the cockpit's config dir until it pegged a CPU core.
+    watched_paths: HashSet<PathBuf>,
     subscribers: HashMap<usize, Box<dyn Fn() -> bool + Send>>,
 }
 
@@ -484,6 +490,7 @@ impl ConfigInner {
             warnings: vec![],
             generation: 0,
             watcher: None,
+            watched_paths: HashSet::new(),
             subscribers: HashMap::new(),
         }
     }
@@ -552,11 +559,22 @@ impl ConfigInner {
             });
             self.watcher.replace(watcher);
         }
+        // Dedup against previously watched paths. notify::Watcher::watch()
+        // does NOT replace — calling it twice on the same path leaves two
+        // OS-level watches active. Without this guard the cockpit leaked
+        // ~8 directory handles/sec until automatically_reload_config was
+        // forced off as a workaround.
+        if self.watched_paths.contains(&path) {
+            return;
+        }
         if let Some(watcher) = self.watcher.as_mut() {
             use notify::Watcher;
-            watcher
+            if watcher
                 .watch(&path, notify::RecursiveMode::NonRecursive)
-                .ok();
+                .is_ok()
+            {
+                self.watched_paths.insert(path);
+            }
         }
     }
 
