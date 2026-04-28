@@ -455,30 +455,47 @@ fn derive_display_title(
     raw_title: &str,
     pane_id: mux::pane::PaneId,
 ) -> String {
-    if let Some(name) = user_vars.get("AGENT_NAME") {
-        let trimmed = name.trim();
-        if !trimmed.is_empty() {
-            // The Executive Assistant gets a ♚ crown next to its name in
-            // the strip — the founder reserved that glyph exclusively
-            // for EA, and it appears wherever "Executive Assistant"
-            // shows: the EA codex pane's strip, and (because the
-            // sidebar binary also emits AGENT_IS_EA=1) every sidebar
-            // pane's strip too. Project leaders / workers stay plain.
-            let is_ea = user_vars
-                .get("AGENT_IS_EA")
-                .map(|v| v == "1")
-                .unwrap_or(false);
-            if is_ea {
-                return format!("{} ♚", trimmed);
+    let agent_name = user_vars
+        .get("AGENT_NAME")
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty());
+    let tab_title = user_vars
+        .get("TAB_TITLE")
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty());
+    let is_ea = user_vars
+        .get("AGENT_IS_EA")
+        .map(|v| v == "1")
+        .unwrap_or(false);
+
+    // Composition rule:
+    //   TAB_TITLE && AGENT_NAME && distinct  → "Project • Agent"
+    //   AGENT_NAME only                       → "Agent"
+    //   TAB_TITLE only                        → "Project"
+    //   neither                               → fall back to raw title
+    //                                            or "pane <id>"
+    let base = match (tab_title, agent_name) {
+        (Some(t), Some(a)) if t != a => format!("{} \u{2022} {}", t, a),
+        (_, Some(a)) => a.to_string(),
+        (Some(t), None) => t.to_string(),
+        (None, None) => {
+            let trimmed = raw_title.trim();
+            if !trimmed.is_empty() {
+                strip_redundant_leader_prefix(trimmed)
+            } else {
+                format!("pane {}", pane_id)
             }
-            return trimmed.to_string();
         }
+    };
+
+    // ♚ crown is reserved for the Executive Assistant — sidebar panes
+    // and the EA codex pane both emit AGENT_IS_EA=1. Project leaders
+    // / workers stay uncrowned.
+    if is_ea && !base.is_empty() {
+        format!("{} \u{265a}", base)
+    } else {
+        base
     }
-    let trimmed_title = raw_title.trim();
-    if !trimmed_title.is_empty() {
-        return strip_redundant_leader_prefix(trimmed_title);
-    }
-    format!("pane {}", pane_id)
 }
 
 fn strip_redundant_leader_prefix(title: &str) -> String {
@@ -541,6 +558,28 @@ mod tests {
         vars.insert("AGENT_IS_LEADER".to_string(), "1".to_string());
         // Sidebar shows leader status; strip stays uncluttered.
         assert_eq!(derive_display_title(&vars, "python.exe", 5), "Leader");
+    }
+
+    #[test]
+    fn project_and_agent_compose_with_bullet() {
+        let mut vars = HashMap::new();
+        vars.insert("AGENT_NAME".to_string(), "Leader".to_string());
+        vars.insert("TAB_TITLE".to_string(), "Rankenstein Suite".to_string());
+        assert_eq!(
+            derive_display_title(&vars, "python.exe", 5),
+            "Rankenstein Suite \u{2022} Leader"
+        );
+    }
+
+    #[test]
+    fn ea_gets_crown_with_no_project() {
+        let mut vars = HashMap::new();
+        vars.insert("AGENT_NAME".to_string(), "Executive Assistant".to_string());
+        vars.insert("AGENT_IS_EA".to_string(), "1".to_string());
+        assert_eq!(
+            derive_display_title(&vars, "python.exe", 5),
+            "Executive Assistant \u{265a}"
+        );
     }
 
     #[test]
