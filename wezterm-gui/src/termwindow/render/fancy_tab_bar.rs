@@ -407,11 +407,24 @@ impl crate::TermWindow {
                 TabBarItem::Tab { tab_idx, active } => {
                     let mut elem = item_to_elem(item);
                     elem.max_width = Some(Dimension::Pixels(max_tab_width));
+
+                    // Rankenstein Suite: tabs whose active pane has the
+                    // AGENT_IS_EA user var are permanent — the founder
+                    // explicitly does not want to be able to close the
+                    // EA tab (the entire system is anchored on it).
+                    // Suppressing the X removes the affordance; the
+                    // close action itself is also refused in
+                    // close_specific_tab as a defense-in-depth.
+                    let tab_is_permanent =
+                        self.tab_is_ea_anchored(tab_idx).unwrap_or(false);
+
                     elem.content = match elem.content {
                         ElementContent::Text(_) => unreachable!(),
                         ElementContent::Poly { .. } => unreachable!(),
                         ElementContent::Children(mut kids) => {
-                            if self.config.show_close_tab_button_in_tabs {
+                            if self.config.show_close_tab_button_in_tabs
+                                && !tab_is_permanent
+                            {
                                 kids.push(make_x_button(&font, &metrics, &colors, tab_idx, active));
                             }
                             ElementContent::Children(kids)

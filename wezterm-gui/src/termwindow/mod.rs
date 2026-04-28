@@ -3276,7 +3276,39 @@ impl TermWindow {
         }
     }
 
+    /// Rankenstein Suite: returns true when the tab at `tab_idx` is
+    /// "EA-anchored" — i.e., its active pane carries the AGENT_IS_EA
+    /// user var. The fork uses this to (a) suppress the X close button
+    /// in the fancy tab bar render, and (b) refuse the close action in
+    /// close_specific_tab / close_current_tab. The Executive Assistant
+    /// is the founder's home surface; closing it would orphan the
+    /// project hierarchy.
+    pub fn tab_is_ea_anchored(&self, tab_idx: usize) -> Option<bool> {
+        let mux = Mux::try_get()?;
+        let mux_window = mux.get_window(self.mux_window_id)?;
+        let tab = mux_window.get_by_idx(tab_idx)?;
+        let active_pane = tab.get_active_pane()?;
+        Some(
+            active_pane
+                .copy_user_vars()
+                .get("AGENT_IS_EA")
+                .map(|v| v == "1")
+                .unwrap_or(false),
+        )
+    }
+
     fn close_specific_tab(&mut self, tab_idx: usize, confirm: bool) {
+        // Refuse to close EA-anchored tabs. The fancy tab bar already
+        // hides the X button for these, but a stray Ctrl+Shift+W could
+        // still land here.
+        if self.tab_is_ea_anchored(tab_idx).unwrap_or(false) {
+            log::info!(
+                "[suite] refusing to close EA-anchored tab idx={}",
+                tab_idx
+            );
+            return;
+        }
+
         let mux = Mux::get();
         let mux_window_id = self.mux_window_id;
         let mux_window = match mux.get_window(mux_window_id) {
@@ -3313,6 +3345,18 @@ impl TermWindow {
             Some(tab) => tab,
             None => return,
         };
+        // Refuse to close EA-anchored tabs (see tab_is_ea_anchored).
+        if let Some(active_pane) = tab.get_active_pane() {
+            if active_pane
+                .copy_user_vars()
+                .get("AGENT_IS_EA")
+                .map(|v| v == "1")
+                .unwrap_or(false)
+            {
+                log::info!("[suite] refusing to close current EA-anchored tab");
+                return;
+            }
+        }
         let tab_id = tab.tab_id();
         let mux_window_id = self.mux_window_id;
         if confirm && !tab.can_close_without_prompting(CloseReason::Tab) {
