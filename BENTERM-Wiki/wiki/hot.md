@@ -47,6 +47,8 @@ tags:
 
 ## Active Threads
 
+- ⚠️ Post-install first BENTERM window has UIPI-shaped HyperYap integration failure - documented in [[Post-Install First-Window Quirks]]. Fix is one-line `runasoriginaluser` flag in `ci/windows-installer.iss` `[Run]` section. Land in next installer touch.
+- ⚠️ v2.0.0 installer on a machine with the legacy v1.x install lands at `C:\Program Files\BenjaminTerm\` instead of `C:\Program Files\BENTERM\` - cosmetic only (binary IS v2.0.0), fix documented in [[Post-Install First-Window Quirks]] (add `DisableDirPage=auto` + `UsePreviousAppDir=no` to `[Setup]`).
 - Verify v2.0.0 install on the maintainer's Windows machine via the official `benterm-v2.0.0-setup.exe` (font system-wide, BEN icon in Apps & Features, Start Menu shortcut, registry "Open BENTERM here" entries).
 - Optimize `benterm-release.yml`: wire `sccache` (drops subsequent builds from ~25 min to ~10), make `prepare-release` idempotent (skip-if-exists rather than delete-then-create), split macOS universal job into two parallel arch-specific jobs. See [[Release Workflow Tax]].
 - Fix legacy `ci/deploy.sh` and `ci/appimage.sh` so the per-distro `*_continuous.yml` workflows turn green again (still reference `assets/wezterm.appdata.xml`, `assets/wezterm.desktop`, `WezTerm.app` etc. - all renamed in v2.0.0). Doesn't ship anything but the badge is red.

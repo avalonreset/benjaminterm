@@ -14,6 +14,7 @@ tags:
 - [[Cross-Platform Release Strategy]]
 - [[Optional Package Manager Channels]]
 - [[Notification Noise Policy]]
+- [[Post-Install First-Window Quirks]]
 - [[README Banner Asset Workflow]]
 - [[Release Candidate Definition]]
 - [[Release Workflow Tax]]

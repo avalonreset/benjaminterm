@@ -10,6 +10,16 @@ tags:
 
 # Wiki Log
 
+## 2026-04-28 (later) - Post-Install Quirks Discovered + Documented
+
+After the v2.0.0 install on the maintainer's Windows box, two install-time quirks surfaced. Neither blocks the v2.0.0 release (already shipped), but both deserve fixing in the next `ci/windows-installer.iss` touch.
+
+**Quirk 1: HyperYap completely dead in the first BENTERM window after install.** Subsequent windows work fine. Leading hypothesis: UIPI token mismatch. Inno Setup's `[Run]` step inherits the installer's elevated token unless `runasoriginaluser` is set, our `.iss` does not set it, so the post-install BENTERM is High IL. HyperYap (Medium IL, normal user launch) cannot send keystrokes / paste events into a High IL window per Windows UIPI rules. Direct evidence eluded the diagnostic - the original elevated process was already closed by the time we checked, all currently-running BENTERMs are Medium IL. Symptom + .iss code path + UIPI behavior all line up. Fix: add `runasoriginaluser` to the `[Run]` Flags. See [[Post-Install First-Window Quirks]].
+
+**Quirk 2: v2.0.0 installer lands at `C:\Program Files\BenjaminTerm\` not `C:\Program Files\BENTERM\` on machines that had a legacy BenjaminTerm install.** Registry shows two `_is1` entries with different AppIds both pointing at the same legacy folder. Binary IS the correct v2.0.0 build (file version `20260427-233347-4ccbe04a` matches the release commit), only the folder name is off. Fix: add `DisableDirPage=auto` + `UsePreviousAppDir=no` to `[Setup]`. See [[Post-Install First-Window Quirks]].
+
+No re-release needed for either - they hit once on first install and never again. Punch-listed for the next installer-touching commit alongside the [[Release Workflow Tax]] items.
+
 ## 2026-04-28 - v2.0.0 Re-Released: WezTerm Visual Brand Purge + Banner / Icon Regen
 
 Force-pushed `v2.0.0` to a new commit (`4ccbe04a6`) replacing the original v2.0.0 release. The rebrand was a pure-visual pass, not a functional change. Internal namespacing (`org.wezfurlong.wezterm` window class, mux socket prefix, `%LOCALAPPDATA%\wezterm` data dir, terminfo entry, Cargo package names) is intentionally unchanged because tools like Hyper Yap key off the window class and renaming would break interop. Layer to revisit in v3.
